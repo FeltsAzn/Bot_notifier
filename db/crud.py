@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
 from db.models import User, Services
+from sqlalchemy.exc import IntegrityError
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -15,11 +16,13 @@ class Database:
 
     @staticmethod
     async def create_session():
+        """Асинхронная сессия подключения к бд"""
         engine = create_async_engine(database_url, future=True, echo=True)
         session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
         return session
 
     async def create_user(self, tg_id: int, name: str) -> bool | Exception:
+        """Создание нового пользователя"""
         database_session = await self.create_session()
         async with database_session() as session:
             data = User(
@@ -27,15 +30,21 @@ class Database:
                 username=name)
             try:
                 session.add(data)
+                await session.commit()
+            except IntegrityError:
+                await session.rollback()
+                # TODO сделать перенаправление вывод бд в логгер
+                # logger warning(IntegrityError)
+                return True
             except Exception as ex:
                 await session.rollback()
-                # logger info
-                return ex
+                # logger error()
+                return False
             else:
-                await session.commit()
                 return True
 
     async def create_service(self, name: str) -> bool | Exception:
+        """Создание нового сервиса"""
         database_session = await self.create_session()
         async with database_session() as session:
             data = Services(service_name=name)
@@ -50,6 +59,7 @@ class Database:
                 return True
 
     async def get_users(self) -> list[tuple]:
+        """Список всех пользователей"""
         database_session = await self.create_session()
         async with database_session() as session:
             data = await session.query(User.user_id, User.username)
@@ -59,6 +69,7 @@ class Database:
             return users
 
     async def get_services(self) -> list[any]:
+        """Список отслеживаемых сервисов"""
         database_session = await self.create_session()
         async with database_session() as session:
             data = await session.query(Services.service_name)

@@ -4,7 +4,6 @@ import heandlers
 from alert_worker import alerts
 
 
-
 def start_bot():
     try:
         dp.loop.create_task(alerts.background_alerts())

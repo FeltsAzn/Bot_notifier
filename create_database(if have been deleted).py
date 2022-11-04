@@ -13,7 +13,7 @@ class User(Base):
     __tablename__ = 'Users'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
+    user_id = Column(Integer, unique=True)
     username = Column(String)
 
 
@@ -25,7 +25,7 @@ class Services(Base):
 
 
 async def create():
-    dotenv_path = os.path.join(os.path.dirname(__file__), '../.env')
+    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
     database_url = os.getenv("DATABASE_URL")
