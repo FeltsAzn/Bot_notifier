@@ -1,8 +1,6 @@
 from aiogram import types
 from loader import dp
 from db.crud import Database
-from keyboards.default.reply_keyboard import def_keyboard
-
 
 
 @dp.message_handler(commands=['start', 'home'])
