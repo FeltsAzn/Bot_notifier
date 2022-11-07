@@ -7,7 +7,7 @@ from alert_worker.alerts import update_user_cache
 
 @dp.message_handler(commands=['start', 'home'])
 async def start(message: types.Message):
-    start_buttons = ['Список площадок', 'Настройки']
+    start_buttons = ['Список площадок', "Список валют", 'Настройки']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     if message.from_user.id in await Database().get_users():
         keyboard.add(*start_buttons)
@@ -31,7 +31,7 @@ async def start(message: types.Message):
 
 @dp.message_handler(Text(equals="Домой"))
 async def start(message: types.Message):
-    buttons = ['Список площадок', 'Настройки']
+    buttons = ['Список площадок', "Список валют", 'Настройки']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
     await message.answer("Возвращаюсь домой", reply_markup=keyboard)

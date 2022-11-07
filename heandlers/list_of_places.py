@@ -36,7 +36,7 @@ async def list_places(message: Message):
         button = InlineKeyboardButton(text=item, callback_data=f"{item}:call")
         keyboard.insert(button)
 
-    next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:call")
+    next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:place:call")
     stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
     keyboard.insert(stop_button)
     keyboard.insert(next_button)
@@ -45,26 +45,24 @@ async def list_places(message: Message):
     await message.answer(text, reply_markup=keyboard)
 
 
-@dp.callback_query_handler(text="next_page:call")
+@dp.callback_query_handler(text="next_page:place:call")
 async def next_pages_heandler(call: CallbackQuery):
     global page_counter
     global elements_counter
 
-    elements_counter += 6
-    page_counter += 1
-    keyboard = InlineKeyboardMarkup(row_width=2)
-
-    for item in places[elements_counter:6 + elements_counter]:
-        button = InlineKeyboardButton(text=item, callback_data=f"{item}:call")
-        keyboard.insert(button)
-
     if page_counter < last_page - 1:
-        back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:call")
-        next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:call")
+        add_of_var()
+        keyboard = filling_keyboard()
+
+        back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:place:call")
+        next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:place:call")
         keyboard.insert(back_button)
         keyboard.insert(next_button)
     else:
-        back_button = InlineKeyboardButton(text="<<<<<<", callback_data="back_page:call")
+        add_of_var()
+        keyboard = filling_keyboard()
+
+        back_button = InlineKeyboardButton(text="<<<<<<", callback_data="back_page:place:call")
         stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         keyboard.insert(back_button)
         keyboard.insert(stop_button)
@@ -73,29 +71,52 @@ async def next_pages_heandler(call: CallbackQuery):
     await call.message.edit_text(text, reply_markup=keyboard)
 
 
-@dp.callback_query_handler(text="back_page:call")
+@dp.callback_query_handler(text="back_page:place:call")
 async def back_pages_heandler(call: CallbackQuery):
     global page_counter
     global elements_counter
 
-    elements_counter -= 6
-    page_counter -= 1
-    keyboard = InlineKeyboardMarkup(row_width=2)
-
-    for item in places[elements_counter:6 + elements_counter]:
-        button = InlineKeyboardButton(text=item, callback_data=f"{item}:call")
-        keyboard.insert(button)
-
     if page_counter > 2:
-        back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:call")
-        next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:call")
+        diff_of_var()
+        keyboard = filling_keyboard()
+
+        back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:place:call")
+        next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:place:call")
         keyboard.insert(back_button)
         keyboard.insert(next_button)
     else:
-        next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:call")
+        diff_of_var()
+        keyboard = filling_keyboard()
+
+        next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:place:call")
         stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         keyboard.insert(stop_button)
         keyboard.insert(next_button)
 
     text = f"Список отслеживаемых площадок площадок ({page_counter}/{last_page}):"
     await call.message.edit_text(text, reply_markup=keyboard)
+
+
+def filling_keyboard():
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    for item in places[elements_counter:6 + elements_counter]:
+        button = InlineKeyboardButton(text=item, callback_data=f"{item}:call")
+        keyboard.insert(button)
+    return keyboard
+
+
+def add_of_var():
+    global elements_counter
+    global page_counter
+
+    page_counter += 1
+    elements_counter += 6
+
+
+def diff_of_var():
+    global elements_counter
+    global page_counter
+
+    elements_counter -= 6
+    page_counter -= 1
+

@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from db.crud import Database
 from decimal import Decimal
-import http_req
+from alert_worker import http_req
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -68,7 +68,7 @@ def quote_difference(bin_price, kucoin_price, huobi_price, okx_price) -> tuple[l
     """Высчитывание наименьшего и наибольшего значения"""
     max_num: list = max(bin_price, kucoin_price, huobi_price, okx_price, key=lambda x: float(x[0]))
     min_num: list = min(bin_price, kucoin_price, huobi_price, okx_price, key=lambda x: float(x[0]))
-    result = str(100 - Decimal(min_num[0]) / Decimal(max_num[0]) * 100)[:3]
+    result = str(100 - Decimal(min_num[0]) / Decimal(max_num[0]) * 100)[:4]
     return min_num, max_num, result
 
 
