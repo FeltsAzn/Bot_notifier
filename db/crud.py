@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-import os
-from dotenv import load_dotenv
-from db.models import User, Services
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-
+from db.models import User, Services
+from dotenv import load_dotenv
+import os
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
@@ -62,19 +62,9 @@ class Database:
         """Список всех пользователей"""
         database_session = await self.create_session()
         async with database_session() as session:
-            data = await session.query(User.user_id, User.username)
-            users = []
-            for tg_id, name in data:
-                users.append((tg_id, name))
+            query = select(User)
+            database_response = await session.execute(query)
+            user = database_response.scalars()
+            users = list(map(lambda x: (x.user_id, x.username), user))
             return users
-
-    async def get_services(self) -> list[any]:
-        """Список отслеживаемых сервисов"""
-        database_session = await self.create_session()
-        async with database_session() as session:
-            data = await session.query(Services.service_name)
-            services = []
-            for name in data:
-                services.append(name)
-            return services
 
