@@ -4,6 +4,8 @@ import os
 from dotenv import load_dotenv
 from db.crud import Database
 from decimal import Decimal
+import http_req
+
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
@@ -11,11 +13,6 @@ if os.path.exists(dotenv_path):
 service_url = os.getenv("SERVICE_URL")
 
 USER_CACHE = []
-
-# список бирж
-
-# список отслеживаемых валют
-coins = []
 
 
 async def update_user_cache() -> None:
@@ -30,10 +27,11 @@ async def background_alerts() -> None:
     """Бесконечный цикл с запросами к биржам и отправке уведомлений"""
     while True:
         async with aiohttp.ClientSession(service_url) as session:
-            binance = await binance_info(session)
-            kucoin = await kucoin_info(session)
-            huobi = await huobi_info(session)
-            okx = await okx_info(session)
+            binance = await http_req.binance_info(session)
+            kucoin = await http_req.kucoin_info(session)
+            huobi = await http_req.huobi_info(session)
+            okx = await http_req.okx_info(session)
+
         info = counter_of_currencies(binance, kucoin, huobi, okx)
         text = ''
         for currency, price in info.items():
@@ -74,30 +72,5 @@ def quote_difference(bin_price, kucoin_price, huobi_price, okx_price) -> tuple[l
     return min_num, max_num, result
 
 
-async def binance_info(session: aiohttp.ClientSession) -> dict:
-    """Запрос к endpoint fastapi binance"""
-    async with session.get('/binance') as binance:
-        binance = await binance.json()
-    return binance
 
-
-async def kucoin_info(session: aiohttp.ClientSession) -> dict:
-    """Запрос к endpoint fastapi kucoin"""
-    async with session.get('/kucoin') as kucoin:
-        kucoin = await kucoin.json()
-    return kucoin
-
-
-async def huobi_info(session: aiohttp.ClientSession) -> dict:
-    """Запрос к endpoint fastapi huobi"""
-    async with session.get('/huobi') as huobi:
-        huobi = await huobi.json()
-    return huobi
-
-
-async def okx_info(session: aiohttp.ClientSession) -> dict:
-    """Запрос к endpoint fastapi okx"""
-    async with session.get('/okx') as okx:
-        okx = await okx.json()
-    return okx
 

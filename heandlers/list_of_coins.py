@@ -23,7 +23,7 @@ elements_counter = 0
 last_page = math.ceil(len(places) / 6)
 
 
-@dp.message_handler(Text(equals="Список площадок"))
+@dp.message_handler(Text(equals="Список валют"))
 async def list_places(message: Message):
     global page_counter
     global elements_counter
