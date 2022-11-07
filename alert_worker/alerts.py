@@ -1,8 +1,6 @@
 from loader import bot
-import asyncio
 import time
 import aiohttp
-import random
 import os
 from dotenv import load_dotenv
 
@@ -13,6 +11,7 @@ service_url = os.getenv("SERVICE_URL")
 
 
 async def background_alerts():
+    start_time = time.time()
     while True:
         async with aiohttp.ClientSession(service_url) as session:
             binance = await binance_info(session)
@@ -23,59 +22,56 @@ async def background_alerts():
                    f"** {kucoin} **\n" \
                    f"** {huobi} **\n" \
                    f"** {okx} **"
-            print(text)
-            # await bot.send_message(chat_id=5703780641, text=text)
+            info = counter_of_currencies(binance, kucoin, huobi, okx)
+            text = ''
+            for currency, price in info.items():
+                text += f'{currency}:\n' \
+                        f'Наименьшое значение - {price[0][0]} - {price[0][1]}\n' \
+                        f'Наибольшоее значение  - {price[1][0]} - {price[1][1]}\n'\
+                        f'Процентный разрыв валют {price[2]}'
+            if text:
+                await bot.send_message(chat_id=5703780641, text=text)
             await session.close()
-        time.sleep(1)
-        break
+
+
+def counter_of_currencies(binance: dict, kucoin: dict, huobi: dict, okx: dict):
+    text = {}
+    for currency, price in binance.items():
+        result = quote_difference(price, kucoin[currency], huobi[currency], okx[currency])
+        if float(result[2]) >= 0.005:
+            text[currency] = result
+    return text
+
+
+def quote_difference(bin_price, kucoin_price, huobi_price, okx_price) -> tuple[list, list, str]:
+    max_num: list = max(bin_price, kucoin_price, huobi_price, okx_price, key=lambda x: float(x[0]))
+    min_num: list = min(bin_price, kucoin_price, huobi_price, okx_price, key=lambda x: float(x[0]))
+    result = str(100 - float(min_num[0]) / float(max_num[0]) * 100)[:3]
+    return min_num, max_num, result
+
+
 
 
 async def binance_info(session: aiohttp.ClientSession) -> dict:
-    binance_currency = {"NEARUSDT": 1,
-                        "TRXUSDT": 2,
-                        "BTCUSDT": 3,
-                        "ETHUSDT": 4,
-                        "APTUSDT": 5,
-                        "DOGEUSDT": 6}
-    async with session.post('/binance', json=binance_currency) as binance:
+    async with session.get('/binance') as binance:
         binance = await binance.json()
     return binance
 
 
 async def kucoin_info(session: aiohttp.ClientSession) -> dict:
-    kucoin_currency = {"NEAR": 1,
-                       "TRX": 2,
-                       "USDT": 3,
-                       "ETH": 4,
-                       "APT": 5,
-                       "DOGE": 6}
-
-    async with session.post('/kucoin', json=kucoin_currency) as kucoin:
+    async with session.get('/kucoin') as kucoin:
         kucoin = await kucoin.json()
     return kucoin
 
 
 async def huobi_info(session: aiohttp.ClientSession) -> dict:
-    huobi_currency = {"nearusdt": 1,
-                      "trxusdt": 2,
-                      "btcusdt": 3,
-                      "ethusdt": 4,
-                      "aptusdt": 5,
-                      "waxlusdt": 6,
-                      "dogeusdt": 7}
-    async with session.post('/huobi', json=huobi_currency) as huobi:
+    async with session.get('/huobi') as huobi:
         huobi = await huobi.json()
     return huobi
 
 
 async def okx_info(session: aiohttp.ClientSession) -> dict:
-    okx_currency = {"NEAR-USDT": 1,
-                    "TRX-USDT": 2,
-                    "BTC-USDT": 3,
-                    "ETH-USDT": 4,
-                    "APT-USDT": 5,
-                    "DOGE-USDT": 6}
-    async with session.post('/okx', json=okx_currency) as okx:
+    async with session.get('/okx') as okx:
         okx = await okx.json()
     return okx
 
