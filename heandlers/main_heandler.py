@@ -3,6 +3,7 @@ from loader import dp
 from db.crud import Database
 from aiogram.dispatcher.filters import Text
 from alert_worker.alerts import update_user_cache
+from heandlers.exception_heandler import exteption_heand
 
 
 @dp.message_handler(commands=['start', 'home'])
@@ -24,9 +25,7 @@ async def start(message: types.Message):
                                  reply_markup=keyboard)
 
         else:
-            await message.answer("Возникла ошибка:(\n"
-                                 "Напишите администратору https://t.me/5703780641",
-                                 reply_markup=keyboard)
+            await exteption_heand(message.from_user.id)
 
 
 @dp.message_handler(Text(equals="Домой"))

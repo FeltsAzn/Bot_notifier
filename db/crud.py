@@ -21,7 +21,7 @@ class Database:
         session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
         return session
 
-    async def create_user(self, tg_id: int, name: str) -> bool | Exception:
+    async def create_user(self, tg_id: int, name: str) -> bool:
         """Создание нового пользователя"""
         database_session = await self.create_session()
         async with database_session() as session:
@@ -31,6 +31,7 @@ class Database:
             try:
                 session.add(data)
                 await session.commit()
+                return True
             except IntegrityError:
                 await session.rollback()
                 # TODO сделать перенаправление вывод бд в логгер
@@ -40,10 +41,9 @@ class Database:
                 await session.rollback()
                 # logger error()
                 return False
-            else:
-                return True
 
-    async def delete_user(self, tg_id: int) -> bool | Exception:
+
+    async def delete_user(self, tg_id: int) -> bool:
         """Удаление пользователя"""
         database_session = await self.create_session()
         async with database_session() as session:
@@ -54,13 +54,12 @@ class Database:
 
                 await session.delete(user)
                 await session.commit()
+                return True
             except Exception as ex:
                 await session.rollback()
                 # TODO сделать перенаправление вывод бд в логгер
                 # logger error()
                 return False
-            else:
-                return True
 
     async def get_users(self) -> list[tuple] | bool:
         """Список всех пользователей"""
