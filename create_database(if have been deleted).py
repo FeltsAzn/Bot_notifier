@@ -15,13 +15,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, unique=True)
     username = Column(String)
-
-
-class Services(Base):
-    __tablename__ = 'Services'
-
-    id = Column(Integer, primary_key=True)
-    service_name = Column(String)
+    notification = Column(String, default='ACTIVATED')
 
 
 async def create():

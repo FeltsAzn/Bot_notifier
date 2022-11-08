@@ -43,28 +43,79 @@ class Database:
             else:
                 return True
 
-    async def create_service(self, name: str) -> bool | Exception:
-        """Создание нового сервиса"""
+    async def delete_user(self, tg_id: int) -> bool | Exception:
+        """Удаление пользователя"""
         database_session = await self.create_session()
         async with database_session() as session:
-            data = Services(service_name=name)
             try:
-                session.add(data)
+                query = select(User).where(User.user_id == tg_id)
+                database_response = await session.execute(query)
+                user = database_response.scalar()
+
+                await session.delete(user)
+                await session.commit()
             except Exception as ex:
                 await session.rollback()
-                # logger info
-                return ex
+                # TODO сделать перенаправление вывод бд в логгер
+                # logger error()
+                return False
             else:
-                await session.commit()
                 return True
 
-    async def get_users(self) -> list[tuple]:
+    async def get_users(self) -> list[tuple] | bool:
         """Список всех пользователей"""
         database_session = await self.create_session()
         async with database_session() as session:
-            query = select(User)
-            database_response = await session.execute(query)
-            user = database_response.scalars()
-            users = list(map(lambda x: (x.user_id, x.username), user))
-            return users
+            try:
+                query = select(User)
+                database_response = await session.execute(query)
+                user = database_response.scalars()
+                users = list(map(lambda x: (x.user_id, x.username), user))
+                return users
+            except Exception as ex:
+                # log.warning(ex)
+                return False
 
+    async def active_notification(self, tg_id) -> bool:
+        """Активация уведомлений пользователя"""
+        database_session = await self.create_session()
+        async with database_session() as session:
+            try:
+                query = select(User).where(User.user_id == tg_id)
+                database_response = await session.execute(query)
+                user = database_response.scalar()
+                user.notification = "ACTIVATED"
+                await session.commit()
+                return True
+            except Exception as ex:
+                # log.warning(ex)
+                return False
+
+    async def deactivated_notification(self, tg_id) -> bool:
+        """Деактивация уведомлений пользователя"""
+        database_session = await self.create_session()
+        async with database_session() as session:
+            try:
+                query = select(User).where(User.user_id == tg_id)
+                database_response = await session.execute(query)
+                user = database_response.scalar()
+                user.notification = "DEACTIVATED"
+                await session.commit()
+                return True
+            except Exception as ex:
+                # log.warning(ex)
+                return False
+
+    async def notifications_state(self) -> list[tuple] | bool:
+        """Состояние уведомлений пользователя"""
+        database_session = await self.create_session()
+        async with database_session() as session:
+            try:
+                query = select(User)
+                database_response = await session.execute(query)
+                user = database_response.scalars()
+                users = list(map(lambda x: (x.user_id, x.notification), user))
+                return users
+            except Exception as ex:
+                # log.warning(ex)
+                return False

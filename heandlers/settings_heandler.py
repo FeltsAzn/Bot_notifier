@@ -1,12 +1,61 @@
 from aiogram import types
 from loader import dp
 from aiogram.dispatcher.filters import Text
+from db.crud import Database
+from alert_worker.alerts import update_user_cache
 
 
-@dp.message_handler(Text(equals="Настройки"))
+@dp.message_handler(Text(equals="Настройки") or Text(equals="Отмена"))
 async def settings(message: types.Message):
-    buttons = ["Добавить новую площадку", 'Удалить площадку', 'Домой']
+    users = await Database().notifications_state()
+    user_state = ''
+    for tg_id, state in users:
+        if tg_id == message.from_user.id:
+            user_state: str = state
+    if user_state == "ACTIVATED":
+        buttons = ["Приостановить отслеживание", 'Удалить аккаунт', 'Домой']
+    else:
+        buttons = ["Включить отслеживание", 'Удалить аккаунт', 'Домой']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
     await message.answer("Выберите действия:", reply_markup=keyboard)
+
+
+@dp.message_handler(Text(equals="Приостановить отслеживание"))
+async def stop_notify(message: types.Message):
+    await Database().deactivated_notification(message.from_user.id)
+    await update_user_cache()
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add("Домой")
+    await message.answer("Отслеживание деактивировано", reply_markup=keyboard)
+
+
+@dp.message_handler(Text(equals="Включить отслеживание"))
+async def start_notify(message: types.Message):
+    await Database().active_notification(message.from_user.id)
+    await update_user_cache()
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add("Домой")
+    await message.answer("Отслеживание активировано", reply_markup=keyboard)
+
+
+@dp.message_handler(Text(equals='Удалить аккаунт'))
+async def settings(message: types.Message):
+    buttons = ["Да, удалить аккаунт", 'Отмена', 'Домой']
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    await message.answer("Вы действительно хотите\nудалить аккаунт?", reply_markup=keyboard)
+
+
+@dp.message_handler(Text(equals="Да, удалить аккаунт"))
+async def settings(message: types.Message):
+    await Database().delete_user(message.from_user.id)
+    await update_user_cache()
+    await message.answer("Ваш аккаунт удален из базы.\n"
+                         "Чтобы снова попасть в базу бота\n"
+                         "для получения уведомлений о состоянии биржи\n"
+                         "наберите /start")
+
+
+
 

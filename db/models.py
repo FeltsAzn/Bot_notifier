@@ -10,6 +10,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer)
     username = Column(String)
+    notification = Column(String, default='ACTIVATED')
 
 
 class Services(Base):

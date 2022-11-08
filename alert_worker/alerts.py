@@ -22,7 +22,7 @@ USER_CACHE = []
 async def update_user_cache() -> None:
     """Обновление кэша при старте приложения и добавления нового пользователя"""
     global USER_CACHE
-    USER_CACHE = await Database().get_users()
+    USER_CACHE = await Database().notifications_state()
 
 
 async def background_alerts() -> None:
@@ -36,19 +36,19 @@ async def background_alerts() -> None:
             kucoin = await http_req.kucoin_info(session)
             huobi = await http_req.huobi_info(session)
             okx = await http_req.okx_info(session)
-
-        data: dict[str:tuple[tuple, str]] = counter_of_currencies(binance, kucoin, huobi, okx)
+        data = counter_of_currencies(binance, kucoin, huobi, okx)
 
         content: list = content_creator(data)
 
         if content:
-            # for tg_id, _ in USER_CACHE:
-            #     await bot.send_message(chat_id=tg_id,
-            #                            text=emojize(markdown.text(*content), language='alias'),
-            #                            parse_mode='html')
-            await bot.send_message(chat_id=5703780641,
-                                   text=emojize(markdown.text(*content), language='alias'),
-                                   parse_mode='html')
+            for tg_id, state in USER_CACHE:
+                if state == "ACTIVATED":
+                    await bot.send_message(chat_id=tg_id,
+                                           text=emojize(markdown.text(*content), language='alias'),
+                                           parse_mode='html')
+            # await bot.send_message(chat_id=5703780641,
+            #                        text=emojize(markdown.text(*content), language='alias'),
+            #                        parse_mode='html')
         await session.close()
 
 

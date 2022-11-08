@@ -17,12 +17,13 @@ def content_creator(data: dict[str:tuple[tuple, str]]) -> list:
         text = text_template(currency, data)
 
         if state == "up":
-            if percent <= HIGH_PERCENT:
+            if percent < HIGH_PERCENT:
                 content.append(markdown.text(up_emoji, text))
             else:
                 content.append(markdown.text(up_emoji, high_percent, text))
+
         elif state == "down":
-            if percent <= HIGH_PERCENT:
+            if percent < HIGH_PERCENT:
                 content.append(markdown.text(down_emoji, text))
             else:
                 content.append(markdown.text(down_emoji, high_percent, text))
