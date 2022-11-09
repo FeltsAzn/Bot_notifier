@@ -8,7 +8,7 @@ from db.crud import Database
 from alert_worker import http_req
 from alert_worker.handler_of_currency import counter_of_currencies
 from alert_worker.template_fabric import content_creator
-from heandlers.exception_heandler import exteption_heand
+from handlers.exception_handler import exteption_heand
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')

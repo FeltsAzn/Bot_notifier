@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from db.models import User, Services
+from db.models import User
 from dotenv import load_dotenv
 import os
 
@@ -42,7 +42,6 @@ class Database:
                 # logger error()
                 return False
 
-
     async def delete_user(self, tg_id: int) -> bool:
         """Удаление пользователя"""
         database_session = await self.create_session()
@@ -61,7 +60,21 @@ class Database:
                 # logger error()
                 return False
 
-    async def get_users(self) -> list[tuple] | bool:
+    async def get_user(self, tg_id: int) -> tuple | bool:
+        """Список всех пользователей"""
+        database_session = await self.create_session()
+        async with database_session() as session:
+            try:
+                query = select(User).where(User.user_id == tg_id)
+                database_response = await session.execute(query)
+                user = database_response.one()
+                user: tuple = tuple(map(lambda x: (x.user_id, x.username, x.notification), user))
+                return user[0]
+            except Exception as ex:
+                # log.warning(ex)
+                return False
+
+    async def get_all_users(self) -> list[tuple] | bool:
         """Список всех пользователей"""
         database_session = await self.create_session()
         async with database_session() as session:
@@ -69,7 +82,7 @@ class Database:
                 query = select(User)
                 database_response = await session.execute(query)
                 user = database_response.scalars()
-                users = list(map(lambda x: (x.user_id, x.username), user))
+                users = list(map(lambda x: (x.user_id, x.username, x.notification), user))
                 return users
             except Exception as ex:
                 # log.warning(ex)

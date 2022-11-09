@@ -11,10 +11,3 @@ class User(Base):
     user_id = Column(Integer)
     username = Column(String)
     notification = Column(String, default='ACTIVATED')
-
-
-class Services(Base):
-    __tablename__ = 'Services'
-
-    id = Column(Integer, primary_key=True)
-    service_name = Column(String)

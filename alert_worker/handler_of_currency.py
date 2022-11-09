@@ -1,5 +1,5 @@
 from decimal import Decimal
-from alert_worker.configs_for_percents import START_PERCENT, INCREASE_PERCENT, DEMOTION_PERCENT
+from alert_worker.config_for_filter import START_PERCENT, INCREASE_PERCENT, DEMOTION_PERCENT
 
 coins_percent_cache = {}
 

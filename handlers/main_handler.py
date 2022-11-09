@@ -3,14 +3,14 @@ from loader import dp
 from db.crud import Database
 from aiogram.dispatcher.filters import Text
 from alert_worker.alerts import update_user_cache
-from heandlers.exception_heandler import exteption_heand
+from handlers.exception_handler import exteption_heand
 
 
 @dp.message_handler(commands=['start', 'home'])
 async def start(message: types.Message):
     start_buttons = ['Список площадок', "Список валют", 'Настройки']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    if message.from_user.id in await Database().get_users():
+    if message.from_user.id in await Database().get_all_users():
         keyboard.add(*start_buttons)
 
         await message.answer("Привет, я твой помощник в отслеживании котировок",
@@ -28,7 +28,7 @@ async def start(message: types.Message):
             await exteption_heand(message.from_user.id)
 
 
-@dp.message_handler(Text(equals="Домой"))
+@dp.message_handler(Text(equals="Домой"), commands=['home'])
 async def start(message: types.Message):
     buttons = ['Список площадок', "Список валют", 'Настройки']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)

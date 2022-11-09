@@ -3,7 +3,7 @@ from loader import dp
 from aiogram.dispatcher.filters import Text
 from db.crud import Database
 from alert_worker.alerts import update_user_cache
-from heandlers.exception_heandler import exteption_heand
+from handlers.exception_handler import exteption_heand
 
 
 @dp.message_handler(Text(equals="Настройки") or Text(equals="Отмена"))
@@ -50,7 +50,7 @@ async def start_notify(message: types.Message):
 
 
 @dp.message_handler(Text(equals='Удалить аккаунт'))
-async def settings(message: types.Message):
+async def delete_user(message: types.Message):
     buttons = ["Да, удалить аккаунт", 'Отмена', 'Домой']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
@@ -58,7 +58,7 @@ async def settings(message: types.Message):
 
 
 @dp.message_handler(Text(equals="Да, удалить аккаунт"))
-async def settings(message: types.Message):
+async def deleting(message: types.Message):
     response = await Database().delete_user(message.from_user.id)
     if response:
         await update_user_cache()

@@ -1,4 +1,4 @@
-from alert_worker.configs_for_percents import HIGH_PERCENT
+from alert_worker.config_for_filter import HIGH_PERCENT
 from decimal import Decimal
 from aiogram.utils import markdown
 

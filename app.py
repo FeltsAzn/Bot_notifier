@@ -1,6 +1,6 @@
 from aiogram import executor
 from loader import dp
-import heandlers
+import handlers
 from alert_worker import alerts
 
 

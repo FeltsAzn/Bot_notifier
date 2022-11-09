@@ -4,45 +4,39 @@ from aiogram.dispatcher.filters import Text
 import math
 
 places = [
-    "BTC",
-    "ETH",
-    "TRX",
-    "WAXL",
-    "APT",
-    "DOGE",
-    "NEAR",
-    "COIN1",
-    "COIN2",
-    "COIN3",
-    "COIN4",
-    "COIN5",
-    "COIN6",
-    "COIN7",
-    "COIN8",
-    "COIN9",
-    "COIN10",
-    "COIN11",
-    "COIN12",
+    "Binance",
+    "Kucoin",
+    "Huobi",
+    "Okx",
+    "Service1",
+    "Service2",
+    "Service3",
+    "Service4",
+    "Service5",
+    "Service6",
+    "Service7",
+    "Service8",
+    "Service9",
 ]
 page_counter = 1
 elements_counter = 0
-last_page = math.ceil(len(places) / 9)
+last_page = math.ceil(len(places) / 6)
 
 
-@dp.message_handler(Text(equals="Список валют"))
-async def list_places(message: Message):
+@dp.message_handler(Text(equals="Список площадок"))
+async def list_of_places(message: Message):
     global page_counter
     global elements_counter
     page_counter = 1
     elements_counter = 0
 
-    keyboard = InlineKeyboardMarkup(row_width=3)
+    keyboard = InlineKeyboardMarkup(row_width=2)
 
-    for item in places[:9]:
+    for item in places[:6]:
         button = InlineKeyboardButton(text=item, callback_data=f"{item}:call")
         keyboard.insert(button)
 
-    next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:coins:call")
+    next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:place:call")
     stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
     keyboard.insert(stop_button)
     keyboard.insert(next_button)
@@ -51,8 +45,8 @@ async def list_places(message: Message):
     await message.answer(text, reply_markup=keyboard)
 
 
-@dp.callback_query_handler(text="next_page:coins:call")
-async def next_pages_handler(call: CallbackQuery):
+@dp.callback_query_handler(text="next_page:place:call")
+async def next_pages_heandler(call: CallbackQuery):
     global page_counter
     global elements_counter
 
@@ -60,15 +54,15 @@ async def next_pages_handler(call: CallbackQuery):
         add_of_var()
         keyboard = filling_keyboard()
 
-        back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:coins:call")
-        next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:coins:call")
+        back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:place:call")
+        next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:place:call")
         keyboard.insert(back_button)
         keyboard.insert(next_button)
     else:
         add_of_var()
         keyboard = filling_keyboard()
 
-        back_button = InlineKeyboardButton(text="<<<<<<", callback_data="back_page:coins:call")
+        back_button = InlineKeyboardButton(text="<<<<<<", callback_data="back_page:place:call")
         stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         keyboard.insert(back_button)
         keyboard.insert(stop_button)
@@ -77,8 +71,8 @@ async def next_pages_handler(call: CallbackQuery):
     await call.message.edit_text(text, reply_markup=keyboard)
 
 
-@dp.callback_query_handler(text="back_page:coins:call")
-async def back_pages_handler(call: CallbackQuery):
+@dp.callback_query_handler(text="back_page:place:call")
+async def back_pages_heandler(call: CallbackQuery):
     global page_counter
     global elements_counter
 
@@ -86,15 +80,15 @@ async def back_pages_handler(call: CallbackQuery):
         diff_of_var()
         keyboard = filling_keyboard()
 
-        back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:coins:call")
-        next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:coins:call")
+        back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:place:call")
+        next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:place:call")
         keyboard.insert(back_button)
         keyboard.insert(next_button)
     else:
         diff_of_var()
         keyboard = filling_keyboard()
 
-        next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:coins:call")
+        next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:place:call")
         stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         keyboard.insert(stop_button)
         keyboard.insert(next_button)
@@ -104,8 +98,8 @@ async def back_pages_handler(call: CallbackQuery):
 
 
 def filling_keyboard():
-    keyboard = InlineKeyboardMarkup(row_width=3)
-    for item in places[elements_counter:9 + elements_counter]:
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    for item in places[elements_counter:6 + elements_counter]:
         button = InlineKeyboardButton(text=item, callback_data=f"{item}:call")
         keyboard.insert(button)
     return keyboard
@@ -116,12 +110,13 @@ def add_of_var():
     global page_counter
 
     page_counter += 1
-    elements_counter += 9
+    elements_counter += 6
 
 
 def diff_of_var():
     global elements_counter
     global page_counter
 
-    elements_counter -= 9
+    elements_counter -= 6
     page_counter -= 1
+

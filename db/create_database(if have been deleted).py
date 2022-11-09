@@ -19,7 +19,7 @@ class User(Base):
 
 
 async def create():
-    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+    dotenv_path = os.path.join(os.path.dirname(__file__), '../.env')
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
     database_url = os.getenv("DATABASE_URL")
