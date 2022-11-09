@@ -23,7 +23,7 @@ async def create():
     dotenv_path = os.path.join(os.path.dirname(__file__), '../.env')
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
-    database_url = os.getenv("DATABASE_URL")
+    database_url = os.getenv("DATABASE_URL_ASYNC")
     print(database_url)
 
     eng = create_async_engine(database_url, future=True, echo=True)

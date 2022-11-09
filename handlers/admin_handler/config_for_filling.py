@@ -22,7 +22,7 @@ async def filling_keyboard() -> InlineKeyboardMarkup:
     last_page = math.ceil(len(users) / 6)
     keyboard = InlineKeyboardMarkup(row_width=2)
     for tg_id, username, _ in users[elements_counter:6 + elements_counter]:
-        button = InlineKeyboardButton(text=username, callback_data=f"{tg_id}:info:call")
+        button = InlineKeyboardButton(text=username, callback_data=f"{tg_id}:user:info:call")
         keyboard.insert(button)
     return keyboard
 
