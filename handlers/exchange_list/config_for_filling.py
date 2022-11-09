@@ -2,24 +2,15 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from db.crud import Database
 import math
 
-
 page_counter = 1
 elements_counter = 0
-users = Database().get_users_sync()
-last_page = math.ceil(len(users) / 6)
-
-
-async def get_user_list() -> list[tuple]:
-    """Получение списка всех пользователей"""
-    users = await Database().get_all_users()
-    return users
+last_page = 1
 
 
 async def filling_keyboard() -> InlineKeyboardMarkup:
     """Заполнение инлайн клавиатуры элементами базы данных"""
     global last_page
 
-    users = await get_user_list()
     last_page = math.ceil(len(users) / 6)
     keyboard = InlineKeyboardMarkup(row_width=2)
     for tg_id, username, _ in users[elements_counter:6 + elements_counter]:

@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from db.models import User
@@ -9,6 +10,7 @@ import os
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
+database_url_async = os.getenv("DATABASE_URL_ASYNC")
 database_url = os.getenv("DATABASE_URL")
 
 
@@ -17,7 +19,7 @@ class Database:
     @staticmethod
     async def create_session():
         """Асинхронная сессия подключения к бд"""
-        engine = create_async_engine(database_url, future=True, echo=True)
+        engine = create_async_engine(database_url_async, future=True, echo=True)
         session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
         return session
 
@@ -130,4 +132,26 @@ class Database:
                 return users
             except Exception as ex:
                 # log.warning(ex)
+                return False
+
+    @staticmethod
+    def create_sync_session():
+        """Синхронная сессия подключения к бд"""
+        engine = create_engine(database_url, future=True, echo=True)
+        session = sessionmaker(engine, expire_on_commit=False)
+        return session
+
+    def get_users_sync(self) -> list[tuple] | bool:
+        """Синхронный обработчик дял получение списка пользователей"""
+        database_session = self.create_sync_session()
+        with database_session() as session:
+            try:
+                query = select(User)
+                database_response = session.execute(query)
+                user = database_response.scalars()
+                users = list(map(lambda x: (x.user_id, x.username, x.notification), user))
+                return users
+            except Exception as ex:
+                # log.warning(ex)
+                print("ERROR")
                 return False
