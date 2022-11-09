@@ -2,7 +2,7 @@ from aiogram.types import Message, InlineKeyboardButton, ReplyKeyboardMarkup
 from dotenv import load_dotenv
 import os
 from loader import dp
-from handlers.admin_handler.config_for_filling import filling_keyboard, last_page, page_counter
+from handlers.admin_handler.config_for_filling import filling_keyboard, last_page
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -29,7 +29,7 @@ async def start_list_of_users(message: Message):
         stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         keyboard.insert(stop_button)
         keyboard.insert(next_button)
-    text = f"Список пользователей ({page_counter}/{last_page}):"
+    text = f"Список пользователей (1/{last_page}):"
     await message.answer(text, reply_markup=keyboard)
 
 

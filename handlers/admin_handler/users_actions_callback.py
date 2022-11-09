@@ -1,10 +1,8 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from loader import dp
 from db.crud import Database
-from handlers.admin_handler.config_for_filling import filling_keyboard, \
-    page_counter, \
-    last_page
-
+from handlers.admin_handler.config_for_filling import filling_keyboard, last_page
+from handlers.admin_handler.page_switch_users import page_counter
 
 @dp.callback_query_handler(text_contains=":cancel:call")
 async def list_of_users(call: CallbackQuery):

@@ -3,7 +3,6 @@ from db.crud import Database
 import math
 
 
-page_counter = 1
 elements_counter = 0
 users = Database().get_users_sync()
 last_page = math.ceil(len(users) / 6)
@@ -31,16 +30,12 @@ async def filling_keyboard() -> InlineKeyboardMarkup:
 def add_of_value() -> None:
     """Повышение пагинации и изменение количества отображжаемых элементов"""
     global elements_counter
-    global page_counter
 
-    page_counter += 1
     elements_counter += 6
 
 
 def diff_of_value() -> None:
     """Понижение пагинации и изменение количества отображжаемых элементов"""
     global elements_counter
-    global page_counter
 
     elements_counter -= 6
-    page_counter -= 1
