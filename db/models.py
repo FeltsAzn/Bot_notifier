@@ -11,3 +11,4 @@ class User(Base):
     user_id = Column(Integer)
     username = Column(String)
     notification = Column(String, default='ACTIVATED')
+    access = Column(String, default='USER')

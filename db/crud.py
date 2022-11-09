@@ -70,7 +70,7 @@ class Database:
                 query = select(User).where(User.user_id == tg_id)
                 database_response = await session.execute(query)
                 user = database_response.one()
-                user: tuple = tuple(map(lambda x: (x.user_id, x.username, x.notification), user))
+                user: tuple = tuple(map(lambda x: (x.user_id, x.username, x.notification, x.access), user))
                 return user[0]
             except Exception as ex:
                 # log.warning(ex)
@@ -84,7 +84,7 @@ class Database:
                 query = select(User)
                 database_response = await session.execute(query)
                 user = database_response.scalars()
-                users = list(map(lambda x: (x.user_id, x.username, x.notification), user))
+                users = list(map(lambda x: (x.user_id, x.username, x.notification, x.access), user))
                 return users
             except Exception as ex:
                 # log.warning(ex)
@@ -142,14 +142,14 @@ class Database:
         return session
 
     def get_users_sync(self) -> list[tuple] | bool:
-        """Синхронный обработчик дял получение списка пользователей"""
+        """Синхронный обработчик для получение списка пользователей"""
         database_session = self.create_sync_session()
         with database_session() as session:
             try:
                 query = select(User)
                 database_response = session.execute(query)
                 user = database_response.scalars()
-                users = list(map(lambda x: (x.user_id, x.username, x.notification), user))
+                users = list(map(lambda x: (x.user_id, x.username, x.notification, x.access), user))
                 return users
             except Exception as ex:
                 # log.warning(ex)

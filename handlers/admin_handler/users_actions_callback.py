@@ -1,9 +1,17 @@
 import asyncio
+from dotenv import load_dotenv
+import os
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from loader import dp
 from db.crud import Database
 from handlers.admin_handler.config_for_filling import filling_keyboard, last_page
 from handlers.admin_handler.page_switch_users import page_counter
+
+
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+super_admin_id = os.getenv("SUPER_ADMIN_ID")
 
 
 @dp.callback_query_handler(text_contains=":cancel:call")
@@ -29,11 +37,12 @@ async def list_of_users(call: CallbackQuery):
 async def user_info(call: CallbackQuery):
     """получение информации по конкретному пользователю"""
     user_tg_id = int(call.data.split(':')[0])
-    _, username, state = await Database().get_user(user_tg_id)
+    _, username, state, status = await Database().get_user(user_tg_id)
     keyboard = InlineKeyboardMarkup(row_width=1)
     text = f'<i>tg_id</i>: <b>{user_tg_id}</b>\n' \
            f'<i>name</i>: <b>{username}</b>\n' \
-           f'<i>notify</i>: <b>{state}</b>'
+           f'<i>notify</i>: <b>{state}</b>\n' \
+           f'<i>status</i>: <b>{status}</b>\n'
     delete_but = InlineKeyboardButton(text="Удалить пользователя", callback_data=f"{user_tg_id}:ask:delete:call")
     cancel_but = InlineKeyboardButton(text="Отмена", callback_data=f"{user_tg_id}:cancel:call")
     keyboard.insert(delete_but)

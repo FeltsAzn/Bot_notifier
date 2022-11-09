@@ -47,9 +47,6 @@ async def background_alerts() -> None:
                         await bot.send_message(chat_id=tg_id,
                                                text=emojize(markdown.text(*content), language='alias'),
                                                parse_mode='html')
-                # await bot.send_message(chat_id=5703780641,
-                #                        text=emojize(markdown.text(*content), language='alias'),
-                #                        parse_mode='html')
             await session.close()
     except Exception as ex:
         for tg_id, _ in USER_CACHE:

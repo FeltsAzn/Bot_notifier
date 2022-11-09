@@ -4,7 +4,7 @@ import math
 
 
 elements_counter = 0
-users = Database().get_users_sync()
+users: list = Database().get_users_sync()
 last_page = math.ceil(len(users) / 6)
 
 
@@ -21,7 +21,7 @@ async def filling_keyboard() -> InlineKeyboardMarkup:
     users = await get_user_list()
     last_page = math.ceil(len(users) / 6)
     keyboard = InlineKeyboardMarkup(row_width=2)
-    for tg_id, username, _ in users[elements_counter:6 + elements_counter]:
+    for tg_id, username, _, _ in users[elements_counter:6 + elements_counter]:
         button = InlineKeyboardButton(text=username, callback_data=f"{tg_id}:user:info:call")
         keyboard.insert(button)
     return keyboard

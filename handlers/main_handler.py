@@ -1,25 +1,24 @@
 from aiogram import types
 from loader import dp
 from db.crud import Database
-from dotenv import load_dotenv
-import os
+from handlers.updater_db_info import sync_update_admin_list, async_update_admin_list
 from alert_worker.alerts import update_user_cache
 from handlers.exception_handler import exteption_heand
 
-
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
-admin_id = list(map(lambda tg_id: int(tg_id), os.getenv("ADMIN_ID").split(',')))
+admin_list: list = sync_update_admin_list()
 
 
 @dp.message_handler(commands=['start', 'home'])
 async def start(message: types.Message):
     """Стартовое окно"""
+    global admin_list
+
+    admin_list = await async_update_admin_list()
     start_buttons = ['Список площадок', "Список валют", 'Настройки']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     all_users = await Database().get_all_users()
-    if message.from_user.id in admin_id:
+
+    if message.from_user.id in admin_list:
         start_buttons = ['Список площадок', "Список валют", "Админка", 'Настройки']
     if all_users and message.from_user.id in all_users:
         keyboard.add(*start_buttons)
@@ -43,8 +42,11 @@ async def start(message: types.Message):
 
 @dp.message_handler(lambda mes: mes.text in ("Домой", "В меню пользователя"))
 async def start(message: types.Message):
+    global admin_list
+
+    admin_list = await async_update_admin_list()
     buttons = ['Список площадок', "Список валют", 'Настройки']
-    if message.from_user.id in admin_id:
+    if message.from_user.id in admin_list:
         buttons = ['Список площадок', "Список валют", "Админка", 'Настройки']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
