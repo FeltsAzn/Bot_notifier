@@ -46,7 +46,6 @@ def add_of_value() -> None:
     elements_counter += 9
 
 
-
 def diff_of_value() -> None:
     """Понижение пагинации и изменение количества отображжаемых элементов"""
     global elements_counter
