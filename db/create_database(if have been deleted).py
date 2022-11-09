@@ -16,6 +16,7 @@ class User(Base):
     user_id = Column(Integer, unique=True)
     username = Column(String)
     notification = Column(String, default='ACTIVATED')
+    access = Column(String, default='USER')
 
 
 async def create():

@@ -41,7 +41,7 @@ async def background_alerts() -> None:
 
             content: list = content_creator(data)
 
-            if content:
+            if content and USER_CACHE:
                 for tg_id, state in USER_CACHE:
                     if state == "ACTIVATED":
                         await bot.send_message(chat_id=tg_id,

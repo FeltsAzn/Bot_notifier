@@ -57,7 +57,7 @@ async def next_pages_handler(call: CallbackQuery):
     global elements_counter
 
     if page_counter < last_page - 1:
-        add_of_var()
+        add_of_value()
         keyboard = filling_keyboard()
 
         back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:coins:call")
@@ -65,7 +65,7 @@ async def next_pages_handler(call: CallbackQuery):
         keyboard.insert(back_button)
         keyboard.insert(next_button)
     else:
-        add_of_var()
+        add_of_value()
         keyboard = filling_keyboard()
 
         back_button = InlineKeyboardButton(text="<<<<<<", callback_data="back_page:coins:call")
@@ -83,7 +83,7 @@ async def back_pages_handler(call: CallbackQuery):
     global elements_counter
 
     if page_counter > 2:
-        diff_of_var()
+        diff_of_value()
         keyboard = filling_keyboard()
 
         back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:coins:call")
@@ -91,7 +91,7 @@ async def back_pages_handler(call: CallbackQuery):
         keyboard.insert(back_button)
         keyboard.insert(next_button)
     else:
-        diff_of_var()
+        diff_of_value()
         keyboard = filling_keyboard()
 
         next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:coins:call")
@@ -111,7 +111,7 @@ def filling_keyboard():
     return keyboard
 
 
-def add_of_var():
+def add_of_value():
     global elements_counter
     global page_counter
 
@@ -119,7 +119,7 @@ def add_of_var():
     elements_counter += 9
 
 
-def diff_of_var():
+def diff_of_value():
     global elements_counter
     global page_counter
 

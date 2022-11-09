@@ -1,5 +1,5 @@
 from . import main_handler
-from . import list_of_places
+from . import exchange_list
 from . import settings_handler
-from . import list_of_coins
+from . import coins_list
 from . import admin_handler
