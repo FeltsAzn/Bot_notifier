@@ -35,13 +35,11 @@ def filling_keyboard() -> InlineKeyboardMarkup:
 def add_of_value() -> None:
     """Повышение пагинации и изменение количества отображжаемых элементов"""
     global elements_counter
-
     elements_counter += 6
 
 
 def diff_of_value() -> None:
     """Понижение пагинации и изменение количества отображжаемых элементов"""
     global elements_counter
-
     elements_counter -= 6
 

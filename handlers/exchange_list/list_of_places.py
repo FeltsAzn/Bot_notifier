@@ -4,23 +4,6 @@ from aiogram.dispatcher.filters import Text
 from handlers.exchange_list.config_for_filling import last_page, filling_keyboard
 
 
-places = [
-    "Binance",
-    "Kucoin",
-    "Huobi",
-    "Okx",
-    "Service1",
-    "Service2",
-    "Service3",
-    "Service4",
-    "Service5",
-    "Service6",
-    "Service7",
-    "Service8",
-    "Service9",
-]
-
-
 @dp.message_handler(Text(equals="Список площадок"))
 async def list_of_places(message: Message):
 

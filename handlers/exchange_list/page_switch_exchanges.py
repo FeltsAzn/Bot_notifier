@@ -13,21 +13,20 @@ async def next_pages_handler(call: CallbackQuery):
     """Прокрутка списка монет вперёд"""
     global page_counter
 
-    state = True if page_counter < last_page - 1 else False  # Проверка пагинации страницы для заполнения
+    state: bool = True if page_counter < last_page - 1 else False  # Проверка пагинации страницы для заполнения
     add_of_value()
     page_counter += 1
     keyboard = filling_keyboard()
 
     if state:
-        back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:places:call")
-        next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:places:call")
-        keyboard.insert(back_button)
-        keyboard.insert(next_button)
+        left_button = InlineKeyboardButton(text="<<<", callback_data="back_page:places:call")
+        right_button = InlineKeyboardButton(text=">>>", callback_data="next_page:places:call")
+
     else:
-        back_button = InlineKeyboardButton(text="<<<<<<", callback_data="back_page:places:call")
-        stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
-        keyboard.insert(back_button)
-        keyboard.insert(stop_button)
+        left_button = InlineKeyboardButton(text="<<<<<<", callback_data="back_page:places:call")
+        right_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
+    keyboard.insert(left_button)
+    keyboard.insert(right_button)
 
     text = f"Список отслеживаемых бирж ({page_counter}/{last_page}):"
     await call.message.edit_text(text, reply_markup=keyboard)
@@ -44,15 +43,13 @@ async def back_pages_handler(call: CallbackQuery):
     keyboard = filling_keyboard()
 
     if state:
-        back_button = InlineKeyboardButton(text="<<<", callback_data="back_page:places:call")
-        next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:places:call")
-        keyboard.insert(back_button)
-        keyboard.insert(next_button)
+        left_button = InlineKeyboardButton(text="<<<", callback_data="back_page:places:call")
+        right_button = InlineKeyboardButton(text=">>>", callback_data="next_page:places:call")
     else:
-        next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:places:call")
-        stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
-        keyboard.insert(stop_button)
-        keyboard.insert(next_button)
+        left_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
+        right_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:places:call")
+    keyboard.insert(left_button)
+    keyboard.insert(right_button)
 
     text = f"Список отслеживаемых бирж ({page_counter}/{last_page}):"
     await call.message.edit_text(text, reply_markup=keyboard)
