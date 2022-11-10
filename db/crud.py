@@ -76,7 +76,7 @@ class Database:
                 # log.warning(ex)
                 return False
 
-    async def get_all_users(self) -> list[tuple] | bool:
+    async def async_get_users(self) -> list[tuple] | bool:
         """Список всех пользователей"""
         database_session = await self.create_session()
         async with database_session() as session:
@@ -141,7 +141,7 @@ class Database:
         session = sessionmaker(engine, expire_on_commit=False)
         return session
 
-    def get_users_sync(self) -> list[tuple] | bool:
+    def sync_get_users(self) -> list[tuple] | bool:
         """Синхронный обработчик для получение списка пользователей"""
         database_session = self.create_sync_session()
         with database_session() as session:

@@ -21,7 +21,7 @@ async def list_of_users(call: CallbackQuery):
     keyboard = await filling_keyboard()
     if page_counter > 1:
         next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:user:call")
-        stop_button = InlineKeyboardButton(text="<<<", callback_data="stop:call")
+        stop_button = InlineKeyboardButton(text="<<<", callback_data="back_page:user:call")
         keyboard.insert(stop_button)
         keyboard.insert(next_button)
     elif last_page > 1:
@@ -72,6 +72,7 @@ async def ask_delete_user(call: CallbackQuery):
     """Удаление выбранного пользователя"""
 
     user_tg_id = int(call.data.split(':')[0])
+
     if user_tg_id != call.from_user.id:
         state = await Database().delete_user(user_tg_id)
         if state:
