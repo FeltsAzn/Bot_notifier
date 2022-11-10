@@ -1,5 +1,5 @@
 from decimal import Decimal
-from alert_worker.config_for_filter import START_PERCENT, INCREASE_PERCENT, DEMOTION_PERCENT
+from alert_worker.config_for_filter import START_PERCENT, UP_PERCENT, DOWN_PERCENT
 
 coins_percent_cache = {}
 
@@ -25,13 +25,12 @@ def counter_of_currencies(*args):
             new_percent = result[2]
 
             if new_percent >= START_PERCENT:
-                # currency_cache
                 if currency not in coins_percent_cache.keys():
                     coins_percent_cache[currency] = new_percent
-                if new_percent - coins_percent_cache[currency] >= INCREASE_PERCENT:
+                if new_percent - coins_percent_cache[currency] >= UP_PERCENT:
                     data[currency] = (result, 'up')
                     coins_percent_cache[currency] = new_percent
-                elif coins_percent_cache[currency] - new_percent >= DEMOTION_PERCENT:
+                elif coins_percent_cache[currency] - new_percent >= DOWN_PERCENT:
                     data[currency] = (result, "down")
                     coins_percent_cache[currency] = new_percent
     return data

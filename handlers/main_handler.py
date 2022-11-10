@@ -12,7 +12,7 @@ async def start(message: types.Message) -> None:
     admin_list = await async_update_admin_list()
     all_users = list(map(lambda user: user[0], await async_update_users_list()))
 
-    buttons = ['Список площадок', "Список валют", 'Настройки']
+    buttons = ['Список площадок', 'Настройки']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     if all_users and message.from_user.id in all_users:
@@ -28,7 +28,7 @@ async def user_in_users_list(admins: list,
                              buttons: list) -> None:
     """Обработчик существующиего пользователя"""
     if message.from_user.id in admins:
-        buttons = ['Список площадок', "Список валют", "Админка", 'Настройки']
+        buttons = ['Список площадок', "Админка", 'Настройки']
     keyboard.add(*buttons)
     await message.answer("Привет, я твой помощник в отслеживании котировок",
                          reply_markup=keyboard)
@@ -55,9 +55,9 @@ async def new_user(message: types.Message,
 async def start(message: types.Message) -> None:
 
     admin_list = await async_update_admin_list()
-    buttons = ['Список площадок', "Список валют", 'Настройки']
+    buttons = ['Список площадок', 'Настройки']
     if message.from_user.id in admin_list:
-        buttons = ['Список площадок', "Список валют", "Админка", 'Настройки']
+        buttons = ['Список площадок', "Админка", 'Настройки']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
     await message.answer("Возвращаюсь домой", reply_markup=keyboard)
