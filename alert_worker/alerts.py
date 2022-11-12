@@ -1,4 +1,5 @@
 import aiohttp
+import asyncio
 import os
 from dotenv import load_dotenv
 from emoji import emojize
@@ -32,29 +33,41 @@ async def background_alerts() -> None:
     global USER_CACHE
     try:
         while True:
-            async with aiohttp.ClientSession(service_url) as session:
-                binance = await http_req.binance_info(session)
-                kucoin = await http_req.kucoin_info(session)
-                huobi = await http_req.huobi_info(session)
-                okx = await http_req.okx_info(session)
-            data = counter_of_currencies(binance, kucoin, huobi, okx)
-
+            raw_data = await data_collector()
+            data = counter_of_currencies(*raw_data)
             content: list = content_creator(data)
 
-            if content and USER_CACHE:
+            if content != [] and USER_CACHE != []:
                 for tg_id, state in USER_CACHE:
                     if state == "ACTIVATED":
                         await bot.send_message(chat_id=tg_id,
                                                text=emojize(markdown.text(*content), language='alias'),
                                                parse_mode='html')
-            await session.close()
+
     except Exception as ex:
-        for tg_id, _ in USER_CACHE:
-            await exteption_heand(tg_id)
+        for tg_id, state in USER_CACHE:
+            if state == "ACTIVATED":
+                await exteption_heand(tg_id)
             # Todo логгер
-            # logger.info()
+            # logger.info(ex)
 
 
-
+async def data_collector():
+    """Сборщик данных с различных бирж"""
+    all_data = []
+    async with aiohttp.ClientSession(service_url) as session:
+        list_of_requests = [
+            http_req.binance_info(session),
+            http_req.kucoin_info(session),
+            http_req.huobi_info(session),
+            http_req.okx_info(session)
+        ]
+        for task in list_of_requests:
+            try:
+                result = await asyncio.wait_for(task, timeout=3)
+            except asyncio.TimeoutError:
+                result = {"response": "TimeoutError"}
+            all_data.append(result)
+    return all_data
 
 
