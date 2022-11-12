@@ -10,6 +10,7 @@ from alert_worker import http_req
 from alert_worker.handler_of_currency import counter_of_currencies
 from alert_worker.template_fabric import content_creator
 from handlers.exception_handler import exteption_heand
+from logs.logger import logger
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -36,7 +37,6 @@ async def background_alerts() -> None:
             raw_data = await data_collector()
             data = counter_of_currencies(*raw_data)
             content: list = content_creator(data)
-
             if content != [] and USER_CACHE != []:
                 for tg_id, state in USER_CACHE:
                     if state == "ACTIVATED":
@@ -45,14 +45,13 @@ async def background_alerts() -> None:
                                                parse_mode='html')
 
     except Exception as ex:
+        logger.exception(f"Exception on alerts loop {ex}")
         for tg_id, state in USER_CACHE:
             if state == "ACTIVATED":
                 await exteption_heand(tg_id)
-            # Todo логгер
-            # logger.info(ex)
 
 
-async def data_collector():
+async def data_collector() -> list[dict]:
     """Сборщик данных с различных бирж"""
     all_data = []
     async with aiohttp.ClientSession(service_url) as session:
@@ -68,6 +67,7 @@ async def data_collector():
             except asyncio.TimeoutError:
                 result = {"response": "TimeoutError"}
             all_data.append(result)
+
     return all_data
 
 

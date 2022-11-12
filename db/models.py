@@ -8,7 +8,7 @@ class User(Base):
     __tablename__ = 'Users'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
+    user_id = Column(Integer, unique=True)
     username = Column(String)
     notification = Column(String, default='ACTIVATED')
     access = Column(String, default='USER')

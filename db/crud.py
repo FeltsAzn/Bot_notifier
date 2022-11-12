@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from db.models import User
 from dotenv import load_dotenv
+from logs.logger import logger
 import os
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -36,12 +37,12 @@ class Database:
                 return True
             except IntegrityError:
                 await session.rollback()
-                # TODO сделать перенаправление вывод бд в логгер
-                # logger warning(IntegrityError)
+                logger.info(f"Not unique telegram id, return old-created user")
                 return True
             except Exception as ex:
                 await session.rollback()
-                # logger error()
+                logger.warning(f"Database exception on create user to db with tg_id: {tg_id}\n"
+                               f"exception type {type(ex)} - {ex}")
                 return False
 
     async def delete_user(self, tg_id: int) -> bool:
@@ -58,8 +59,8 @@ class Database:
                 return True
             except Exception as ex:
                 await session.rollback()
-                # TODO сделать перенаправление вывод бд в логгер
-                # logger error()
+                logger.warning(f"Exception on delete user on db with tg_id: {tg_id}\n"
+                               f"exception type {type(ex)} - {ex}")
                 return False
 
     async def get_user(self, tg_id: int) -> tuple | bool:
@@ -73,7 +74,8 @@ class Database:
                 user: tuple = tuple(map(lambda x: (x.user_id, x.username, x.notification, x.access), user))
                 return user[0]
             except Exception as ex:
-                # log.warning(ex)
+                logger.warning(f"Exception in asynchronous get user on db with tg id: {tg_id}\n"
+                               f"exception type {type(ex)} - {ex}")
                 return False
 
     async def async_get_users(self) -> list[tuple] | bool:
@@ -87,7 +89,8 @@ class Database:
                 users = list(map(lambda x: (x.user_id, x.username, x.notification, x.access), user))
                 return users
             except Exception as ex:
-                # log.warning(ex)
+                logger.warning(f"Exception in asynchronous get all users on db\n"
+                               f"exception type {type(ex)} - {ex}")
                 return False
 
     async def active_notification(self, tg_id) -> bool:
@@ -102,7 +105,8 @@ class Database:
                 await session.commit()
                 return True
             except Exception as ex:
-                # log.warning(ex)
+                logger.warning(f"Exception in activate notifications with tg id: {tg_id}\n"
+                               f"exception type {type(ex)} - {ex}")
                 return False
 
     async def deactivated_notification(self, tg_id) -> bool:
@@ -117,7 +121,8 @@ class Database:
                 await session.commit()
                 return True
             except Exception as ex:
-                # log.warning(ex)
+                logger.warning(f"Exception in deactivate notifications with tg id: {tg_id}\n"
+                               f"exception type {type(ex)} - {ex}")
                 return False
 
     async def notifications_state(self) -> list[tuple] | bool:
@@ -131,7 +136,8 @@ class Database:
                 users = list(map(lambda x: (x.user_id, x.notification), user))
                 return users
             except Exception as ex:
-                # log.warning(ex)
+                logger.warning(f"Exception in asynchronous notifications state on db\n"
+                               f"exception type {type(ex)} - {ex}")
                 return False
 
     @staticmethod
@@ -152,6 +158,6 @@ class Database:
                 users = list(map(lambda x: (x.user_id, x.username, x.notification, x.access), user))
                 return users
             except Exception as ex:
-                # log.warning(ex)
-                print("ERROR")
+                logger.warning(f"Exception in asynchronous get all users on db\n"
+                               f"exception type {type(ex)} - {ex}")
                 return False
