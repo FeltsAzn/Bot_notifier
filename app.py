@@ -1,14 +1,14 @@
 import time
 from aiogram import executor
 from loader import dp, bot
-import handlers
 import multiprocessing
 from alert_worker import alerts
 import asyncio
 import os
 import sys
 from dotenv import load_dotenv
-from logs.logger import logger
+from logger import logger
+import handlers
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):

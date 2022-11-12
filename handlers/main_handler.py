@@ -2,7 +2,7 @@ from aiogram import types
 from loader import dp
 from handlers.updater_db_info import async_update_admin_list, create_new_user, async_update_users_list
 from alert_worker.alerts import update_user_cache
-from handlers.exception_handler import exteption_heand
+from handlers.exception_handler import exception_hand
 
 
 @dp.message_handler(commands=['start', 'home'])
@@ -48,7 +48,7 @@ async def new_user(message: types.Message,
         await message.answer("Привет, я твой помощник в отслеживании котировок",
                              reply_markup=keyboard)
     else:
-        await exteption_heand(message.from_user.id)
+        await exception_hand(message.from_user.id)
 
 
 @dp.message_handler(lambda mes: mes.text in ("Домой", "В меню пользователя"))

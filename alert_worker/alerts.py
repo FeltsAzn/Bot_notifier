@@ -9,8 +9,8 @@ from db.crud import Database
 from alert_worker import http_req
 from alert_worker.handler_of_currency import counter_of_currencies
 from alert_worker.template_fabric import content_creator
-from handlers.exception_handler import exteption_heand
-from logs.logger import logger
+from alert_worker.alerts_exception_handler import exception_handler
+from logger import logger
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -48,7 +48,7 @@ async def background_alerts() -> None:
         logger.exception(f"Exception on alerts loop: {ex}")
         for tg_id, state in USER_CACHE:
             if state == "ACTIVATED":
-                await exteption_heand(tg_id)
+                await exception_handler(tg_id, bot)
             raise ex
 
 

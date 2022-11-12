@@ -3,7 +3,7 @@ from loader import dp
 from aiogram.dispatcher.filters import Text
 from db.crud import Database
 from alert_worker.alerts import update_user_cache
-from handlers.exception_handler import exteption_heand
+from handlers.exception_handler import exception_hand
 
 
 @dp.message_handler(lambda mes: mes.text in ("Отмена удаления", "Настройки"))
@@ -22,7 +22,7 @@ async def settings(message: types.Message):
         keyboard.add(*buttons)
         await message.answer("Выберите действия:", reply_markup=keyboard)
     else:
-        await exteption_heand(message.from_user.id)
+        await exception_hand(message.from_user.id)
 
 
 @dp.message_handler(Text(equals="Приостановить отслеживание"))
@@ -34,7 +34,7 @@ async def stop_notify(message: types.Message):
         keyboard.add("Домой")
         await message.answer("Отслеживание деактивировано", reply_markup=keyboard)
     else:
-        await exteption_heand(message.from_user.id)
+        await exception_hand(message.from_user.id)
 
 
 @dp.message_handler(Text(equals="Включить отслеживание"))
@@ -46,7 +46,7 @@ async def start_notify(message: types.Message):
         keyboard.add("Домой")
         await message.answer("Отслеживание активировано", reply_markup=keyboard)
     else:
-        await exteption_heand(message.from_user.id)
+        await exception_hand(message.from_user.id)
 
 
 @dp.message_handler(Text(equals='Удалить аккаунт'))
@@ -67,7 +67,7 @@ async def deleting(message: types.Message):
                              "для получения уведомлений о состоянии биржи\n"
                              "наберите /start")
     else:
-        await exteption_heand(message.from_user.id)
+        await exception_hand(message.from_user.id)
 
 
 

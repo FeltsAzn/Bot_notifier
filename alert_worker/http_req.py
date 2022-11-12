@@ -1,5 +1,5 @@
 import aiohttp
-from logs.logger import logger
+from logger import logger
 
 
 async def binance_info(session: aiohttp.ClientSession) -> dict:

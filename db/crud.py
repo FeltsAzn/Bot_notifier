@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from db.models import User
 from dotenv import load_dotenv
-from logs.logger import logger
+from logger import logger
 import os
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')

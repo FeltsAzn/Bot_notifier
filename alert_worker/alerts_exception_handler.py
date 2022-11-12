@@ -1,5 +1,4 @@
 from aiogram import types
-from loader import bot
 from dotenv import load_dotenv
 import os
 
@@ -9,7 +8,7 @@ if os.path.exists(dotenv_path):
 admin_url = os.getenv("ADMIN_NAME")
 
 
-async def exception_hand(tg_id: int) -> None:
+async def exception_handler(tg_id: int, bot) -> None:
     start_buttons = ['Список площадок', "Список валют", 'Настройки']
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*start_buttons)
