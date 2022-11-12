@@ -34,6 +34,7 @@ class Database:
             try:
                 session.add(data)
                 await session.commit()
+                logger.info(f"Create new user with tg id: {tg_id}")
                 return True
             except IntegrityError:
                 await session.rollback()
@@ -56,6 +57,7 @@ class Database:
 
                 await session.delete(user)
                 await session.commit()
+                logger.info(f"Delete user with tg id: {tg_id}")
                 return True
             except Exception as ex:
                 await session.rollback()
@@ -103,6 +105,7 @@ class Database:
                 user = database_response.scalar()
                 user.notification = "ACTIVATED"
                 await session.commit()
+                logger.info(f"Activate notifications for tg id: {tg_id}")
                 return True
             except Exception as ex:
                 logger.warning(f"Exception in activate notifications with tg id: {tg_id}\n"
@@ -119,6 +122,7 @@ class Database:
                 user = database_response.scalar()
                 user.notification = "DEACTIVATED"
                 await session.commit()
+                logger.info(f"Deactivate notifications for tg id: {tg_id}")
                 return True
             except Exception as ex:
                 logger.warning(f"Exception in deactivate notifications with tg id: {tg_id}\n"
