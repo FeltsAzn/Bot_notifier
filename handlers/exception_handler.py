@@ -1,5 +1,6 @@
 from aiogram import types
 from loader import bot
+from logs.logger import logger
 from dotenv import load_dotenv
 import os
 

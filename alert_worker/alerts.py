@@ -65,6 +65,7 @@ async def data_collector() -> list[dict]:
             try:
                 result = await asyncio.wait_for(task, timeout=3)
             except asyncio.TimeoutError:
+
                 result = {"response": "TimeoutError"}
             all_data.append(result)
 
