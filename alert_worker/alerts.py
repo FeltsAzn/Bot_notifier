@@ -45,10 +45,11 @@ async def background_alerts() -> None:
                                                parse_mode='html')
 
     except Exception as ex:
-        logger.exception(f"Exception on alerts loop {ex}")
+        logger.exception(f"Exception on alerts loop: {ex}")
         for tg_id, state in USER_CACHE:
             if state == "ACTIVATED":
                 await exteption_heand(tg_id)
+            raise ex
 
 
 async def data_collector() -> list[dict]:
@@ -65,8 +66,8 @@ async def data_collector() -> list[dict]:
             try:
                 result = await asyncio.wait_for(task, timeout=3)
             except asyncio.TimeoutError:
-
-                result = {"response": "TimeoutError"}
+                logger.info('Timeout on fastapi endpoint')
+                result = {}
             all_data.append(result)
 
     return all_data

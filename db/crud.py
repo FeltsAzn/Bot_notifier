@@ -20,7 +20,7 @@ class Database:
     @staticmethod
     async def create_session():
         """Асинхронная сессия подключения к бд"""
-        engine = create_async_engine(database_url_async, future=True, echo=True)
+        engine = create_async_engine(database_url_async, future=True, echo=False)
         session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
         return session
 
@@ -162,6 +162,6 @@ class Database:
                 users = list(map(lambda x: (x.user_id, x.username, x.notification, x.access), user))
                 return users
             except Exception as ex:
-                logger.warning(f"Exception in asynchronous get all users on db\n"
+                logger.warning(f"Exception in synchronous get all users on db\n"
                                f"exception type {type(ex)} - {ex}")
                 return False

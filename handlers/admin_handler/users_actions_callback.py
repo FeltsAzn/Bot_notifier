@@ -7,7 +7,6 @@ from db.crud import Database
 from handlers.admin_handler.config_for_filling import filling_keyboard, last_page
 from handlers.admin_handler.page_switch_users import page_counter
 
-
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
@@ -64,7 +63,7 @@ async def ask_delete_user(call: CallbackQuery) -> None:
     keyboard.insert(cancel_but)
 
     await call.message.edit_text(text="Вы действительно хотите\n"
-                                           "удалить пользователя?", reply_markup=keyboard, parse_mode='html')
+                                      "удалить пользователя?", reply_markup=keyboard, parse_mode='html')
 
 
 @dp.callback_query_handler(text_contains=":delete:call")
@@ -74,7 +73,7 @@ async def delete_user(call: CallbackQuery) -> None:
     user_tg_id = int(call.data.split(':')[0])
 
     if user_tg_id != call.from_user.id:
-        state = await Database().delete_user(user_tg_id)
+        state: bool = await Database().delete_user(user_tg_id)
         if state:
             mes = f"Пользователь {user_tg_id} удален"
         else:
@@ -91,7 +90,7 @@ async def delete_user(call: CallbackQuery) -> None:
     await call.message.edit_text(text, reply_markup=keyboard, parse_mode='html')
 
 
-def inserting_button(keyboard):
+def inserting_button(keyboard: InlineKeyboardMarkup) -> InlineKeyboardMarkup:
     if page_counter == last_page and last_page != 1:
         right_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         left_button = InlineKeyboardButton(text="<<<", callback_data="back_page:user:call")
@@ -108,4 +107,3 @@ def inserting_button(keyboard):
         keyboard.insert(right_button)
         keyboard.insert(left_button)
     return keyboard
-
