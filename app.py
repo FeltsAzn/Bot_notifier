@@ -1,5 +1,6 @@
 import time
 from aiogram import executor
+from handlers.updater_db_info import update_users_list_sync
 from loader import dp, bot
 import multiprocessing
 from alert_worker import alerts
@@ -13,12 +14,12 @@ import handlers
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
-multiproc_config = os.getenv("MULTIPROCESSERING")
+multiproc_config = os.getenv("MULTIPROCESSORING")
 
 
 def start_app_on_one_thread():
     try:
-        dp.loop.create_task(alerts.background_alerts())
+        dp.loop.create_task(alerts.background_alerts(True))
         executor.start_polling(dp, skip_updates=True)
     except Exception as ex:
         logger.exception("Stop one thread app."
@@ -27,8 +28,10 @@ def start_app_on_one_thread():
 
 
 def multiproc_app():
-    process_1 = multiprocessing.Process(target=start_bot_proc1)
-    process_2 = multiprocessing.Process(target=start_alerts_proc2)
+    manager = multiprocessing.Manager()
+    instance = manager.Value('instance', False)
+    process_1 = multiprocessing.Process(target=start_bot_proc1, args=(instance,))
+    process_2 = multiprocessing.Process(target=start_alerts_proc2, args=(instance,))
     process_1.start()
     process_2.start()
 
@@ -46,26 +49,28 @@ def multiproc_app():
             sys.exit(1)
 
 
-def start_bot_proc1():
+def start_bot_proc1(instance):
+    """Запуск бота в процессе 1"""
     try:
-        executor.start_polling(dp, skip_updates=True)
+        executor.start_polling(dp, skip_updates=True, on_startup=update_users_list_sync(instance))
     except Exception as ex:
-        logger.exception("Error process 1 (bot)"
+        logger.exception("Error process 1 (bot) "
                          f"exception type: {type(ex)} exception: {ex}")
         raise SystemExit
 
 
-def start_alerts_proc2():
+def start_alerts_proc2(instance):
+    """Запуск уведомлений в процессе 2"""
     try:
-        asyncio.run(alerts.background_alerts())
+        asyncio.run(alerts.background_alerts(instance))
     except Exception as ex:
-        logger.exception("Error process 2 (alerts)"
+        logger.exception("Error process 2 (alerts) "
                          f"exception type: {type(ex)} exception: {ex}")
         raise SystemExit
 
 
 if __name__ == '__main__':
-    if multiproc_config == "ON":
+    if multiproc_config.upper() == "ON":
         logger.info("Start on multiprocessing mod")
         multiproc_app()
     else:

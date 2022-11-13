@@ -1,3 +1,4 @@
+import multiprocessing
 import aiohttp
 import asyncio
 import os
@@ -17,23 +18,31 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 service_url = os.getenv("SERVICE_URL")
-
+multiproc_config = os.getenv("MULTIPROCESSORING")
 
 USER_CACHE = []
 
 
-async def update_user_cache() -> None:
+async def update_user_cache(instance: multiprocessing.Value or bool) -> None:
     """Обновление кэша при старте приложения и добавления нового пользователя"""
     global USER_CACHE
-    USER_CACHE = await Database().notifications_state()
+    if multiproc_config.upper() == "ON":
+        """Мультипроцессорное обновление кэша"""
+        if instance.value:
+            logger.info("CACHE HAS BEEN UPDATED")
+            instance.value = False
+            USER_CACHE = await Database().notifications_state()
+    else:
+        """Однопоточное обновление кэша"""
+        USER_CACHE = await Database().notifications_state()
 
 
-async def background_alerts() -> None:
+async def background_alerts(instance: multiprocessing.Value or bool) -> None:
     """Бесконечный цикл с запросами к биржам и отправке уведомлений"""
-    await update_user_cache()
-    global USER_CACHE
     try:
         while True:
+            await update_user_cache(instance)
+
             raw_data = await data_collector()
             data = counter_of_currencies(*raw_data)
             content: list = content_creator(data)

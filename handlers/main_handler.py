@@ -1,8 +1,18 @@
 from aiogram import types
 from loader import dp
-from handlers.updater_db_info import async_update_admin_list, create_new_user, async_update_users_list
-from alert_worker.alerts import update_user_cache
 from handlers.exception_handler import exception_hand
+from handlers.updater_db_info import async_update_admin_list,\
+    create_new_user, \
+    async_update_users_list, \
+    update_users_list_sync, \
+    update_users_list_async
+import os
+from dotenv import load_dotenv
+
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+multiproc_config = os.getenv("MULTIPROCESSORING")
 
 
 @dp.message_handler(commands=['start', 'home'])
@@ -41,7 +51,10 @@ async def new_user(message: types.Message,
     tg_id: int = message.from_user.id
     username: str = message.from_user.username if message.from_user.username else message.from_user.first_name
     data = await create_new_user(tg_id, username)
-    await update_user_cache()
+    if multiproc_config.upper() == "ON":
+        update_users_list_sync()
+    else:
+        await update_users_list_async()
 
     if data:
         keyboard.add(*buttons)

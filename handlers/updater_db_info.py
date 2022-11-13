@@ -1,4 +1,25 @@
 from db.crud import Database
+import multiprocessing
+from alert_worker.alerts import update_user_cache
+
+
+instance_cache = {}
+
+
+def update_users_list_sync(instance: multiprocessing.Value = None) -> None:
+    """Обновление списка пользователей для оповещений в мультипроцессорном режиме"""
+    global instance_cache
+    if instance is not None:
+        instance.value = True
+        instance_cache['state'] = instance
+    else:
+        instance = instance_cache['state']
+        instance.value = True
+
+
+async def update_users_list_async() -> None:
+    """Обновление списка пользователей для оповещений в однопоточном асинхронном режиме"""
+    await update_user_cache(True)
 
 
 def sync_get_users_list() -> list:
