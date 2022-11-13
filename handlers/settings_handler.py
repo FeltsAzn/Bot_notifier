@@ -1,8 +1,12 @@
 from aiogram import types
 from loader import dp
 from aiogram.dispatcher.filters import Text
-from db.crud import Database
-from handlers.updater_db_info import update_users_list_sync, update_users_list_async
+from handlers.middleware import update_users_list_sync,\
+    update_users_list_async, \
+    delete_user_from_tg_id, \
+    notify_activate, \
+    activate_notify, \
+    deactivate_notify
 from handlers.exception_handler import exception_hand
 
 import os
@@ -16,7 +20,7 @@ multiproc_config = os.getenv("MULTIPROCESSORING")
 
 @dp.message_handler(lambda mes: mes.text in ("Отмена удаления", "Настройки"))
 async def settings(message: types.Message):
-    users = await Database().notifications_state()
+    users = await notify_activate()
     user_state = ''
     if users:
         for tg_id, state in users:
@@ -35,7 +39,7 @@ async def settings(message: types.Message):
 
 @dp.message_handler(Text(equals="Приостановить отслеживание"))
 async def stop_notify(message: types.Message):
-    response = await Database().deactivated_notification(message.from_user.id)
+    response: bool = await deactivate_notify(message.from_user.id)
     if response:
         if multiproc_config.upper() == "ON":
             update_users_list_sync()
@@ -50,7 +54,7 @@ async def stop_notify(message: types.Message):
 
 @dp.message_handler(Text(equals="Включить отслеживание"))
 async def start_notify(message: types.Message):
-    response = await Database().active_notification(message.from_user.id)
+    response: bool = await activate_notify(message.from_user.id)
     if response:
         if multiproc_config.upper() == "ON":
             update_users_list_sync()
@@ -73,7 +77,7 @@ async def delete_user(message: types.Message):
 
 @dp.message_handler(Text(equals="Да, удалить аккаунт"))
 async def deleting(message: types.Message):
-    response = await Database().delete_user(message.from_user.id)
+    response = await delete_user_from_tg_id(message.from_user.id)
     if response:
         if multiproc_config.upper() == "ON":
             update_users_list_sync()
@@ -85,6 +89,3 @@ async def deleting(message: types.Message):
                              "наберите /start")
     else:
         await exception_hand(message.from_user.id)
-
-
-

@@ -1,7 +1,7 @@
 from aiogram import types
 from loader import dp
 from handlers.exception_handler import exception_hand
-from handlers.updater_db_info import async_update_admin_list,\
+from handlers.middleware import async_update_admin_list,\
     create_new_user, \
     async_update_users_list, \
     update_users_list_sync, \

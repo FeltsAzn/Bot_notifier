@@ -38,9 +38,9 @@ def counter_of_currencies(*args):
 
 def quote_difference(*args) -> tuple[tuple, tuple, Decimal]:
     """Высчитывание наименьшего и наибольшего значения, а так же процентный разрыв между ними"""
-    max_num: list[str, str] = max(*args, key=lambda x: Decimal(x[0]) if x else 0)
+    max_num: list[str, str] = max(*args, key=lambda x: Decimal(x[0]) if x else -1)
     min_num: list[str, str] = min(*args, key=lambda x: Decimal(x[0]) if x else int(10e8))
-    result = Decimal(str(100 - Decimal(min_num[0]) / Decimal(max_num[0]) * 100)[:4])
+    result = Decimal(f"{str(100 - Decimal(min_num[0]) / Decimal(max_num[0]) * 100)}0000"[:4])
     max_num: tuple[Decimal, str] = (Decimal(max_num[0]), max_num[1])
     min_num: tuple[Decimal, str] = (Decimal(min_num[0]), min_num[1])
     return min_num, max_num, result

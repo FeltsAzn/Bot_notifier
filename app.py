@@ -1,6 +1,6 @@
 import time
 from aiogram import executor
-from handlers.updater_db_info import update_users_list_sync
+from handlers.middleware import update_users_list_sync
 from loader import dp, bot
 import multiprocessing
 from alert_worker import alerts

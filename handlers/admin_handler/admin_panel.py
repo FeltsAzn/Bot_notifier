@@ -1,7 +1,7 @@
 from aiogram.types import Message, InlineKeyboardButton, ReplyKeyboardMarkup
 from loader import dp
 from handlers.admin_handler.config_for_filling import filling_keyboard, last_page
-from handlers.updater_db_info import async_update_admin_list, sync_get_admin_list
+from handlers.middleware import async_update_admin_list, sync_get_admin_list
 
 admins: list = sync_get_admin_list()
 

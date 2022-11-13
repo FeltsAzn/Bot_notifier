@@ -3,9 +3,9 @@ from dotenv import load_dotenv
 import os
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from loader import dp
-from db.crud import Database
 from handlers.admin_handler.config_for_filling import filling_keyboard, last_page
 from handlers.admin_handler.page_switch_users import page_counter
+from handlers.middleware import get_user_from_tg_id, delete_user_from_tg_id
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
@@ -36,7 +36,7 @@ async def list_of_users(call: CallbackQuery) -> None:
 async def user_info(call: CallbackQuery) -> None:
     """получение информации по конкретному пользователю"""
     user_tg_id = int(call.data.split(':')[0])
-    _, username, state, status = await Database().get_user(user_tg_id)
+    _, username, state, status = await get_user_from_tg_id(user_tg_id)
     keyboard = InlineKeyboardMarkup(row_width=1)
     text = f'<i>tg_id</i>: <b>{user_tg_id}</b>\n' \
            f'<i>name</i>: <b>{username}</b>\n' \
@@ -73,7 +73,7 @@ async def delete_user(call: CallbackQuery) -> None:
     user_tg_id = int(call.data.split(':')[0])
 
     if user_tg_id != call.from_user.id:
-        state: bool = await Database().delete_user(user_tg_id)
+        state: bool = await delete_user_from_tg_id(user_tg_id)
         if state:
             mes = f"Пользователь {user_tg_id} удален"
         else:
