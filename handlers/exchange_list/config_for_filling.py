@@ -1,6 +1,12 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import math
 
+"""
+Файл config_for_filling.py - методы для заполнения списка бирж и контроль
+глобальных переменных для корректного переключения страничек 
+"""
+
+
 places = [
     "Binance",
     "Kucoin",

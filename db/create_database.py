@@ -5,6 +5,10 @@ import os
 from dotenv import load_dotenv
 import asyncio
 
+"""
+Файл create_database.py - создание новой базы данных для приложения бота, если будет удалена активная база
+"""
+
 
 Base = declarative_base()
 

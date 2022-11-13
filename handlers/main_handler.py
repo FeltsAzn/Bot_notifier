@@ -9,6 +9,11 @@ from handlers.middleware import async_update_admin_list,\
 import os
 from dotenv import load_dotenv
 
+"""
+Файл main_handler.py - стартовое меню бота. Осуществляет авторизацию, либо регистрацию пользователя.
+"""
+
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)

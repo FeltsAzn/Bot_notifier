@@ -3,6 +3,12 @@ from loader import bot
 from dotenv import load_dotenv
 import os
 
+"""
+Файл exception_handler.py - при возникновении ошибки в меню управления (удаление или получение информации)
+присылает пользователям уведомление об ошибке.
+"""
+
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)

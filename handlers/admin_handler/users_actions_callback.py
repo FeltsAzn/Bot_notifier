@@ -7,6 +7,11 @@ from handlers.admin_handler.config_for_filling import filling_keyboard, last_pag
 from handlers.admin_handler.page_switch_users import page_counter
 from handlers.middleware import get_user_from_tg_id, delete_user_from_tg_id
 
+"""
+Файл users_actioins_callback.py предназначен для реализации функционала бота "Админка -> Список пользователей".
+Основные кнопки - инлайн, реализуется вывод информации о пользователе и возможность его удаления из БД . 
+"""
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)

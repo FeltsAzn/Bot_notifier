@@ -1,6 +1,11 @@
 from decimal import Decimal
 from alert_worker.config_for_filter import START_PERCENT, UP_PERCENT, DOWN_PERCENT
 
+"""
+Файл handler_of_currency.py - главный сортировщик валют.
+Вычисляет повышение и понижение значений котировок на биржах.
+"""
+
 coins_percent_cache = {}
 
 

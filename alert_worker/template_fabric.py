@@ -2,6 +2,10 @@ from alert_worker.config_for_filter import HIGH_PERCENT
 from decimal import Decimal
 from aiogram.utils import markdown
 
+"""
+Файл template_fabric.py - конфигуратор текстовой информации отсылаемой пользователям
+"""
+
 
 def content_creator(data: dict[str:tuple[tuple, str]]) -> list:
     """Функция-фабрика для шаблонов"""

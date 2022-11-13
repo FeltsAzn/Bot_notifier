@@ -1,6 +1,10 @@
 import aiohttp
 from logger import logger
 
+"""
+Файл http_req.py - запросы к endpoint'ам приложения на FastAPI
+"""
+
 
 async def binance_info(session: aiohttp.ClientSession) -> dict:
     """Запрос к endpoint fastapi binance"""

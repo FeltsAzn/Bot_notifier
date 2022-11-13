@@ -5,9 +5,13 @@ from alert_worker.alerts import update_user_cache
 
 instance_cache = {}
 
+"""
+Файл middleware.py предназначен для сокрытия обращений к бд и фильтрации данных при получении ответа
+от бд для читаемости кода.
+"""
 
 def update_users_list_sync(instance: multiprocessing.Value = None) -> None:
-    """Обновление списка пользователей для оповещений в мультипроцессорном режиме"""
+    """Обновление списка пользователей для списка оповещений в мультипроцессорном режиме"""
     global instance_cache
     if instance is not None:
         instance.value = True
@@ -18,7 +22,7 @@ def update_users_list_sync(instance: multiprocessing.Value = None) -> None:
 
 
 async def update_users_list_async() -> None:
-    """Обновление списка пользователей для оповещений в однопоточном асинхронном режиме"""
+    """Обновление списка пользователей для списка оповещений в однопоточном асинхронном режиме"""
     await update_user_cache(True)
 
 
@@ -41,7 +45,7 @@ async def create_new_user(tg_id: int, username: str) -> bool:
 
 
 async def async_update_admin_list() -> list:
-    """Обновление списка списка админов """
+    """Обновление списка админов при работе приложения"""
     response: list = await Database().async_get_users()
     only_admins = list(filter(lambda x: x[3] == "ADMIN", response))
     admin_list = list(map(lambda tup: tup[0], only_admins))
@@ -49,7 +53,7 @@ async def async_update_admin_list() -> list:
 
 
 async def async_update_users_list() -> list[tuple]:
-    """Обновление списка пользователей"""
+    """Обновление списка пользователей при работе приложения для админской панели"""
     return await Database().async_get_users()
 
 
@@ -76,6 +80,4 @@ async def activate_notify(tg_id: int) -> bool:
 async def deactivate_notify(tg_id: int) -> bool:
     """Деактивация уведомлений у пользователя"""
     return await Database().deactivated_notification(tg_id)
-
-
 

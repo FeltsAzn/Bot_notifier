@@ -3,6 +3,10 @@ from loader import dp
 from handlers.admin_handler.config_for_filling import filling_keyboard, last_page
 from handlers.middleware import async_update_admin_list, sync_get_admin_list
 
+"""
+Файл admin_panel.py - главный обработчик для доступа к админ-панели.
+"""
+
 admins: list = sync_get_admin_list()
 
 

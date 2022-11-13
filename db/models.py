@@ -1,6 +1,10 @@
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, Integer, String
 
+"""
+Файл models.py - шаблон таблицы для бд. На основании этого шаблона вносятся и читаются данные из бд
+"""
+
 Base = declarative_base()
 
 

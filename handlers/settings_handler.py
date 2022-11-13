@@ -12,10 +12,16 @@ from handlers.exception_handler import exception_hand
 import os
 from dotenv import load_dotenv
 
+"""
+Файл settiongs_handler.py предназначен для реализации функционала бота "настройки" пользователя
+основные кнопки "Выключение/включение уведомлений", "Удаление аккаунта" и "Домой". 
+"""
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 multiproc_config = os.getenv("MULTIPROCESSORING")
+
 
 
 @dp.message_handler(lambda mes: mes.text in ("Отмена удаления", "Настройки"))

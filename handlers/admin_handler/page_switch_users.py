@@ -5,6 +5,11 @@ from handlers.admin_handler.config_for_filling import filling_keyboard,\
     diff_of_value, \
     last_page
 
+"""
+Файл page_switch.py - обработчик переключений страничек для административной панели пользователей
+"""
+
+
 page_counter = 1
 
 

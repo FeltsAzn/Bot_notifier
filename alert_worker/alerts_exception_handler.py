@@ -2,6 +2,11 @@ from aiogram import types
 from dotenv import load_dotenv
 import os
 
+"""
+Файл alerts_exception_handler.py - метод для отправки сообщения об ошибке
+связанной с главным обработчиком уведомлений.  
+"""
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)

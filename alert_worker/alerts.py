@@ -13,6 +13,11 @@ from alert_worker.template_fabric import content_creator
 from alert_worker.alerts_exception_handler import exception_handler
 from logger import logger
 
+"""
+Файл alerts.py предназначен для уведомления позльзователей о изменении цен на бирже.
+Используется бесконечный цикл для постоянной работы бота.
+"""
+
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
@@ -24,7 +29,7 @@ USER_CACHE = []
 
 
 async def update_user_cache(instance: multiprocessing.Value or bool) -> None:
-    """Обновление кэша при старте приложения и добавления нового пользователя"""
+    """Обновление кэша при старте приложения или при добавлении нового пользователя"""
     global USER_CACHE
     if multiproc_config.upper() == "ON":
         """Мультипроцессорное обновление кэша"""
@@ -38,7 +43,7 @@ async def update_user_cache(instance: multiprocessing.Value or bool) -> None:
 
 
 async def background_alerts(instance: multiprocessing.Value or bool) -> None:
-    """Бесконечный цикл с запросами к биржам и отправке уведомлений"""
+    """Бесконечный цикл с запросами к биржам и отправке уведомлений пользователям"""
     try:
         while True:
             await update_user_cache(instance)
