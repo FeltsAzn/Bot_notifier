@@ -1,7 +1,5 @@
-import datetime
 import multiprocessing
 import time
-
 import aiohttp
 import asyncio
 import os
@@ -53,21 +51,24 @@ async def background_alerts(instance: multiprocessing.Value or bool) -> None:
             t1 = time.time()
 
             if not isinstance(instance, bool):
+                # проверка на мультипроцессеринговый режим
                 await update_user_cache(instance)
             raw_data = await data_collector()
-            data = counter_of_currencies(*raw_data)
-            content: list = content_creator(data)
-            t2 = time.time()
-
-            if t2 - t1 < 1:
+            if time.time() - t1 < 1:
                 # проверк на случай когда сервер fastapi не будет отвечать
                 time.sleep(10)
-            if content != [] and USER_CACHE != []:
-                for tg_id, state in USER_CACHE:
-                    if state == "ACTIVATED":
-                        await bot.send_message(chat_id=tg_id,
-                                               text=emojize(markdown.text(*content), language='alias'),
-                                               parse_mode='html')
+            if raw_data:
+                data = counter_of_currencies(*raw_data)
+                content: list = content_creator(data)
+
+                if content != [] and USER_CACHE != []:
+                    for tg_id, state in USER_CACHE:
+                        if state == "ACTIVATED":
+                            await bot.send_message(chat_id=tg_id,
+                                                   text=emojize(markdown.text(*content), language='alias'),
+                                                   parse_mode='html')
+            else:
+                logger.error("FastAPI service is dropped.")
 
     except Exception as ex:
         logger.exception(f"Exception on alerts loop: {ex}")
@@ -77,9 +78,8 @@ async def background_alerts(instance: multiprocessing.Value or bool) -> None:
             raise ex
 
 
-async def data_collector() -> list[dict]:
+async def data_collector() -> list:
     """Сборщик данных с различных бирж"""
-    all_data = []
     async with aiohttp.ClientSession(service_url) as session:
         list_of_requests = [
             http_req.binance_info(session),
@@ -87,17 +87,13 @@ async def data_collector() -> list[dict]:
             http_req.huobi_info(session)
         ]
         # http_req.okx_info(session)
-        for task in list_of_requests:
-            try:
-                result = await asyncio.wait_for(task, timeout=10)
-            except asyncio.TimeoutError:
-                logger.info(f'Requests timeout error on http-requests loop')
-                result = {}
-            except Exception as ex:
-                logger.info(f'Coroutine loop exception on http-requests: {ex}')
-                result = {}
-            all_data.append(result)
-
+        tasks = list(map(lambda x: asyncio.wait_for(x, timeout=5), list_of_requests))
+        try:
+            all_data = await asyncio.gather(*tasks, return_exceptions=True)
+        except Exception as ex:
+            logger.exception(f"Exception on gather loop on http-requests: {ex}")
+            all_data = []
+    all_data = list(filter(lambda x: isinstance(x, dict), all_data))
     return all_data
 
 
