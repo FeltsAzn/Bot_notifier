@@ -46,6 +46,7 @@ def multiproc_app():
             time.sleep(1)
             logger.exception("Stop multiprocessing app. "
                              f"last exception: {ex}")
+            print("BOT STOPPED", file=sys.stderr)
             sys.exit(1)
 
 
@@ -62,7 +63,7 @@ def start_bot_proc1(instance):
 def start_alerts_proc2(instance):
     """Запуск уведомлений в процессе 2"""
     try:
-        asyncio.run(alerts.background_alerts(instance))
+        asyncio.run(alerts.background_alerts(instance), debug=True)
     except Exception as ex:
         logger.exception("Error process 2 (alerts) "
                          f"exception type: {type(ex)} exception: {ex}")

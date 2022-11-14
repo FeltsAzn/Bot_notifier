@@ -1,4 +1,7 @@
+import datetime
 import multiprocessing
+import time
+
 import aiohttp
 import asyncio
 import os
@@ -44,13 +47,21 @@ async def update_user_cache(instance: multiprocessing.Value or bool) -> None:
 
 async def background_alerts(instance: multiprocessing.Value or bool) -> None:
     """Бесконечный цикл с запросами к биржам и отправке уведомлений пользователям"""
+    await update_user_cache(instance)
     try:
         while True:
-            await update_user_cache(instance)
+            t1 = time.time()
 
+            if not isinstance(instance, bool):
+                await update_user_cache(instance)
             raw_data = await data_collector()
             data = counter_of_currencies(*raw_data)
             content: list = content_creator(data)
+            t2 = time.time()
+
+            if t2 - t1 < 1:
+                # проверк на случай когда сервер fastapi не будет отвечать
+                time.sleep(10)
             if content != [] and USER_CACHE != []:
                 for tg_id, state in USER_CACHE:
                     if state == "ACTIVATED":
@@ -73,14 +84,17 @@ async def data_collector() -> list[dict]:
         list_of_requests = [
             http_req.binance_info(session),
             http_req.kucoin_info(session),
-            http_req.huobi_info(session),
-            http_req.okx_info(session)
+            http_req.huobi_info(session)
         ]
+        # http_req.okx_info(session)
         for task in list_of_requests:
             try:
-                result = await asyncio.wait_for(task, timeout=3)
+                result = await asyncio.wait_for(task, timeout=10)
             except asyncio.TimeoutError:
-                logger.info('Timeout on fastapi endpoint')
+                logger.info(f'Requests timeout error on http-requests loop')
+                result = {}
+            except Exception as ex:
+                logger.info(f'Coroutine loop exception on http-requests: {ex}')
                 result = {}
             all_data.append(result)
 
