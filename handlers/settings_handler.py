@@ -23,7 +23,6 @@ if os.path.exists(dotenv_path):
 multiproc_config = os.getenv("MULTIPROCESSORING")
 
 
-
 @dp.message_handler(lambda mes: mes.text in ("Отмена удаления", "Настройки"))
 async def settings(message: types.Message):
     users = await notify_activate()

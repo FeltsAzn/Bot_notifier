@@ -24,9 +24,13 @@ class Database:
     @staticmethod
     async def create_session():
         """Асинхронная сессия подключения к бд"""
-        engine = create_async_engine(database_url_async, future=True, echo=False)
-        session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
-        return session
+        try:
+            engine = create_async_engine(database_url_async, future=True, echo=False)
+            session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+            return session
+        except Exception as ex:
+            logger.error(f"Asynchronous session maker error: {ex}")
+            return False
 
     async def create_user(self, tg_id: int, name: str) -> bool:
         """Создание нового пользователя"""
@@ -61,6 +65,7 @@ class Database:
 
                 await session.delete(user)
                 await session.commit()
+
                 logger.info(f"Delete user with tg id: {tg_id}")
                 return True
             except Exception as ex:
@@ -151,9 +156,13 @@ class Database:
     @staticmethod
     def create_sync_session():
         """Синхронная сессия подключения к бд"""
-        engine = create_engine(database_url, future=True, echo=True)
-        session = sessionmaker(engine, expire_on_commit=False)
-        return session
+        try:
+            engine = create_engine(database_url, future=True, echo=True)
+            session = sessionmaker(engine, expire_on_commit=False)
+            return session
+        except Exception as ex:
+            logger.error(f"Synchronous session maker error: {ex}")
+            return False
 
     def sync_get_users(self) -> list[tuple] | bool:
         """Синхронный обработчик для получение списка пользователей"""
