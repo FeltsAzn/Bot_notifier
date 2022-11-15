@@ -41,6 +41,7 @@ async def update_user_cache(instance: multiprocessing.Value or bool) -> None:
     else:
         """Однопоточное обновление кэша"""
         USER_CACHE = await Database().notifications_state()
+        logger.info("CACHE HAS BEEN UPDATED")
 
 
 async def background_alerts(instance: multiprocessing.Value or bool) -> None:

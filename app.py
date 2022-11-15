@@ -63,7 +63,7 @@ def start_bot_proc1(instance):
 def start_alerts_proc2(instance):
     """Запуск уведомлений в процессе 2"""
     try:
-        asyncio.run(alerts.background_alerts(instance), debug=True)
+        asyncio.run(alerts.background_alerts(instance))
     except Exception as ex:
         logger.exception("Error process 2 (alerts) "
                          f"exception type: {type(ex)} exception: {ex}")
