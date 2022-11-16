@@ -47,7 +47,7 @@ def multiproc_app():
             logger.exception("Stop multiprocessing app. "
                              f"last exception: {ex}")
             print("BOT STOPPED", file=sys.stderr)
-            sys.exit(1)
+            sys.exit(13)
 
 
 def start_bot_proc1(instance):
