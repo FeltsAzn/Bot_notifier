@@ -1,0 +1,29 @@
+
+version: 1.0.0
+services:
+  fastapi:
+    image: fastapi
+    container_name: fastapi_endpoints
+    ports:
+    - "8000:8000"
+    build:
+      context: /home/tim/PycharmProjects/Crypto_bot_API/
+      dockerfile: dockerfile
+    networks:
+      - custom
+
+  telegram_bot:
+    image: bot
+    container_name: bot
+    build:
+      context: .
+      dockerfile: dockerfile
+    networks:
+      - custom
+    depends_on:
+      - fastapi
+
+
+networks:
+  custom:
+    driver: bridge

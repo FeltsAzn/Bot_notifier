@@ -10,6 +10,7 @@ instance_cache = {}
 от бд для читаемости кода.
 """
 
+
 def update_users_list_sync(instance: multiprocessing.Value = None) -> None:
     """Обновление списка пользователей для списка оповещений в мультипроцессорном режиме"""
     global instance_cache
