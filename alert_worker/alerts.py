@@ -81,13 +81,14 @@ async def background_alerts(instance: multiprocessing.Value or bool) -> None:
 
 async def data_collector() -> list:
     """Сборщик данных с различных бирж"""
+    t1 = time.time()
     async with aiohttp.ClientSession(service_url) as session:
         list_of_requests = [
             http_req.binance_info(session),
             http_req.kucoin_info(session),
-            http_req.huobi_info(session)
+            http_req.huobi_info(session),
+            http_req.okx_info(session)
         ]
-        # http_req.okx_info(session)
         tasks = list(map(lambda x: asyncio.wait_for(x, timeout=5), list_of_requests))
         try:
             all_data = await asyncio.gather(*tasks, return_exceptions=True)
@@ -95,6 +96,7 @@ async def data_collector() -> list:
             logger.exception(f"Exception on gather loop on http-requests: {ex}")
             all_data = []
     all_data = list(filter(lambda x: isinstance(x, dict), all_data))
+    print(time.time() - t1)
     return all_data
 
 
