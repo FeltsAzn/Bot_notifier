@@ -57,6 +57,7 @@ async def background_alerts(instance: multiprocessing.Value or bool) -> None:
             raw_data = await data_collector()
             if time.time() - t1 < 1:
                 # проверк на случай когда сервер fastapi не будет отвечать
+                logger.critical("FastAPI server is dropped.")
                 time.sleep(10)
             if raw_data:
                 data = counter_of_currencies(*raw_data)
@@ -81,7 +82,6 @@ async def background_alerts(instance: multiprocessing.Value or bool) -> None:
 
 async def data_collector() -> list:
     """Сборщик данных с различных бирж"""
-    t1 = time.time()
     async with aiohttp.ClientSession(service_url) as session:
         list_of_exchanges = [
             "binance",
@@ -92,14 +92,12 @@ async def data_collector() -> list:
         tasks = []
         for exchange in list_of_exchanges:
             request = http_req.get_exchange_data(session, exchange)
-            tasks.append(asyncio.wait_for(request, timeout=5))
+            tasks.append(request)
         try:
             all_data = await asyncio.gather(*tasks, return_exceptions=True)
         except Exception as ex:
             logger.exception(f"Exception on gather loop on http-requests: {ex}")
             all_data = []
-    all_data = list(filter(lambda x: isinstance(x, dict), all_data))
-    print(time.time() - t1)
     return all_data
 
 

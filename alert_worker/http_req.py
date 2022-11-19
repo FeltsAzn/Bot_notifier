@@ -8,8 +8,12 @@ from logger import logger
 
 async def get_exchange_data(session: aiohttp.ClientSession, service: str) -> dict:
     """Запрос к endpoint fastapi binance"""
-    async with session.get(f"/{service}") as exchange_raw_data:
-        exchange_data = await exchange_raw_data.json()
+    try:
+        async with session.get(f"/{service}", timeout=5) as exchange_raw_data:
+            exchange_data = await exchange_raw_data.json()
+    except Exception as ex:
+        logger.warning(f'Http timeout error fastapi endpoint "{service}" not responding. Exception: {ex}')
+        return {}
     if "error" in exchange_data.keys():
         logger.warning(f"Binance endpoint is empty.\n"
                        f"response -> {exchange_data['error']}")
