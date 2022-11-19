@@ -49,7 +49,7 @@ def quote_difference(*args) -> tuple[tuple, tuple, Decimal]:
     try:
         result = Decimal(f"{str(100 - Decimal(min_num[0]) / Decimal(max_num[0]) * 100)}0000"[:4])
     except Exception as ex:
-        logger.info(f"Exception {ex}. Decimal division min num: {Decimal(min_num[0])}"
+        logger.warning(f"Exception {ex}. Decimal division min num: {Decimal(min_num[0])}"
                     f" | max num: {Decimal(max_num[0])} ")
         result = None
     max_num: tuple[Decimal, str] = (Decimal(max_num[0]), max_num[1])
