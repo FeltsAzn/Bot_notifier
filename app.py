@@ -36,6 +36,7 @@ def multiproc_app():
     process_2.start()
 
     while True:
+        time.sleep(3)
         if not process_1.is_alive() or not process_2.is_alive():
             ex = "process 1 (telegram bot) was closed with exception"
             if process_1.is_alive():
@@ -43,7 +44,6 @@ def multiproc_app():
 
             process_1.terminate()
             process_2.terminate()
-            time.sleep(1)
             logger.exception("Stop multiprocessing app. "
                              f"last exception: {ex}")
             print("BOT STOPPED", file=sys.stderr)

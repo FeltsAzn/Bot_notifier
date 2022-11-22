@@ -80,7 +80,7 @@ async def background_alerts(instance: multiprocessing.Value or bool) -> None:
             raise ex
 
 
-async def data_collector() -> list:
+async def data_collector() -> tuple:
     """Сборщик данных с различных бирж"""
     async with aiohttp.ClientSession(service_url) as session:
         list_of_exchanges = [
@@ -93,9 +93,5 @@ async def data_collector() -> list:
         for exchange in list_of_exchanges:
             request = http_req.get_exchange_data(session, exchange)
             tasks.append(request)
-        try:
-            all_data = await asyncio.gather(*tasks, return_exceptions=True)
-        except Exception as ex:
-            logger.exception(f"Exception on gather loop on http-requests: {ex}")
-            all_data = []
+    all_data = await asyncio.gather(*tasks, return_exceptions=True)
     return all_data

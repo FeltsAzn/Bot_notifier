@@ -14,6 +14,7 @@ async def get_exchange_data(session: aiohttp.ClientSession, service: str) -> dic
     except Exception as ex:
         logger.warning(f'Http timeout error fastapi endpoint "{service}" not responding. Exception: {ex}')
         return {}
+
     if "error" in exchange_data.keys():
         logger.warning(f"Binance endpoint is empty.\n"
                        f"response -> {exchange_data['error']}")
