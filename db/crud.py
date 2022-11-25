@@ -75,7 +75,7 @@ class Database:
                 return False
 
     async def get_user(self, tg_id: int) -> tuple | bool:
-        """Список всех пользователей"""
+        """Список всех пользователей(Синхронно, используется для старта приложения)"""
         database_session = await self.create_session()
         async with database_session() as session:
             try:
@@ -90,7 +90,7 @@ class Database:
                 return False
 
     async def async_get_users(self) -> list[tuple] | bool:
-        """Список всех пользователей"""
+        """Список всех пользователей (асинхронно, используется во время работы программы)"""
         database_session = await self.create_session()
         async with database_session() as session:
             try:
@@ -165,7 +165,7 @@ class Database:
             return False
 
     def sync_get_users(self) -> list[tuple] | bool:
-        """Синхронный обработчик для получение списка пользователей"""
+        """Синхронный обработчик для получение списка пользователей (для корректного старта приложения)"""
         database_session = self.create_sync_session()
         with database_session() as session:
             try:

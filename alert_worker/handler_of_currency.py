@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, DivisionUndefined
 from logger import logger
 from alert_worker.config_for_filter import START_PERCENT, UP_PERCENT, DOWN_PERCENT
 
@@ -48,9 +48,12 @@ def quote_difference(*args) -> tuple[tuple, tuple, Decimal]:
     min_num: list[str, str] = min(*args, key=lambda x: Decimal(x[0]) if x else int(10e8))
     try:
         result = Decimal(f"{str(100 - Decimal(min_num[0]) / Decimal(max_num[0]) * 100)}0000"[:4])
-    except Exception as ex:
-        logger.warning(f"Exception {ex}. Decimal division min num: {Decimal(min_num[0])}"
+    except DivisionUndefined:
+        logger.info(f"Exception DivisionUndefined. Decimal division min num: {Decimal(min_num[0])}"
                     f" | max num: {Decimal(max_num[0])} ")
+        result = None
+    except Exception as ex:
+        logger.warning(f"Exception {ex}")
         result = None
     max_num: tuple[Decimal, str] = (Decimal(max_num[0]), max_num[1])
     min_num: tuple[Decimal, str] = (Decimal(min_num[0]), min_num[1])

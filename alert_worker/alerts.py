@@ -66,9 +66,12 @@ async def background_alerts(instance: multiprocessing.Value or bool) -> None:
                 if content != [] and USER_CACHE != []:
                     for tg_id, state in USER_CACHE:
                         if state == "ACTIVATED":
-                            await bot.send_message(chat_id=tg_id,
-                                                   text=emojize(markdown.text(*content), language='alias'),
-                                                   parse_mode='html')
+                            try:
+                                await bot.send_message(chat_id=tg_id,
+                                                       text=emojize(markdown.text(*content), language='alias'),
+                                                       parse_mode='html')
+                            except Exception as ex:
+                                logger.warning(f"Message didn't send to user {tg_id}. {ex}")
             else:
                 logger.error("FastAPI service is dropped.")
 
@@ -93,5 +96,5 @@ async def data_collector() -> tuple:
         for exchange in list_of_exchanges:
             request = http_req.get_exchange_data(session, exchange)
             tasks.append(request)
-    all_data = await asyncio.gather(*tasks, return_exceptions=True)
+        all_data = await asyncio.gather(*tasks, return_exceptions=True)
     return all_data
