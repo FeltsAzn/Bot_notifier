@@ -27,27 +27,35 @@ def counter_of_currencies(*args):
         for currency, price in max_size_exch.items():
             """Находим конретные коины из всех бирж"""
             currencies = tuple(map(lambda x: x.get(coin, {}).get(currency, []), args))
-            result: tuple[tuple, tuple, Decimal] = quote_difference(currencies)
-            new_percent = result[2]
+            result: dict = quote_difference(currencies)
+            new_percent: float = result["percent"]
+            exchange_volume = result["min"]["volume"]
+
             if new_percent is not None:
                 if new_percent >= START_PERCENT:
                     if currency not in coins_percent_cache.keys():
                         coins_percent_cache[currency] = new_percent
+
                     if new_percent - coins_percent_cache[currency] >= UP_PERCENT:
                         data[currency] = (result, 'up')
                         coins_percent_cache[currency] = new_percent
+
                     elif coins_percent_cache[currency] - new_percent >= DOWN_PERCENT:
                         data[currency] = (result, "down")
                         coins_percent_cache[currency] = new_percent
+        """Блок в слвоаре data:
+        "CTC-USDT: ({'min': {'buy_price': 0.3501, 'volume': 58.98444024, 'exchange': 'HUOBI'},
+         'max': {'buy_price': '0.364', 'volume': 158838.366565, 'exchange': 'OKX'},
+         'percent': Decimal('3.81')}, 'down')"""
         return data
 
 
-def quote_difference(*args) -> tuple[tuple, tuple, Decimal]:
+def quote_difference(*args) -> dict:
     """Высчитывание наименьшего и наибольшего значения, а так же процентный разрыв между ними"""
-    max_num: list[str, str] = max(*args, key=lambda x: Decimal(x[0]) if x else -1)
-    min_num: list[str, str] = min(*args, key=lambda x: Decimal(x[0]) if x else int(10e8))
+    max_num: dict = max(*args, key=lambda x: Decimal(x["buy_price"]) if x else -1)
+    min_num: dict = min(*args, key=lambda x: Decimal(x["buy_price"]) if x else int(10e8))
     try:
-        result = Decimal(f"{str(100 - Decimal(min_num[0]) / Decimal(max_num[0]) * 100)}0000"[:4])
+        result = Decimal(f"{str(100 - Decimal(min_num['buy_price']) / Decimal(max_num['buy_price']) * 100)}0000"[:4])
     except DivisionUndefined:
         logger.info(f"Exception DivisionUndefined. Decimal division min num: {Decimal(min_num[0])}"
                     f" | max num: {Decimal(max_num[0])} ")
@@ -55,6 +63,4 @@ def quote_difference(*args) -> tuple[tuple, tuple, Decimal]:
     except Exception as ex:
         logger.warning(f"Exception {ex}")
         result = None
-    max_num: tuple[Decimal, str] = (Decimal(max_num[0]), max_num[1])
-    min_num: tuple[Decimal, str] = (Decimal(min_num[0]), min_num[1])
-    return min_num, max_num, result
+    return {"min": min_num, "max": max_num, "percent": result}
