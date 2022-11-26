@@ -1,9 +1,10 @@
 from aiogram.types import InlineKeyboardButton, CallbackQuery
 from loader import dp
-from handlers.exchange_list.config_for_filling import filling_keyboard,\
-    add_of_value, \
-    diff_of_value, \
-    last_page
+from handlers.exchange_list.config_for_filling import (filling_keyboard,
+                                                       add_of_value,
+                                                       diff_of_value,
+                                                       last_page
+                                                       )
 
 """
 Файл page_switch.py - обработчик переключений страничек для списка отслеживаемых бирж

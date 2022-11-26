@@ -1,7 +1,7 @@
 import os
 from aiogram import types
-from loader import dp
 from aiogram.dispatcher.filters import Text
+from loader import dp
 from handlers.exception_handler import exception_hand
 from handlers.middleware import update_users_list_sync, update_users_list_async, delete_user_from_tg_id, \
     notify_activate, activate_notify, deactivate_notify
@@ -24,9 +24,9 @@ async def settings(message: types.Message):
             if tg_id == message.from_user.id:
                 user_state: str = state
         if user_state == "ACTIVATED":
-            buttons = ["Приостановить отслеживание", 'Удалить аккаунт', 'Домой']
+            buttons = ["Приостановить отслеживание", "Удалить аккаунт", "Домой"]
         else:
-            buttons = ["Включить отслеживание", 'Удалить аккаунт', 'Домой']
+            buttons = ["Включить отслеживание", "Удалить аккаунт", "Домой"]
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         keyboard.add(*buttons)
         await message.answer("Выберите действия:", reply_markup=keyboard)
@@ -64,9 +64,9 @@ async def start_notify(message: types.Message):
         await exception_hand(message.from_user.id)
 
 
-@dp.message_handler(Text(equals='Удалить аккаунт'))
+@dp.message_handler(Text(equals="Удалить аккаунт"))
 async def delete_user(message: types.Message):
-    buttons = ["Да, удалить аккаунт", 'Отмена удаления', 'Домой']
+    buttons = ["Да, удалить аккаунт", "Отмена удаления", "Домой"]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
     await message.answer("Вы действительно хотите\nудалить аккаунт?", reply_markup=keyboard)

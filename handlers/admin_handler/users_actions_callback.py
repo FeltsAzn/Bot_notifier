@@ -1,5 +1,4 @@
 import asyncio
-from dotenv import load_dotenv
 import os
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from loader import dp
@@ -40,10 +39,10 @@ async def user_info(call: CallbackQuery) -> None:
     user_tg_id = int(call.data.split(':')[0])
     _, username, state, status = await get_user_from_tg_id(user_tg_id)
     keyboard = InlineKeyboardMarkup(row_width=1)
-    text = f'<i>tg_id</i>: <b>{user_tg_id}</b>\n' \
-           f'<i>name</i>: <b>{username}</b>\n' \
-           f'<i>notify</i>: <b>{state}</b>\n' \
-           f'<i>status</i>: <b>{status}</b>\n'
+    text = f"<i>tg_id</i>: <b>{user_tg_id}</b>\n" \
+           f"<i>name</i>: <b>{username}</b>\n" \
+           f"<i>notify</i>: <b>{state}</b>\n" \
+           f"<i>status</i>: <b>{status}</b>\n"
     delete_but = InlineKeyboardButton(text="Удалить пользователя", callback_data=f"{user_tg_id}:ask:delete:call")
     cancel_but = InlineKeyboardButton(text="Отмена", callback_data=f"{user_tg_id}:cancel:call")
     keyboard.insert(delete_but)
@@ -65,7 +64,7 @@ async def ask_delete_user(call: CallbackQuery) -> None:
     keyboard.insert(cancel_but)
 
     await call.message.edit_text(text="Вы действительно хотите\n"
-                                      "удалить пользователя?", reply_markup=keyboard, parse_mode='html')
+                                      "удалить пользователя?", reply_markup=keyboard, parse_mode="html")
 
 
 @dp.callback_query_handler(text_contains=":delete:call")
@@ -89,7 +88,7 @@ async def delete_user(call: CallbackQuery) -> None:
     text = f"Список пользователей ({page_counter}/{last_page}):"
     await call.message.edit_text(mes)
     await asyncio.sleep(2)
-    await call.message.edit_text(text, reply_markup=keyboard, parse_mode='html')
+    await call.message.edit_text(text, reply_markup=keyboard, parse_mode="html")
 
 
 def inserting_button(keyboard: InlineKeyboardMarkup) -> InlineKeyboardMarkup:

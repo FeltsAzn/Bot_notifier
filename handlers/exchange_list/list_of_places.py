@@ -1,6 +1,6 @@
 from aiogram.types import Message, InlineKeyboardButton
-from loader import dp
 from aiogram.dispatcher.filters import Text
+from loader import dp
 from handlers.exchange_list.config_for_filling import last_page, filling_keyboard
 
 

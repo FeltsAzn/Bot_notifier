@@ -1,6 +1,6 @@
-from alert_worker.config_for_filter import HIGH_PERCENT
 from decimal import Decimal
 from aiogram.utils import markdown
+from alert_worker.config_for_filter import HIGH_PERCENT
 
 """
 Файл template_fabric.py - конфигуратор текстовой информации отсылаемой пользователям
@@ -46,11 +46,11 @@ def text_template(currency: str, data: dict) -> str:
     max_val = data["max"]["buy_price"]
     max_exchange = data["max"]["exchange"]
 
-    text = f' <i>{currency}</i>:\n' \
-           f'Наименьшее: {str(min_val)[:8]}$ - {min_exchange}\n' \
-           f'Наибольшее: {str(max_val)[:8]}$ - {max_exchange}\n' \
-           f'Разница: <b>{data["percent"]}%</b>\n' \
-           '\n' \
-           f'Объём торгов: {str(volume)}\n'
+    text = f" <i>{currency}</i>:\n" \
+           f"Наименьшее: {str(min_val)[:8]}$ - {min_exchange}\n" \
+           f"Наибольшее: {str(max_val)[:8]}$ - {max_exchange}\n" \
+           f"Разница: <b>{data['percent']}%</b>\n" \
+           "\n" \
+           f"Объём торгов: {str(volume)}\n"
 
     return text

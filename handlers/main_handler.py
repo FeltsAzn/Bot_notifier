@@ -1,12 +1,13 @@
+import os
 from aiogram import types
 from loader import dp
 from handlers.exception_handler import exception_hand
-from handlers.middleware import async_update_admin_list,\
-    create_new_user, \
-    async_update_users_list, \
-    update_users_list_sync, \
-    update_users_list_async
-import os
+from handlers.middleware import (async_update_admin_list,
+                                 create_new_user,
+                                 async_update_users_list,
+                                 update_users_list_sync,
+                                 update_users_list_async)
+
 
 """
 Файл main_handler.py - стартовое меню бота. Осуществляет авторизацию, либо регистрацию пользователя.
@@ -16,14 +17,14 @@ import os
 multiproc_config = os.getenv("MULTIPROCESSORING")
 
 
-@dp.message_handler(commands=['start', 'home'])
+@dp.message_handler(commands=["start", "home"])
 async def start(message: types.Message) -> None:
     """Стартовое окно"""
 
     admin_list = await async_update_admin_list()
     all_users = list(map(lambda user: user[0], await async_update_users_list()))
 
-    buttons = ['Список площадок', 'Настройки']
+    buttons = ["Список площадок", "Настройки"]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     if all_users and message.from_user.id in all_users:
@@ -39,7 +40,7 @@ async def user_in_users_list(admins: list,
                              buttons: list) -> None:
     """Обработчик существующиего пользователя"""
     if message.from_user.id in admins:
-        buttons = ['Список площадок', "Админка", 'Настройки']
+        buttons = ["Список площадок", "Админка", "Настройки"]
     keyboard.add(*buttons)
     await message.answer("Привет, я твой помощник в отслеживании котировок",
                          reply_markup=keyboard)
@@ -69,9 +70,9 @@ async def new_user(message: types.Message,
 async def start(message: types.Message) -> None:
 
     admin_list = await async_update_admin_list()
-    buttons = ['Список площадок', 'Настройки']
+    buttons = ["Список площадок", "Настройки"]
     if message.from_user.id in admin_list:
-        buttons = ['Список площадок', "Админка", 'Настройки']
+        buttons = ["Список площадок", "Админка", "Настройки"]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
     await message.answer("Возвращаюсь домой", reply_markup=keyboard)

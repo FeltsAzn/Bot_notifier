@@ -1,6 +1,8 @@
-from db.crud import Database
 import multiprocessing
+from db.crud import Database
 from alert_worker.alerts import update_user_cache
+
+
 
 
 instance_cache = {}

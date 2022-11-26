@@ -1,5 +1,6 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import math
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 
 """
 Файл config_for_filling.py - методы для заполнения списка бирж и контроль

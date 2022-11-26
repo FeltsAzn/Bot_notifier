@@ -1,6 +1,7 @@
+import math
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from handlers.middleware import sync_get_users_list, async_update_users_list
-import math
+
 
 """
 Файл config_for_filling.py - методы для заполнения административного списка пользователей и контроль

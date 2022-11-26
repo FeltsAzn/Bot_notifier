@@ -1,6 +1,7 @@
 from decimal import Decimal, DivisionUndefined
-from logger import logger
 from alert_worker.config_for_filter import START_PERCENT, UP_PERCENT, DOWN_PERCENT
+from logger import logger
+
 
 """
 Файл handler_of_currency.py - главный сортировщик валют.
@@ -59,8 +60,5 @@ def quote_difference(*args) -> dict:
     except DivisionUndefined:
         logger.info(f"Exception DivisionUndefined. Decimal division min num: {Decimal(min_num[0])}"
                     f" | max num: {Decimal(max_num[0])} ")
-        result = None
-    except Exception as ex:
-        logger.warning(f"Exception {ex}")
         result = None
     return {"min": min_num, "max": max_num, "percent": result}

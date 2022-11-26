@@ -1,7 +1,7 @@
+import os
 from aiogram import types
 from loader import bot
-from dotenv import load_dotenv
-import os
+
 
 """
 Файл exception_handler.py - при возникновении ошибки в меню управления (удаление или получение информации)

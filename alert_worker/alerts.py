@@ -1,18 +1,17 @@
-import multiprocessing
 import time
 import aiohttp
 import asyncio
 import os
-from dotenv import load_dotenv
 from emoji import emojize
-from aiogram.utils import markdown
-from loader import bot
+from aiogram.utils import markdown, exceptions
 from db.crud import Database
+from loader import bot
+from logger import logger
 from alert_worker import http_req
 from alert_worker.handler_of_currency import counter_of_currencies
 from alert_worker.template_fabric import content_creator
 from alert_worker.alerts_exception_handler import exception_handler
-from logger import logger
+
 
 """
 Файл alerts.py предназначен для уведомления позльзователей о изменении цен на бирже.
@@ -26,8 +25,11 @@ multiproc_config = os.getenv("MULTIPROCESSORING")
 USER_CACHE = []
 
 
-async def update_user_cache(instance: multiprocessing.Value or bool) -> None:
-    """Обновление кэша при старте приложения или при добавлении нового пользователя"""
+async def update_user_cache(instance) -> None:
+    """
+    :param instance: multiprocessing.Value | bool
+    Обновление кэша при старте приложения или при добавлении нового пользователя
+    """
     global USER_CACHE
     if multiproc_config.upper() == "ON":
         """Мультипроцессорное обновление кэша"""
@@ -41,8 +43,11 @@ async def update_user_cache(instance: multiprocessing.Value or bool) -> None:
         logger.info("CACHE HAS BEEN UPDATED")
 
 
-async def background_alerts(instance: multiprocessing.Value or bool) -> None:
-    """Бесконечный цикл с запросами к биржам и отправке уведомлений пользователям"""
+async def background_alerts(instance) -> None:
+    """
+    :param instance: multiprocessing.Value | bool
+    Бесконечный цикл с запросами к биржам и отправке уведомлений пользователям
+    """
     await update_user_cache(instance)
     try:
         while True:
@@ -65,19 +70,19 @@ async def background_alerts(instance: multiprocessing.Value or bool) -> None:
                         if state == "ACTIVATED":
                             try:
                                 await bot.send_message(chat_id=tg_id,
-                                                       text=emojize(markdown.text(*content), language='alias'),
-                                                       parse_mode='html')
-                            except Exception as ex:
+                                                       text=emojize(markdown.text(*content), language="alias"),
+                                                       parse_mode="html")
+                            except exceptions.BotBlocked as ex:
                                 logger.warning(f"Message didn't send to user {tg_id}. {ex}")
             else:
                 logger.error("FastAPI service is dropped.")
 
-    except Exception as ex:
+    except (TypeError, AttributeError) as ex:
         logger.exception(f"Exception on alerts loop: {ex}")
         for tg_id, state in USER_CACHE:
             if state == "ACTIVATED":
                 await exception_handler(tg_id, bot)
-            raise ex
+            raise SystemError
 
 
 async def data_collector() -> tuple:
@@ -93,5 +98,5 @@ async def data_collector() -> tuple:
         for exchange in list_of_exchanges:
             request = http_req.get_exchange_data(session, exchange)
             tasks.append(request)
-        all_data = await asyncio.gather(*tasks, return_exceptions=True)
+        all_data = await asyncio.gather(*tasks)
     return all_data
