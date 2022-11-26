@@ -1,25 +1,17 @@
+import os
 from aiogram import types
 from loader import dp
 from aiogram.dispatcher.filters import Text
-from handlers.middleware import update_users_list_sync,\
-    update_users_list_async, \
-    delete_user_from_tg_id, \
-    notify_activate, \
-    activate_notify, \
-    deactivate_notify
 from handlers.exception_handler import exception_hand
+from handlers.middleware import update_users_list_sync, update_users_list_async, delete_user_from_tg_id, \
+    notify_activate, activate_notify, deactivate_notify
 
-import os
-from dotenv import load_dotenv
 
 """
 Файл settiongs_handler.py предназначен для реализации функционала бота "настройки" пользователя
 основные кнопки "Выключение/включение уведомлений", "Удаление аккаунта" и "Домой". 
 """
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
 multiproc_config = os.getenv("MULTIPROCESSORING")
 
 

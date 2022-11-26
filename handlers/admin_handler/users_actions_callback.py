@@ -12,9 +12,6 @@ from handlers.middleware import get_user_from_tg_id, delete_user_from_tg_id
 Основные кнопки - инлайн, реализуется вывод информации о пользователе и возможность его удаления из БД . 
 """
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
 super_admin_id = os.getenv("SUPER_ADMIN_ID")
 
 

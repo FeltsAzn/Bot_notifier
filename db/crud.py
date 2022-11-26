@@ -12,9 +12,6 @@ import os
 Файл crud.py - методы для создания, чтения, удаления и обновления полей в бд
 """
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
 database_url_async = os.getenv("DATABASE_URL_ASYNC")
 database_url = os.getenv("DATABASE_URL")
 

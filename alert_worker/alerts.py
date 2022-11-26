@@ -20,9 +20,6 @@ from logger import logger
 """
 
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
 service_url = os.getenv("SERVICE_URL")
 multiproc_config = os.getenv("MULTIPROCESSORING")
 

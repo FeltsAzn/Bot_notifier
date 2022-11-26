@@ -11,11 +11,6 @@ from dotenv import load_dotenv
 from logger import logger
 import handlers
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
-multiproc_config = os.getenv("MULTIPROCESSORING")
-
 
 def start_app_on_one_thread():
     try:
@@ -71,6 +66,11 @@ def start_alerts_proc2(instance):
 
 
 if __name__ == '__main__':
+    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+    if os.path.exists(dotenv_path):
+        load_dotenv(dotenv_path)
+    multiproc_config = os.getenv("MULTIPROCESSORING")
+
     if multiproc_config.upper() == "ON":
         logger.info("Start on multiprocessing mod")
         multiproc_app()

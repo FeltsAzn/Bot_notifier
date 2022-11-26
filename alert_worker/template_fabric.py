@@ -39,13 +39,17 @@ def content_creator(data: dict[str: tuple[dict, str]]) -> list:
 
 def text_template(currency: str, data: dict) -> str:
     """Шаблон повышения позиции котировки"""
-    minimum, maximum, percent = data["min"], data["max"], data["percent"]
-    min_val, volume, min_coin = minimum["buy_price"], minimum["volume"], minimum["exchange"]
-    max_val, max_coin = maximum["buy_price"], maximum["exchange"]
+    min_val = data["min"]["buy_price"]
+    volume = data["min"]["volume"]
+    min_exchange = data["min"]["exchange"]
+
+    max_val = data["max"]["buy_price"]
+    max_exchange = data["max"]["exchange"]
+
     text = f' <i>{currency}</i>:\n' \
-           f'Наименьшее: {str(min_val)[:8]}$ - {min_coin}\n' \
-           f'Наибольшее: {str(max_val)[:8]}$ - {max_coin}\n' \
-           f'Разница: <b>{percent}%</b>\n' \
+           f'Наименьшее: {str(min_val)[:8]}$ - {min_exchange}\n' \
+           f'Наибольшее: {str(max_val)[:8]}$ - {max_exchange}\n' \
+           f'Разница: <b>{data["percent"]}%</b>\n' \
            '\n' \
            f'Объём торгов: {str(volume)}\n'
 
