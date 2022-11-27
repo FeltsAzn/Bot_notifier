@@ -13,7 +13,8 @@ async def get_exchange_data(session: aiohttp.ClientSession, service: str) -> dic
             exchange_data = await exchange_raw_data.json()
     except (asyncio.exceptions.TimeoutError,
             aiohttp.ClientConnectorError,
-            aiohttp.ClientOSError) as ex:
+            aiohttp.ClientOSError,
+            OSError) as ex:
         logger.warning(f"Http error fastapi endpoint '{service}' not responding. Exception: {ex}")
         return {}
     if "error" in exchange_data.keys():

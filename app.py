@@ -2,6 +2,7 @@ import time
 import asyncio
 import os
 import sys
+from aiogram.utils.exceptions import NetworkError
 import multiprocessing
 from dotenv import load_dotenv
 from aiogram import executor
@@ -16,7 +17,7 @@ def start_app_on_one_thread():
     try:
         dp.loop.create_task(alerts.background_alerts(True))
         executor.start_polling(dp, skip_updates=True)
-    except ValueError as ex:
+    except (SystemExit, ) as ex:
         logger.exception("Stop one thread app."
                          f"exception type: {type(ex)} exception: {ex}")
         bot.close()
@@ -49,7 +50,7 @@ def start_bot_proc1(instance):
     """Запуск бота в процессе 1"""
     try:
         executor.start_polling(dp, skip_updates=True, on_startup=update_users_list_sync(instance))
-    except Exception as ex:
+    except NetworkError as ex:
         logger.exception("Error process 1 (bot) "
                          f"exception type: {type(ex)} exception: {ex}")
         raise SystemExit
