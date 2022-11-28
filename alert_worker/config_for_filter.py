@@ -6,6 +6,6 @@ from decimal import Decimal
 """
 
 HIGH_PERCENT = Decimal(10)
-START_PERCENT = Decimal(2)
-UP_PERCENT = Decimal(1)
-DOWN_PERCENT = Decimal(1)
+START_PERCENT = Decimal(3)# 5
+UP_PERCENT = Decimal(1) # 5
+DOWN_PERCENT = Decimal(1.5) # 4

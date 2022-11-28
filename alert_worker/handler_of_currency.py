@@ -1,7 +1,3 @@
-import decimal
-import json
-from datetime import datetime
-import time
 from alert_worker.handler_for_volumes import VOLUME_CACHE, dynamic_volumes
 from decimal import Decimal, DivisionUndefined
 from alert_worker.config_for_filter import START_PERCENT, UP_PERCENT, DOWN_PERCENT
@@ -13,7 +9,6 @@ from logger import logger
 """
 
 PERCENT_CACHE = {}
-
 
 
 def counter_of_currencies(*args):

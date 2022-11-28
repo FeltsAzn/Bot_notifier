@@ -1,6 +1,7 @@
 import aiohttp
 from logger import logger
 import asyncio
+from aiohttp.client_exceptions import ContentTypeError
 """
 Файл http_req.py - запросы к endpoint'ам приложения на FastAPI
 """
@@ -14,6 +15,7 @@ async def get_exchange_data(session: aiohttp.ClientSession, service: str) -> dic
     except (asyncio.exceptions.TimeoutError,
             aiohttp.ClientConnectorError,
             aiohttp.ClientOSError,
+            ContentTypeError,
             OSError) as ex:
         logger.warning(f"Http error fastapi endpoint '{service}' not responding. Exception: {ex}")
         return {}

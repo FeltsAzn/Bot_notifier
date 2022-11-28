@@ -51,16 +51,12 @@ async def background_alerts(instance) -> None:
     await update_user_cache(instance)
     try:
         while True:
-            t1 = time.time()
 
             if not isinstance(instance, bool):
                 # проверка на мультипроцессеринговый режим
                 await update_user_cache(instance)
             raw_data = await data_collector()
-            if time.time() - t1 < 1:
-                # проверк на случай когда сервер fastapi не будет отвечать
-                logger.critical("FastAPI server is dropped.")
-                time.sleep(10)
+
             if raw_data:
                 data = counter_of_currencies(*raw_data)
                 content: list = content_creator(data)
@@ -76,6 +72,7 @@ async def background_alerts(instance) -> None:
                                 logger.warning(f"Message didn't send to user {tg_id}. {ex}")
             else:
                 logger.error("FastAPI service is dropped.")
+                time.sleep(10)
 
     except (TypeError, AttributeError) as ex:
         logger.exception(f"Exception on alerts loop: {ex}")
