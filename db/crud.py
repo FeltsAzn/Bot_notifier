@@ -1,4 +1,4 @@
-from sqlalchemy.exc import IntegrityError, OperationalError
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, select
@@ -88,7 +88,7 @@ class Database:
                 except Exception as ex:
                     logger.exception(f"Exception in asynchronous get user on db with tg id: {tg_id}\n"
                                      f"exception type {type(ex)} - {ex}")
-                    return False
+                    return ()
         return False
 
     async def async_get_users(self) -> list[tuple] | bool:
@@ -105,7 +105,7 @@ class Database:
                 except Exception as ex:
                     logger.exception(f"Exception in asynchronous get all users on db\n"
                                      f"exception type {type(ex)} - {ex}")
-                    return False
+                    return []
         return False
 
     async def active_notification(self, tg_id) -> bool:

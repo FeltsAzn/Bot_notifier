@@ -10,6 +10,7 @@ from handlers.middleware import sync_get_users_list, async_update_users_list
 
 
 elements_counter = 0
+
 users_list: list = sync_get_users_list()
 last_page = math.ceil(len(users_list) / 6)
 

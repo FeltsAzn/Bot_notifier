@@ -1,6 +1,5 @@
 import os
-import asyncio
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, Integer, String
 from dotenv import load_dotenv
@@ -10,8 +9,11 @@ from dotenv import load_dotenv
 Файл create_database.py - создание новой базы данных для приложения бота, если будет удалена активная база
 """
 
-
+dotenv_path = os.path.join(os.path.dirname(__file__), "../.env")
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
 Base = declarative_base()
+database_url = os.getenv("DATABASE_URL")
 
 
 class User(Base):
@@ -24,16 +26,13 @@ class User(Base):
     access = Column(String, default="USER")
 
 
-async def create():
-    dotenv_path = os.path.join(os.path.dirname(__file__), "../.env")
-    if os.path.exists(dotenv_path):
-        load_dotenv(dotenv_path)
-    database_url = os.getenv("DATABASE_URL_ASYNC")
-    print(database_url)
-
-    eng = create_async_engine(database_url, future=True, echo=True)
-    async with eng.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+def create_new_database():
+    logs_path = os.path.join(os.path.dirname(__file__), "info.db")
+    if not os.path.exists(logs_path):
+        eng = create_engine(database_url, future=True, echo=True)
+        Base.metadata.create_all(eng)
+    else:
+        print("Database created already")
 
 
-asyncio.run(create())
+create_new_database()

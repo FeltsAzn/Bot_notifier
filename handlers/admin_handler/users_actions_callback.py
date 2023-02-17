@@ -35,7 +35,7 @@ async def list_of_users(call: CallbackQuery) -> None:
 
 @dp.callback_query_handler(text_contains=":user:info:call")
 async def user_info(call: CallbackQuery) -> None:
-    """получение информации по конкретному пользователю"""
+    """Получение информации по конкретному пользователю"""
     user_tg_id = int(call.data.split(':')[0])
     _, username, state, status = await get_user_from_tg_id(user_tg_id)
     keyboard = InlineKeyboardMarkup(row_width=1)

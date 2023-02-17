@@ -22,11 +22,11 @@ def counter_of_currencies(*args):
     ]
     data = {}
     for coin in coins:
-        """Получаем максимальное значение биржи по конкретной монете"""
+        """Получаем максимальное значение биржи (количества коинов) по конкретной монете"""
         max_size_exch = max(tuple(map(lambda x: x.get(coin, {}), args)), key=lambda x: len(x))
 
         for currency, _ in max_size_exch.items():
-            """Находим конретные коины из всех бирж"""
+            """Находим конкретные коины из всех бирж"""
 
             currencies = tuple(map(lambda x: x.get(coin, {}).get(currency, {}), args))
             dynamic_volumes(currency, currencies)
