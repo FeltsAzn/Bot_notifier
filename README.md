@@ -167,3 +167,9 @@ Filtering information by currencies is done through the `config.py` file in the 
 Where constants are exposed:
 - High percentage (highlighted in notifications)
 - Starting percentage at which otp starts
+
+send notifications to users
+- The minimum step up when the quotes gap increases
+- The minimum step down when the quotes gap increases
+
+The cycle time for information processing from stock exchanges is ~3 seconds.
