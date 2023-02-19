@@ -66,16 +66,20 @@ class VolumeCache:
         try:
             data_block["diff"] = str(100 - old_volume / new_volume * 100)[:5]
         except (ValueError, ZeroDivisionError):
-            logger.info(f"Currency {self.currency} is not for sell on {exchange_name}. Volume is zero\n"
-                        f"Old volume = {old_volume}, new volume {new_volume}")
-            data_block["diff"] = 0.00
+            if old_volume == 0 and new_volume == 0:
+                data_block["diff"] = 0.00
+            else:
+                logger.info(f"Currency {self.currency} is not for sell on {exchange_name}. Volume is zero\n"
+                            f"Old volume = {old_volume}, new volume {new_volume}")
+                data_block["diff"] = 0.00
+
         data_block["vol"] = volume_on_exchange
         data_block["time"] = now_time
         return data_block
 
     @staticmethod
     def __create_template(volume: str) -> dict:
-        """Функция для создания кеша, если котировки и биржи нет в кэше"""
+        """Func for creating the volume template"""
         time_start = time.time()
         template = {
             "5_min": {

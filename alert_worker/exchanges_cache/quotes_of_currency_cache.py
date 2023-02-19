@@ -24,7 +24,7 @@ class CurrencyCache:
             "DAI",
             "BTC"
         ]
-        data = {}
+        collection_data_for_sending = {}
 
         with self.__CACHE_CONN as cache:
             for coin in coins:
@@ -34,12 +34,16 @@ class CurrencyCache:
                 for currency, _ in max_size_of_exchange.items():
                     """Находим конкретные коины из всех бирж"""
 
-                    currencies = tuple(map(lambda x: x.get(coin, {}).get(currency, {}), args))
-                    volume = VolumeCache(currency, currencies)
-                    volume.dynamic_volumes()
-                    result = self.__quote_difference(*currencies)
-                    data = self.__filling_data_to_send(result, cache, currency, volume, data)
-            return data
+                    currency_on_exchanges = tuple(map(lambda x: x.get(coin, {}).get(currency, {}), args))
+                    volume_of_currency = VolumeCache(currency, currency_on_exchanges)
+                    volume_of_currency.dynamic_volumes()
+                    result_of_quote_difference = self.__quote_difference(*currency_on_exchanges)
+                    collection_data_for_sending = self.__filling_data_to_send(result_of_quote_difference,
+                                                       cache,
+                                                       currency,
+                                                       volume_of_currency,
+                                                       collection_data_for_sending)
+            return collection_data_for_sending
 
     @staticmethod
     def __filling_data_to_send(result: dict, cache: RedisCache, currency: str, volume: VolumeCache, data: dict):
@@ -47,7 +51,9 @@ class CurrencyCache:
         exchange: str = result["min"]["exchange"]
 
         if new_percent is not None:
-            if new_percent >= START_PERCENT:
+            currency_volume = volume.get_currency_volume(f"{currency}|{exchange}")
+            if new_percent >= START_PERCENT and float(currency_volume["5_min"]["vol"]):
+
 
                 if not cache.check_key_in_redis(currency):
                     cache.create_key_and_value(currency, new_percent)
@@ -56,7 +62,7 @@ class CurrencyCache:
                     data[currency] = {
                         "price": result,
                         "state": "up",
-                        "vol": volume.get_currency_volume(f"{currency}|{exchange}")
+                        "vol": currency_volume
                     }
                     cache.update_exist_key(currency, new_percent)
 
@@ -64,7 +70,7 @@ class CurrencyCache:
                     data[currency] = {
                         "price": result,
                         "state": "down",
-                        "vol": volume.get_currency_volume(f"{currency}|{exchange}")
+                        "vol": currency_volume
                     }
                     cache.update_exist_key(currency, new_percent)
         return data

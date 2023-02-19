@@ -21,6 +21,7 @@ from alert_worker.exchanges_cache.quotes_of_currency_cache import CurrencyCache
 
 service_url = os.getenv("SERVICE_URL")
 multiproc_config = os.getenv("MULTIPROCESSORING")
+admin = int(os.getenv("SUPER_ADMIN_ID"))
 
 USER_CACHE = []
 
@@ -59,22 +60,12 @@ async def background_alerts(instance) -> None:
 
             if time.time() - t1 < 1:
                 logger.error("FastAPI service is dropped.")
-                await bot.send_message()
+                await bot.send_message(chat_id=admin, text="FastAPI service is dropped.")
                 time.sleep(10)
 
             data = CurrencyCache().counter_of_currencies(*raw_data)
             content: list = content_creator(data)
-
-
-            if content != [] and USER_CACHE != []:
-                for tg_id, state in USER_CACHE:
-                    if state == "ACTIVATED":
-                        try:
-                            await bot.send_message(chat_id=tg_id,
-                                                   text=emojize(markdown.text(*content), language="alias"),
-                                                   parse_mode="html")
-                        except exceptions.BotBlocked as ex:
-                            logger.warning(f"Message didn't send to user {tg_id}. {ex}")
+            await send_message(content)
 
     except (TypeError, AttributeError) as ex:
         logger.exception(f"Exception on alerts loop: {ex}")
@@ -83,6 +74,19 @@ async def background_alerts(instance) -> None:
                 error = UnexpectedException(tg_id, bot)
                 await error.exception_handler()
             raise SystemError
+
+
+async def send_message(content: list):
+    if content != [] and USER_CACHE != []:
+        for tg_id, state in USER_CACHE:
+            if state == "ACTIVATED":
+                try:
+                    await bot.send_message(chat_id=tg_id,
+                                           text=emojize(markdown.text(*content), language="alias"),
+                                           parse_mode="html")
+                except exceptions.BotBlocked as ex:
+                    logger.warning(f"Message didn't send to user {tg_id}. {ex}")
+                    await bot.send_message(chat_id=admin, text=f"Message not sent to user {tg_id}. He is blocked bot")
 
 
 async def data_collector() -> tuple:
