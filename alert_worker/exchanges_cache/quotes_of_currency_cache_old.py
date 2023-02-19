@@ -1,17 +1,18 @@
-from alert_worker.handler_for_volumes import VOLUME_CACHE, dynamic_volumes
+from alert_worker.exchanges_cache.volume_of_trading_cache_old import VOLUME_CACHE, dynamic_volumes
 from decimal import Decimal, DivisionUndefined
 from alert_worker.config_for_filter import START_PERCENT, UP_PERCENT, DOWN_PERCENT
 from logger import logger
 
+
 """
-Файл handler_of_currency.py - главный сортировщик валют.
+Файл quotes_of_currency_cache_old.py - главный сортировщик валют.
 Вычисляет повышение и понижение значений котировок на биржах.
 """
 
 PERCENT_CACHE = {}
 
 
-def counter_of_currencies(*args):
+def counter_of_currencies(*args) -> dict:
     """Обработчик отсеивания не рентабельных данных"""
     coins = [
         "USDT",

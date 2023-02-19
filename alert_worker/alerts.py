@@ -8,9 +8,9 @@ from db.crud import Database
 from loader import bot
 from logger import logger
 from alert_worker import http_req
-from alert_worker.handler_of_currency import counter_of_currencies
 from alert_worker.template_fabric import content_creator
-from alert_worker.alerts_exception_handler import exception_handler
+from alert_worker.alerts_exception_handler import UnexpectedException
+from alert_worker.exchanges_cache.quotes_of_currency_cache import CurrencyCache
 
 
 """
@@ -28,17 +28,17 @@ USER_CACHE = []
 async def update_user_cache(instance) -> None:
     """
     :param instance: multiprocessing.Value | bool
-    Обновление кэша при старте приложения или при добавлении нового пользователя
+    Updating cache after app launching or after adding new user
     """
     global USER_CACHE
     if multiproc_config.upper() == "ON":
-        """Мультипроцессорное обновление кэша"""
+        """Updating cache in multiprocess mod"""
         if instance.value:
             logger.info("CACHE HAS BEEN UPDATED")
             instance.value = False
             USER_CACHE = await Database().notifications_state()
     else:
-        """Однопоточное обновление кэша"""
+        """Updating cache in one thread mod"""
         USER_CACHE = await Database().notifications_state()
         logger.info("CACHE HAS BEEN UPDATED")
 
@@ -46,23 +46,26 @@ async def update_user_cache(instance) -> None:
 async def background_alerts(instance) -> None:
     """
     :param instance: multiprocessing.Value | bool
-    Бесконечный цикл с запросами к биржам и отправке уведомлений пользователям
+    Mainloop with requests to backend and sending notifications to telegram users
     """
     await update_user_cache(instance)
     try:
         while True:
             t1 = time.time()
             if not isinstance(instance, bool):
-                # проверка на мультипроцессеринговый режим
+                # verification on multiprocess mod
                 await update_user_cache(instance)
             raw_data = await data_collector()
 
             if time.time() - t1 < 1:
                 logger.error("FastAPI service is dropped.")
+                await bot.send_message()
                 time.sleep(10)
 
-            data = counter_of_currencies(*raw_data)
+            data = CurrencyCache().counter_of_currencies_redis(*raw_data)
             content: list = content_creator(data)
+
+
             if content != [] and USER_CACHE != []:
                 for tg_id, state in USER_CACHE:
                     if state == "ACTIVATED":
@@ -77,7 +80,8 @@ async def background_alerts(instance) -> None:
         logger.exception(f"Exception on alerts loop: {ex}")
         for tg_id, state in USER_CACHE:
             if state == "ACTIVATED":
-                await exception_handler(tg_id, bot)
+                error = UnexpectedException(tg_id, bot)
+                await error.exception_handler()
             raise SystemError
 
 
