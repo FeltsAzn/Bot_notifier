@@ -60,18 +60,27 @@ class VolumeCache:
             exchange_name: str,
             volume_on_exchange: str,
     ) -> dict:
-        """Обновление информации по объёму в кэше"""
+        """Update information about a cache of volumes """
         old_volume = float(data_block["vol"])
         new_volume = float(volume_on_exchange)
         try:
-            data_block["diff"] = str(100 - old_volume / new_volume * 100)[:5]
-        except (ValueError, ZeroDivisionError):
-            if old_volume == 0 and new_volume == 0:
-                data_block["diff"] = 0.00
+            volume_difference = new_volume / old_volume * 100 - 100
+            data_block["diff"] = str(volume_difference)[:5]
+            if volume_difference > 0:
+                data_block["state"] = "up"
+            elif volume_difference < 0:
+                data_block["state"] = "down"
+            else:
+                data_block["state"] = "none"
+        except ZeroDivisionError:
+            if new_volume != 0:
+                data_block["diff"] = str(100)
+                data_block["state"] = "up"
             else:
                 logger.info(f"Currency {self.currency} is not for sell on {exchange_name}. Volume is zero\n"
                             f"Old volume = {old_volume}, new volume {new_volume}")
-                data_block["diff"] = 0.00
+                data_block["diff"] = str(0)
+                data_block["state"] = "none"
 
         data_block["vol"] = volume_on_exchange
         data_block["time"] = now_time
@@ -85,27 +94,32 @@ class VolumeCache:
             "5_min": {
                 "time": time_start,
                 "vol": volume,
-                "diff": 0.00
+                "diff": 0.00,
+                "state": "none"
             },
             "30_min": {
                 "time": time_start,
                 "vol": volume,
-                "diff": 0.00
+                "diff": 0.00,
+                "state": "none"
             },
             "1_hour": {
                 "time": time_start,
                 "vol": volume,
-                "diff": 0.00
+                "diff": 0.00,
+                "state": "none"
             },
             "4_hour": {
                 "time": time_start,
                 "vol": volume,
-                "diff": 0.00
+                "diff": 0.00,
+                "state": "none"
             },
             "1_day": {
                 "time": time_start,
                 "vol": volume,
-                "diff": 0.00
+                "diff": 0.00,
+                "state": "none"
             }
         }
         return template

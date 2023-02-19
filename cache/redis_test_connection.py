@@ -44,7 +44,7 @@ port=6379
 db=0
 pool = redis.ConnectionPool(host=host, port=port, db=db)
 redis = redis.Redis(connection_pool=pool)
-redis.flushall()
+
 
 with cache1 as redis_session_1:
     print(type(redis_session_1.get_value("BTC/USDT|huobi")), redis_session_1.get_value("BTC/USDT|huobi"))
@@ -54,4 +54,4 @@ with cache2 as redis_session_2:
 
 
 
-
+redis.flushall()

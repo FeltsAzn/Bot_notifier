@@ -79,34 +79,36 @@ def volume_percent(container: dict, vol: dict) -> list[str]:
 
     for interval in time_intervals:
         volume_diff: str = vol[interval]["diff"]
+        state_of_volume: str = vol[interval]["state"]
 
         if interval == "5_min":
-            volume_segment += template_5m(volume_diff, up_emoji, down_emoji, zero_emoji)
+            volume_segment += template_5m(volume_diff, state_of_volume, up_emoji, down_emoji, zero_emoji)
 
         elif interval == "30_min":
-            volume_segment += template_30m(volume_diff, up_emoji, down_emoji, zero_emoji)
+            volume_segment += template_30m(volume_diff, state_of_volume, up_emoji, down_emoji, zero_emoji)
 
         elif interval == "1_hour":
-            volume_segment += template_1h(volume_diff, up_emoji, down_emoji, zero_emoji)
+            volume_segment += template_1h(volume_diff, state_of_volume, up_emoji, down_emoji, zero_emoji)
 
         elif interval == "4_hour":
-            volume_segment += template_4h(volume_diff, up_emoji, down_emoji, zero_emoji)
+            volume_segment += template_4h(volume_diff, state_of_volume, up_emoji, down_emoji, zero_emoji)
 
         elif interval == "1_day":
-            volume_segment += template_1d(volume_diff, up_emoji, down_emoji, zero_emoji)
+            volume_segment += template_1d(volume_diff, state_of_volume, up_emoji, down_emoji, zero_emoji)
     return volume_segment
 
 
 def template_5m(
         vol: str,
+        state_of_volume: str,
         up_emoji: str,
         down_emoji: str,
         zero_emoji: str
 ) -> list[str]:
     """Шаблон для 5-ти минутного кэша объёма"""
-    if Decimal(vol) > 0:
+    if state_of_volume == "up":
         text_segment = [up_emoji, f"<i>5м</i>:    {vol}%\n"]
-    elif Decimal(vol) < 0:
+    elif state_of_volume == "down":
         text_segment = [down_emoji, f"<i>5м</i>:    {vol[1:]}%\n"]
     else:
         text_segment = [zero_emoji, f"<i>5м</i>:    {vol}%\n"]
@@ -115,14 +117,15 @@ def template_5m(
 
 def template_30m(
         vol: str,
+        state_of_volume: str,
         up_emoji: str,
         down_emoji: str,
         zero_emoji: str
 ) -> list[str]:
     """Шаблон для 30-ти минутного кэша объёма"""
-    if Decimal(vol) > 0:
+    if state_of_volume == "up":
         text_segment = [up_emoji, f"<i>30м</i>:  {vol}%\n"]
-    elif Decimal(vol) < 0:
+    elif state_of_volume == "down":
         text_segment = [down_emoji, f"<i>30м</i>:  {vol[1:]}%\n"]
     else:
         text_segment = [zero_emoji, f"<i>30м</i>:  {vol}%\n"]
@@ -131,14 +134,15 @@ def template_30m(
 
 def template_1h(
         vol: str,
+        state_of_volume: str,
         up_emoji: str,
         down_emoji: str,
         zero_emoji: str
 ) -> list[str]:
     """Шаблон для часового кэша объёма"""
-    if Decimal(vol) > 0:
+    if state_of_volume == "up":
         text_segment = [up_emoji, f"<i>1ч</i>:     {vol}%\n"]
-    elif Decimal(vol) < 0:
+    elif state_of_volume == "down":
         text_segment = [down_emoji, f"<i>1ч</i>:     {vol[1:]}%\n"]
     else:
         text_segment = [zero_emoji, f"<i>1ч</i>:     {vol}%\n"]
@@ -147,14 +151,15 @@ def template_1h(
 
 def template_4h(
         vol: str,
+        state_of_volume: str,
         up_emoji: str,
         down_emoji: str,
         zero_emoji: str
 ) -> list[str]:
     """Шаблон для 4-х часового кэша объёма"""
-    if Decimal(vol) > 0:
+    if state_of_volume == "up":
         text_segment = [up_emoji, f"<i>4ч</i>:     {vol}%\n"]
-    elif Decimal(vol) < 0:
+    elif state_of_volume == "down":
         text_segment = [down_emoji, f"<i>4ч</i>:     {vol[1:]}%\n"]
     else:
         text_segment = [zero_emoji, f"<i>4ч</i>:     {vol}%\n"]
@@ -163,14 +168,15 @@ def template_4h(
 
 def template_1d(
         vol: str,
+        state_of_volume: str,
         up_emoji: str,
         down_emoji: str,
         zero_emoji: str
 ) -> list[str]:
     """Шаблон для дневного кэша объёма"""
-    if Decimal(vol) > 0:
+    if state_of_volume == "up":
         text_segment = [up_emoji, f"<i>день</i>: {vol}%\n"]
-    elif Decimal(vol) < 0:
+    elif state_of_volume == "down":
         text_segment = [down_emoji, f"<i>день</i>: {vol[1:]}%\n"]
     else:
         text_segment = [zero_emoji, f"<i>день</i>: {vol}%\n\n"]

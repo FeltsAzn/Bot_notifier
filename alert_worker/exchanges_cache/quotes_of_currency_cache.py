@@ -48,12 +48,11 @@ class CurrencyCache:
     @staticmethod
     def __filling_data_to_send(result: dict, cache: RedisCache, currency: str, volume: VolumeCache, data: dict):
         new_percent: float = result["percent"]
-        exchange: str = result["min"]["exchange"]
+        exchange_name: str = result["min"]["exchange"]
 
         if new_percent is not None:
-            currency_volume = volume.get_currency_volume(f"{currency}|{exchange}")
+            currency_volume: dict = volume.get_currency_volume(f"{currency}|{exchange_name}")
             if new_percent >= START_PERCENT and float(currency_volume["5_min"]["vol"]):
-
 
                 if not cache.check_key_in_redis(currency):
                     cache.create_key_and_value(currency, new_percent)
