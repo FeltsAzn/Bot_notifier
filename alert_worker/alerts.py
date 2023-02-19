@@ -62,7 +62,7 @@ async def background_alerts(instance) -> None:
                 await bot.send_message()
                 time.sleep(10)
 
-            data = CurrencyCache().counter_of_currencies_redis(*raw_data)
+            data = CurrencyCache().counter_of_currencies(*raw_data)
             content: list = content_creator(data)
 
 

@@ -2,6 +2,11 @@ import time
 from logger import logger
 from loader import VOLUME_CONNECTION
 
+"""
+volume_of_trading_cache.py file - Cache updater.
+Is uses for tracking a volumes of quotes on exchanges and update information about volumes.
+Using redis to saving a values
+"""
 
 class VolumeCache:
     __CACHE_CONN = VOLUME_CONNECTION
@@ -29,26 +34,26 @@ class VolumeCache:
 
         timer: dict = cache.get_value(key_of_currency)
         if now_time - timer["5_min"]["time"] > 300:
-            timer["5_min"] = self.__update_time(timer["5_min"], now_time, exchange, volume)
+            timer["5_min"] = self.__update_time_and_difference(timer["5_min"], now_time, exchange, volume)
             cache.update_exist_key(key_of_currency, timer)
 
         if now_time - timer["30_min"]["time"] > 1800:
-            timer["30_min"] = self.__update_time(timer["30_min"], now_time, exchange, volume)
+            timer["30_min"] = self.__update_time_and_difference(timer["30_min"], now_time, exchange, volume)
             cache.update_exist_key(key_of_currency, timer)
 
         if now_time - timer["1_hour"]["time"] > 3600:
-            timer["1_hour"] = self.__update_time(timer["1_hour"], now_time, exchange, volume)
+            timer["1_hour"] = self.__update_time_and_difference(timer["1_hour"], now_time, exchange, volume)
             cache.update_exist_key(key_of_currency, timer)
 
         if now_time - timer["4_hour"]["time"] > 14400:
-            timer["4_hour"] = self.__update_time(timer["4_hour"], now_time, exchange, volume)
+            timer["4_hour"] = self.__update_time_and_difference(timer["4_hour"], now_time, exchange, volume)
             cache.update_exist_key(key_of_currency, timer)
 
         if now_time - timer["1_day"]["time"] > 86400:
-            timer["1_day"] = self.__update_time(timer["1_day"], now_time, exchange, volume)
+            timer["1_day"] = self.__update_time_and_difference(timer["1_day"], now_time, exchange, volume)
             cache.update_exist_key(key_of_currency, timer)
 
-    def __update_time(
+    def __update_time_and_difference(
             self,
             data_block: dict,
             now_time: float,
@@ -61,7 +66,8 @@ class VolumeCache:
         try:
             data_block["diff"] = str(100 - old_volume / new_volume * 100)[:5]
         except (ValueError, ZeroDivisionError):
-            logger.info(f"Currency {self.currency} is not for sell on {exchange_name}. Volume is zero")
+            logger.info(f"Currency {self.currency} is not for sell on {exchange_name}. Volume is zero\n"
+                        f"Old volume = {old_volume}, new volume {new_volume}")
             data_block["diff"] = 0.00
         data_block["vol"] = volume_on_exchange
         data_block["time"] = now_time

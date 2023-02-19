@@ -6,15 +6,16 @@ from loader import CURRENCY_CONNECTION
 from cache.redis_logic import RedisCache
 
 """
-Файл quotes_of_currency_cache_old.py - главный сортировщик валют.
-Вычисляет повышение и понижение значений котировок на биржах.
+quotes_of_currency_cache.py File - The main currency sorter.
+Is computes upgrade and downgrade a values of quotes on exchanges.
+Using redis to saving a values.
 """
 
 
 class CurrencyCache:
     __CACHE_CONN = CURRENCY_CONNECTION
 
-    def counter_of_currencies_redis(self, *args) -> dict:
+    def counter_of_currencies(self, *args) -> dict:
         """Обработчик отсеивания не рентабельных данных"""
         coins = [
             "USDT",
@@ -37,11 +38,11 @@ class CurrencyCache:
                     volume = VolumeCache(currency, currencies)
                     volume.dynamic_volumes()
                     result = self.__quote_difference(*currencies)
-                    data = self.filling_data_to_send(result, cache, currency, volume, data)
+                    data = self.__filling_data_to_send(result, cache, currency, volume, data)
             return data
 
     @staticmethod
-    def filling_data_to_send(result: dict, cache: RedisCache, currency: str, volume: VolumeCache, data: dict):
+    def __filling_data_to_send(result: dict, cache: RedisCache, currency: str, volume: VolumeCache, data: dict):
         new_percent: float = result["percent"]
         exchange: str = result["min"]["exchange"]
 
