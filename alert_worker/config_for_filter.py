@@ -5,7 +5,7 @@ from decimal import Decimal
 стартовое значение и шаг перехода.
 """
 
-HIGH_PERCENT = Decimal(10)
-START_PERCENT = Decimal(3)# 5
-UP_PERCENT = Decimal(1.5) # 5
-DOWN_PERCENT = Decimal(1) # 4
+HIGH_PERCENT = Decimal(10) # 10
+START_PERCENT = Decimal(5)# 5
+UP_PERCENT = Decimal(5) # 5
+DOWN_PERCENT = Decimal(4) # 4

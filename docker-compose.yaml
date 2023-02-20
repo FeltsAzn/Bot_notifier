@@ -16,3 +16,12 @@ services:
       dockerfile: dockerfile
     depends_on:
       - fastapi
+      - redis
+
+  redis:
+    image: redis:latest
+    container_name: redis_server
+    environment:
+      - REDIS_PASSWORD=
+    volumes:
+      - '/path/to/redis-persistence:/bitnami'
