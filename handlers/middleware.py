@@ -8,13 +8,13 @@ from alert_worker.alerts import update_user_cache
 instance_cache = {}
 
 """
-Файл middleware.py предназначен для сокрытия обращений к бд и фильтрации данных при получении ответа
-от бд для читаемости кода.
+The middleware.py file is designed to hide database calls and filter data when a response is received.
+from the database for readability of the code.
 """
 
 
 def update_users_list_sync(instance: multiprocessing.Value = None) -> None:
-    """Обновление списка пользователей для списка оповещений в мультипроцессорном режиме"""
+    """Update list of users for notification list in multiprocess mod"""
     global instance_cache
     if instance is not None:
         instance.value = True
@@ -25,17 +25,17 @@ def update_users_list_sync(instance: multiprocessing.Value = None) -> None:
 
 
 async def update_users_list_async() -> None:
-    """Обновление списка пользователей для списка оповещений в однопоточном асинхронном режиме"""
+    """Update list of users for notification list in one thread mod"""
     await update_user_cache(True)
 
 
 def sync_get_users_list() -> list:
-    """Получение списка пользователей при старте приложения"""
+    """Receiving list of users after app running"""
     return Database().sync_get_users()
 
 
 def sync_get_admin_list() -> list:
-    """Получение списка админов при старте приложения"""
+    """Receiving list of admin after app running"""
     response: list = Database().sync_get_users()
     only_admins = list(filter(lambda x: x[3] == "ADMIN", response))
     admin_list = list(map(lambda tup: tup[0], only_admins))
@@ -43,12 +43,12 @@ def sync_get_admin_list() -> list:
 
 
 async def create_new_user(tg_id: int, username: str) -> bool:
-    """Создание нового пользователя"""
+    """Creating new user"""
     return await Database().create_user(tg_id=tg_id, name=username)
 
 
 async def async_update_admin_list() -> list:
-    """Обновление списка админов при работе приложения"""
+    """Update admin list for app in running"""
     response: list = await Database().async_get_users()
     only_admins = list(filter(lambda x: x[3] == "ADMIN", response))
     admin_list = list(map(lambda tup: tup[0], only_admins))
@@ -56,31 +56,31 @@ async def async_update_admin_list() -> list:
 
 
 async def async_update_users_list() -> list[tuple]:
-    """Обновление списка пользователей при работе приложения для админской панели"""
+    """Update user list for admin panel if app has been running for a while"""
     return await Database().async_get_users()
 
 
 async def get_user_from_tg_id(user_tg_id: int) -> tuple | bool:
-    """Получение пользователя по его телеграм id"""
+    """Receiving user by tg id"""
     return await Database().get_user(user_tg_id)
 
 
 async def delete_user_from_tg_id(user_tg_id: int) -> bool:
-    """Удаление пользователя по его телеграм id"""
+    """Deleting user by tg id"""
     return await Database().delete_user(user_tg_id)
 
 
 async def notify_activate() -> list[tuple] | bool:
-    """Список состояний уведомления всех пользователей"""
+    """List of all users with instance notifications"""
     return await Database().notifications_state()
 
 
 async def activate_notify(tg_id: int) -> bool:
-    """Активация уведомлений у пользователя"""
+    """Activation notifications on user"""
     return await Database().active_notification(tg_id)
 
 
 async def deactivate_notify(tg_id: int) -> bool:
-    """Деактивация уведомлений у пользователя"""
+    """Deactivation notifications on user"""
     return await Database().deactivated_notification(tg_id)
 

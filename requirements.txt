@@ -14,6 +14,7 @@ idna==3.4
 multidict==6.0.2
 python-dotenv==0.21.0
 pytz==2022.6
+redis==4.5.1
 SQLAlchemy==1.4.42
 typing_extensions==4.4.0
 yarl==1.8.1

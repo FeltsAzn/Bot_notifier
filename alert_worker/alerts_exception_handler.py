@@ -1,4 +1,5 @@
 import os
+import aiogram
 from aiogram import types
 
 """
@@ -8,11 +9,15 @@ from aiogram import types
 
 admin_url = os.getenv("ADMIN_NAME")
 
+class UnexpectedException:
+    def __init__(self, tg_id: int, bot_instance: aiogram.Bot):
+        self.tg_id = tg_id
+        self.bot = bot_instance
 
-async def exception_handler(tg_id: int, bot) -> None:
-    start_buttons = ["Список площадок", "Настройки"]
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    keyboard.add(*start_buttons)
-    await bot.send_message(tg_id, "Возникла ошибка:(\n"
-                                  f"Напишите администратору {admin_url}",
-                           reply_markup=keyboard)
+    async def exception_handler(self) -> None:
+        start_buttons = ["Список площадок", "Настройки"]
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        keyboard.add(*start_buttons)
+        await self.bot.send_message(self.tg_id, "Возникла ошибка:(\n"
+                                      f"Напишите администратору {admin_url}",
+                               reply_markup=keyboard)

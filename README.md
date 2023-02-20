@@ -1,174 +1,175 @@
-# Бот для отслеживания котировок на криптобиржах.
+# Bot for tracking quotes on crypto exchanges.
 
-## Локальное развёртывание
+## Local deployment
 
-Скопируйте через terminal репозиторий:
+Copy via terminal repository:
 ```bash
 git clone https://github.com/FeltsAzn/Ctypto_info_bot
 ```
 
-#### Если вы работаете через редакторы кода `vim`, `nano`, `notepad` и другие:
-Установка виртуального окружения, если у вас нет его локально.
+#### If you are working with code editors `vim`, `nano`, `notepad` and others:
+Installing a virtual environment if you don't have one locally.
 ```bash
 python3 -m pip install --user virtualenv
 ```
 
-Создайте виртуальное окружение в скопированном репозитории:
+Create a virtual environment in the copied repository:
 ```bash
 python3 -m venv env
 ```
 
-Активируйте виртуальное окружение:
+Activate the virtual environment:
 ```bash
 source env/bin/activate
 ```
 
-Установите файл с зависимостями в виртуальном окружении:
+Install the dependency file in the virtual environment:
 ```bash
-(venv):~<путь до проекта>$ pip install -r requirements.txt
+(venv):~<project path>$ pip install -r requirements.txt
 ```
 
-Создайте в папке проекта файл `.env`
+Create a `.env` file in the project folder
 ```bash
-touch .env
+touch.env
 ```
 
-Для корректной работы нужно в репозитории проекта создать папку **logs**:
+For correct work, you need to create a **logs** folder in the project repository:
 ```bash
 mkdir logs
 ```
 
 
-#### Если вы работаете через IDE:
-Установите файл с зависимостями в виртуальном окружении:
+#### If you are using the IDE:
+Install the dependency file in the virtual environment:
 ```bash
-(venv):~<путь до проекта>$ pip install -r requirements.txt
+(venv):~<project path>$ pip install -r requirements.txt
 ```
 
-Создайте файл ***.env*** в папке проекта
+Create a ***.env*** file in your project folder
 
-Содержание файла `.env`:
+Contents of the `.env` file:
 ```sh
-BOT_TOKEN=<Токен бота от BotFather>
-DATABASE_URL_ASYNC=sqlite+aiosqlite:///db/info.db # локальная база данных и драйвер для асинхронного подключения
-DATABASE_URL=sqlite:///db/info.db # локальная база данных для синхронного подключения
-SERVICE_URL=http://0.0.0.0:8000 
-ADMIN_NAME=https://t.me/Turkey_accountt # аакаунт админа ответственного за техподдержку
-SUPER_ADMIN_ID=<телеграм id админа, у которого будут супер доступ>
-MULTIPROCESSORING=ON # Мультипроцессорный режим. Для отключения можно поменять "ON" на любой другой текст.
+BOT_TOKEN=<Bot token from BotFather>
+DATABASE_URL_ASYNC=sqlite+aiosqlite:///db/info.db # local database and driver for asynchronous connection
+DATABASE_URL=sqlite:///db/info.db # local database for synchronous connection
+SERVICE_URL=http://0.0.0.0:8000
+ADMIN_NAME=https://t.me/Turkey_accountt # admin account responsible for technical support
+SUPER_ADMIN_ID=<telegram id of the admin who will have super access>
+MULTIPROCESSORING=ON # Multiprocessor mode. To disable, you can change "ON" to any other text.
 # SERVICE_URL=http://0.0.0.0:8000 for local run
 # SERVICE_URL=http://fastapi:8000 for docker run
 ```
 
 
-Для корректной работы нужно в репозитории проекта создать папку **logs**:
+For correct work, you need to create a **logs** folder in the project repository:
 ```bash
 mkdir logs
 ```
 
 
-!!! ВАЖНО
-1. Перед запуском, нужно создать базу, для этого нужно запустить **db/**`create_database.py`.
-2. Бот будет работать только вместе с его [backend](https://github.com/FeltsAzn/FastAPI-service-for-bot) частью, 
-так что прежде чем запускать, скачайте 2-ю часть приложения.
+!!! IMPORTANT
+1. Before starting, you need to create a database, for this you need to run **db/**`create_database.py`.
+2. The bot will only work with its [backend](https://github.com/FeltsAzn/FastAPI-service-for-bot) part,
+so before you start, download the 2nd part of the application.
 
-Запуск из терминала -> `python3 app.py`
+Run from terminal -> `python3 app.py`
 
 
-#### Docker контейнер
+#### Docker container
 
-Вы можете развернуть приложение на сервере или локально в контейнере используя ***dockerfile***:
+You can deploy the application on a server or locally in a container using ***dockerfile***:
 ```bash
-docker build . -t <название образа>
+docker build . -t <image name>
 ```
 
-И запустить собранный образ в контейнере:
+And run the built image in a container:
 ```bash
-docker run -d <название образа>
+docker run -d <image name>
 ```
 
 
-Есть возможность поднять кластер для бота и его [backend](https://github.com/FeltsAzn/FastAPI-service-for-bot) части в docker-compose:
+It is possible to raise a cluster for the bot and its [backend](https://github.com/FeltsAzn/FastAPI-service-for-bot) parts in docker-compose:
 ```bash
-"Изменяем путь до API для бота"
+"Changing the path to the API for the bot"
 
 services:
-  fastapi:
-    image: fastapi
-    container_name: fastapi_app
-    ports:
-    - "8000:8000"
-    build:
-      context: <асболютный путь в системе до dockerfile для fastapi сервиса>
-      dockerfile: dockerfile
+   fastapi:
+     image:fastapi
+     container_name: fastapi_app
+     ports:
+     - "8000:8000"
+     build:
+       context: <absolute path in the system to the dockerfile for the fastapi service>
+       dockerfile: dockerfile
 .....
 ```
 
-Прописываем в терминале IDE или терминале операционной системы:
+We register in the IDE terminal or the terminal of the operating system:
 ```bash
 docker compose -f docker-compose.dev.yaml up -d --build
-``` 
+```
 
 
-_____________________________________________________________
+_______________________________________________________________
 
-Приложение написано на библиотеке `aiogramm`. Имеется два типа работы: однопоточный режим и мультипроцессорный.
-
-
-
-Запуск из терминала -> `python3 app.py`
-
-Приложение написано на библиотеке `aiogramm`. Имеется два типа работы: однопоточный режим и мультипроцессорный.
-Изменение режима работы бота возможна через файл "*.env*".
-
-Для запуска мультипроцессорного режима `MULTIPROCESSORING=ON`
-Для запуска однопоточного режима `MULTIPROCESSORING={Любые символы}`
-
-Бот состоит из 3-х частей:
-
-- Реализация уведомлений пользователей находится в папке *alerts_worker*.
-
-- База данных пользователей бота и методы CRUD лежат в папке *db*.
-
-- Обработчики клавиатуры бота лежат в папке *handlers*
+The application is written in the `aiogramm` library. There are two types of operation: single-threaded mode and multiprocessor.
 
 
-### Администратор
-Административный интерфейс состоит списка пользователей и настроек администратора(пока в работе)
 
-#### Список пользователей:
-Просмотр списка пользователей через inline-keyboard.
-Доступная информация:
+Run from terminal -> `python3 app.py`
+
+The application is written in the `aiogramm` library. There are two types of operation: single-threaded mode and multiprocessor.
+Changing the bot's mode of operation is possible through the "*.env*" file.
+
+To start multiprocessor mode `MULTIPROCESSORING=ON`
+To start single-threaded mode `MULTIPROCESSORING={Any characters}`
+
+The bot consists of 3 parts:
+
+- The implementation of user notifications is located in the *alerts_worker* folder.
+
+- The bot user database and CRUD methods are in the *db* folder.
+
+- Bot keyboard handlers are in the *handlers* folder
+
+
+### Administrator
+The administrative interface consists of a list of users and administrator settings (still in progress)
+
+#### A list of users:
+Viewing a list of users via inline-keyboard.
+Available information:
 - Telegram id
-- Имя пользователя
-- Активность уведомлений
+- Username
+- Activity notifications
 
-Есть возможность удаление пользователя по желанию администратора
-(отключена возможность удаления самого себя через административную панель).
+It is possible to delete a user at the request of the administrator
+(disabled the ability to delete yourself through the administrative panel).
 
-### Пользователь
-Пользовательский интерфейс состоит из списка отслеживаемых бирж и настроек
+### User
+The user interface consists of a list of monitored exchanges and settings
 
-#### Настройки
-- Отключение/включение уведомлений от бота.
-- Удаление аккаунта из базы бота, для прекращения получения сообщений
-(бот записывает пользователя в базу и будет присылать уведомления,
-даже после удаления диалога с ботом)
+#### Settings
+- Disable / enable notifications from the bot.
+- Deleting an account from the bot database to stop receiving messages
+(the bot writes the user to the database and will send notifications,
+even after deleting the dialogue with the bot)
 
-**Пользователь бота получает уведомления о котировках валют только доступных для продажи/покупки.**
+**The bot user receives notifications about currency quotes only available for sale/purchase.**
 
 
-Бот настроен на постоянную работу на сервере, поэтому только в случае критической ошибки
-произойдёт выход из приложения (отключение сервера, ручная остановка, ошибка телеграмма).
+The bot is configured to work permanently on the server, so only in case of a critical error
+the application will exit (server shutdown, manual stop, telegram error).
 
-Запросы к биржам осуществляется через внутренний сервис написанный на `FastAPI`.
+Requests to exchanges are made through an internal service written in `FastAPI`.
 
-Фильтрование информации по валютам осуществляется через `config.py` файл в папке *alerts_worker*.
-Где выставлены константы:
-- Высокий процент (выделяется в уведомлениях)
-- Стартовый процент, при котором начинаются отправляться уведомления пользователям
-- Минимальный шаг вверх, при повышении разрыва котировок
-- Минимальный шаг вниз при повышении разрыва котировок
+Filtering information by currencies is done through the `config.py` file in the *alerts_worker* folder.
+Where constants are exposed:
+- High percentage (highlighted in notifications)
+- Starting percentage at which otp starts
 
-Время прохода цикла обработки информации с бирж ~3 секунды.
+send notifications to users
+- The minimum step up when the quotes gap increases
+- The minimum step down when the quotes gap increases
 
+The cycle time for information processing from stock exchanges is ~3 seconds.
