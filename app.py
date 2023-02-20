@@ -2,15 +2,15 @@ import time
 import asyncio
 import os
 import sys
-import multiprocessing
-import handlers
 from aiogram.utils.exceptions import NetworkError
+import multiprocessing
 from dotenv import load_dotenv
 from aiogram import executor
 from handlers.middleware import update_users_list_sync
 from loader import dp, bot
 from alert_worker import alerts
 from logger import logger
+import handlers
 
 
 def start_app_on_one_thread():
@@ -70,7 +70,6 @@ if __name__ == "__main__":
     dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
-
     multiproc_config = os.getenv("MULTIPROCESSORING")
 
     if multiproc_config.upper() == "ON":

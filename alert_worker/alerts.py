@@ -51,27 +51,28 @@ async def background_alerts(instance) -> None:
     await update_user_cache(instance)
     try:
         while True:
-            t1 = time.time()
+
             if not isinstance(instance, bool):
                 # проверка на мультипроцессеринговый режим
                 await update_user_cache(instance)
             raw_data = await data_collector()
 
-            if time.time() - t1 < 1:
+            if raw_data:
+                data = counter_of_currencies(*raw_data)
+                content: list = content_creator(data)
+
+                if content != [] and USER_CACHE != []:
+                    for tg_id, state in USER_CACHE:
+                        if state == "ACTIVATED":
+                            try:
+                                await bot.send_message(chat_id=tg_id,
+                                                       text=emojize(markdown.text(*content), language="alias"),
+                                                       parse_mode="html")
+                            except exceptions.BotBlocked as ex:
+                                logger.warning(f"Message didn't send to user {tg_id}. {ex}")
+            else:
                 logger.error("FastAPI service is dropped.")
                 time.sleep(10)
-
-            data = counter_of_currencies(*raw_data)
-            content: list = content_creator(data)
-            if content != [] and USER_CACHE != []:
-                for tg_id, state in USER_CACHE:
-                    if state == "ACTIVATED":
-                        try:
-                            await bot.send_message(chat_id=tg_id,
-                                                   text=emojize(markdown.text(*content), language="alias"),
-                                                   parse_mode="html")
-                        except exceptions.BotBlocked as ex:
-                            logger.warning(f"Message didn't send to user {tg_id}. {ex}")
 
     except (TypeError, AttributeError) as ex:
         logger.exception(f"Exception on alerts loop: {ex}")
