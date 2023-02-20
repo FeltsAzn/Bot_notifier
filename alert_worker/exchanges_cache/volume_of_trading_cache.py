@@ -10,6 +10,13 @@ Using redis to saving a values
 
 class VolumeCache:
     __CACHE_CONN = VOLUME_CONNECTION
+    TIME_INTERVALS = {
+        "5_min": 300,
+        "30_min": 1800,
+        "1_hour": 3600,
+        "4_hour": 14400,
+        "1_day": 86400
+    }
 
     def __init__(self, currency: str, exchanges_data: tuple):
         self.currency = currency
@@ -28,38 +35,23 @@ class VolumeCache:
         exchange = block["exchange"]
         volume = block["volume"]
         key_of_currency = f"{self.currency}|{exchange}"
+
         if not cache.check_key_in_redis(key_of_currency):
             template = self.__create_template(volume)
             cache.create_key_and_value(key_of_currency, template)
 
-        timer: dict = cache.get_value(key_of_currency)
-        if now_time - timer["5_min"]["time"] > 300:
-            timer["5_min"] = self.__update_time_and_difference(timer["5_min"], now_time, exchange, volume)
-            cache.update_exist_key(key_of_currency, timer)
+        timer: dict[str:dict] = cache.get_value(key_of_currency)
 
-        if now_time - timer["30_min"]["time"] > 1800:
-            timer["30_min"] = self.__update_time_and_difference(timer["30_min"], now_time, exchange, volume)
-            cache.update_exist_key(key_of_currency, timer)
+        for time_interval, time_in_seconds in self.TIME_INTERVALS.items():
+            time_difference = now_time - timer[time_interval]["time"]
 
-        if now_time - timer["1_hour"]["time"] > 3600:
-            timer["1_hour"] = self.__update_time_and_difference(timer["1_hour"], now_time, exchange, volume)
-            cache.update_exist_key(key_of_currency, timer)
+            if time_difference > time_in_seconds:
+                timer[time_interval] = self.__update_time_and_difference(timer[time_interval], now_time, volume)
+                cache.update_exist_key(key_of_currency, timer)
 
-        if now_time - timer["4_hour"]["time"] > 14400:
-            timer["4_hour"] = self.__update_time_and_difference(timer["4_hour"], now_time, exchange, volume)
-            cache.update_exist_key(key_of_currency, timer)
 
-        if now_time - timer["1_day"]["time"] > 86400:
-            timer["1_day"] = self.__update_time_and_difference(timer["1_day"], now_time, exchange, volume)
-            cache.update_exist_key(key_of_currency, timer)
-
-    def __update_time_and_difference(
-            self,
-            data_block: dict,
-            now_time: float,
-            exchange_name: str,
-            volume_on_exchange: str,
-    ) -> dict:
+    @staticmethod
+    def __update_time_and_difference(data_block: dict, now_time: float, volume_on_exchange: str) -> dict:
         """Update information about a cache of volumes """
         old_volume = float(data_block["vol"])
         new_volume = float(volume_on_exchange)
@@ -77,8 +69,6 @@ class VolumeCache:
                 data_block["diff"] = str(100)
                 data_block["state"] = "up"
             else:
-                logger.info(f"Currency {self.currency} is not for sell on {exchange_name}. Volume is zero\n"
-                            f"Old volume = {old_volume}, new volume {new_volume}")
                 data_block["diff"] = str(0)
                 data_block["state"] = "none"
 
@@ -130,6 +120,5 @@ class VolumeCache:
         if volume is None:
             return {}
         return volume
-
 
 
