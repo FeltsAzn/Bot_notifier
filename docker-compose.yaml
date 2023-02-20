@@ -3,7 +3,7 @@ services:
     image: fastapi
     container_name: fastapi_app
     ports:
-    - "8000:8000"
+    - "8888:8888"
     build:
       context: /home/tim/PycharmProjects/Crypto_bot_API/
       dockerfile: dockerfile
