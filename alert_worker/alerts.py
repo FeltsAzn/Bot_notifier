@@ -2,13 +2,14 @@ import time
 import aiohttp
 import asyncio
 import os
+import redis
 from emoji import emojize
 from aiogram.utils import markdown, exceptions
 from db.crud import Database
 from loader import bot
 from logger import logger
 from alert_worker import http_req
-from alert_worker.template_fabric import content_creator
+from alert_worker.sending_text_view.template_fabric import content_creator
 from alert_worker.alerts_exception_handler import UnexpectedException
 from alert_worker.exchanges_cache.quotes_of_currency_cache import CurrencyCache
 
@@ -67,7 +68,7 @@ async def background_alerts(instance) -> None:
             content: list = content_creator(data)
             await send_message(content)
 
-    except (TypeError, AttributeError) as ex:
+    except (TypeError, AttributeError, redis.exceptions.ConnectionError) as ex:
         logger.exception(f"Exception on alerts loop: {ex}")
         for tg_id, state in USER_CACHE:
             if state == "ACTIVATED":
@@ -90,7 +91,7 @@ async def send_message(content: list):
 
 
 async def data_collector() -> tuple:
-    """Сборщик данных с различных бирж"""
+    """Collector of data on different exchanges"""
     async with aiohttp.ClientSession(service_url) as session:
         list_of_exchanges = [
             "binance",
