@@ -5,6 +5,7 @@ import os
 import redis
 from emoji import emojize
 from aiogram.utils import markdown, exceptions
+from aiohttp.client_exceptions import ClientConnectorError
 from db.crud import Database
 from loader import bot
 from logger import logger
@@ -67,6 +68,11 @@ async def background_alerts(instance) -> None:
             data = CurrencyCache().counter_of_currencies(*raw_data)
             content: list = content_creator(data)
             await send_message(content)
+
+    except ClientConnectorError:
+        time.sleep(10)
+        logger.exception("Telegram connection refused. Timeout 10 second activated")
+
 
     except (TypeError, AttributeError, redis.exceptions.ConnectionError) as ex:
         logger.exception(f"Exception on alerts loop: {ex}")
