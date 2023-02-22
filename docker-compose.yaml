@@ -2,11 +2,11 @@ services:
   fastapi:
     image: fastapi
     container_name: fastapi_app
-    ports:
-    - "8888:8888"
     build:
       context: /home/tim/PycharmProjects/Crypto_bot_API/
       dockerfile: dockerfile
+    restart: on-failure
+
 
   telegram_bot:
     image: bot
@@ -17,6 +17,7 @@ services:
     depends_on:
       - fastapi
       - redis
+    restart: on-failure
 
   redis:
     image: redis:latest
@@ -25,3 +26,9 @@ services:
       - REDIS_PASSWORD=
     volumes:
       - '/path/to/redis-persistence:/bitnami'
+    restart: on-failure
+
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
