@@ -1,13 +1,15 @@
 import os
+from aiogram import Dispatcher
+from aiogram.dispatcher import FSMContext
 from aiogram import types
-from loader import dp
+from loader import bot
 from handlers.exception_handler import exception_hand
 from handlers.middleware import (async_update_admin_list,
                                  create_new_user,
                                  async_update_users_list,
                                  update_users_list_sync,
                                  update_users_list_async)
-
+from aiogram.dispatcher.webhook import SendMessage
 
 """
 Файл main_handler.py - стартовое меню бота. Осуществляет авторизацию, либо регистрацию пользователя.
@@ -17,10 +19,11 @@ from handlers.middleware import (async_update_admin_list,
 multiproc_config = os.getenv("MULTIPROCESSORING")
 
 
-@dp.message_handler(commands=["start", "home"])
-async def start(message: types.Message) -> None:
+# @dp.message_handler(commands=["start", "home"])
+async def start(message: types.Message, state: FSMContext) -> None:
     """Стартовое окно"""
-
+    # return SendMessage(message.from_user.id, text="HI")
+    await message.answer("❗ <b>For admin only!</b>")
     admin_list = await async_update_admin_list()
     all_users = list(map(lambda user: user[0], await async_update_users_list()))
 
@@ -66,13 +69,17 @@ async def new_user(message: types.Message,
         await exception_hand(message.from_user.id)
 
 
-@dp.message_handler(lambda mes: mes.text in ("Домой", "В меню пользователя"))
-async def start(message: types.Message) -> None:
+# @dp.message_handler(lambda mes: mes.text in ("Домой", "В меню пользователя"))
+# async def start(message: types.Message) -> None:
+#
+#     admin_list = await async_update_admin_list()
+#     buttons = ["Список площадок", "Настройки"]
+#     if message.from_user.id in admin_list:
+#         buttons = ["Список площадок", "Админка", "Настройки"]
+#     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+#     keyboard.add(*buttons)
+#     await message.answer("Возвращаюсь домой", reply_markup=keyboard)
 
-    admin_list = await async_update_admin_list()
-    buttons = ["Список площадок", "Настройки"]
-    if message.from_user.id in admin_list:
-        buttons = ["Список площадок", "Админка", "Настройки"]
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    keyboard.add(*buttons)
-    await message.answer("Возвращаюсь домой", reply_markup=keyboard)
+
+def register_admin_handlers(dp: Dispatcher) -> None:
+    dp.register_message_handler(start, commands=["start"])

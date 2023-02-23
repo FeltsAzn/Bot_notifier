@@ -3,9 +3,12 @@ import asyncio
 import os
 import sys
 import multiprocessing
-import handlers
+
+from handlers.main_handler import register_admin_handlers
+
 from aiogram.utils.exceptions import NetworkError
 from dotenv import load_dotenv
+from aiogram.utils.executor import start_webhook
 from aiogram import executor
 from handlers.middleware import update_users_list_sync
 from loader import dp, bot
@@ -49,11 +52,29 @@ def multiproc_app():
 def start_bot_proc1(instance):
     """Запуск бота в процессе 1"""
     try:
-        executor.start_polling(dp, skip_updates=True, on_startup=update_users_list_sync(instance))
+        update_users_list_sync(instance)
+        WEBHOOK_PATH = os.getenv("WEBHOOK_PATH")
+        WEBAPP_HOST = os.getenv("WEBAPP_HOST")
+        BOT_PORT = os.getenv("BOT_PORT")
+        start_webhook(
+            dispatcher=dp,
+            webhook_path=WEBHOOK_PATH,
+            skip_updates=True,
+            on_startup= on_startup,
+            host=WEBAPP_HOST,
+            port=BOT_PORT,
+        )
+
+
     except NetworkError as ex:
         logger.exception("Error process 1 (bot) "
                          f"exception type: {type(ex)} exception: {ex}")
         raise SystemExit
+
+async def on_startup(dp):
+    WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+    register_admin_handlers(dp)
+    await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
 
 
 def start_alerts_proc2(instance):
@@ -73,9 +94,10 @@ if __name__ == "__main__":
 
     multiproc_config = os.getenv("MULTIPROCESSORING")
 
-    if multiproc_config.upper() == "ON":
-        logger.info("Start on multiprocessing mod")
-        multiproc_app()
-    else:
-        logger.info("Start on one thread mod")
-        start_app_on_one_thread()
+    match multiproc_config.upper():
+        case "ON":
+            logger.info("Start on multiprocessing mod")
+            multiproc_app()
+        case _:
+            logger.info("Start on one thread mod")
+            start_app_on_one_thread()

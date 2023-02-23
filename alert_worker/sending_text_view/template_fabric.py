@@ -73,14 +73,14 @@ def volume_percent(min_exchange_name: str, vol: dict) -> list[str]:
     return volume_segment
 
 
-def create_volume_data_block(time_diff: str, volume: float, state_of_volume: str) -> list[str]:
+def create_volume_data_block(time_diff: str, volume_percent: float, state_of_volume: str) -> list[str]:
     """Шаблон для 5-ти минутного кэша объёма"""
     text_templates = {
-        "5_min": [f"<i>5m</i>:    {volume}%\n"],
-        "30_min": [f"<i>30m</i>:  {volume}%\n"],
-        "1_hour": [f"<i>1h</i>:      {volume}%\n"],
-        "4_hour": [f"<i>4h</i>:      {volume}%\n"],
-        "1_day": [f"<i>day</i>:    {volume}%\n\n\n"]
+        "5_min": [f"<i>5m</i>:    {volume_percent}%\n"],
+        "30_min": [f"<i>30m</i>:  {volume_percent}%\n"],
+        "1_hour": [f"<i>1h</i>:      {volume_percent}%\n"],
+        "4_hour": [f"<i>4h</i>:      {volume_percent}%\n"],
+        "1_day": [f"<i>day</i>:    {volume_percent}%\n\n\n"]
     }
 
     text_segment = text_templates[time_diff]
