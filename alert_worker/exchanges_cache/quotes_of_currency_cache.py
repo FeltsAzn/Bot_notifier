@@ -2,7 +2,7 @@ from alert_worker.exchanges_cache.volume_of_trading_cache import VolumeCache
 from decimal import Decimal, DivisionUndefined
 from alert_worker.config_for_filter import START_PERCENT, UP_PERCENT, DOWN_PERCENT
 from logger import logger
-from loader import CURRENCY_CONNECTION
+# from loader import CURRENCY_CONNECTION
 from cache.redis_logic import RedisCache
 
 """
@@ -13,6 +13,7 @@ Using redis to saving a values.
 
 
 class CurrencyCache:
+    CURRENCY_CONNECTION = None
     __CACHE_CONN = CURRENCY_CONNECTION
 
     def counter_of_currencies(self, *args) -> dict:

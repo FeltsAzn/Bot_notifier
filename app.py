@@ -3,27 +3,40 @@ import asyncio
 import os
 import sys
 import multiprocessing
-
-from handlers.main_handler import register_admin_handlers
-
+import aiogram
+import handlers
 from aiogram.utils.exceptions import NetworkError
 from dotenv import load_dotenv
 from aiogram.utils.executor import start_webhook
-from aiogram import executor
 from handlers.middleware import update_users_list_sync
 from loader import dp, bot
 from alert_worker import alerts
 from logger import logger
 
 
+WEBHOOK_PATH = os.getenv("WEBHOOK_PATH")
+WEBAPP_HOST = os.getenv("WEBAPP_HOST")
+BOT_PORT = os.getenv("BOT_PORT")
+DOMAIN = os.getenv("DOMAIN_NAME")
+WEBHOOK_URL = f"{DOMAIN}{WEBHOOK_PATH}"
+
+
 def start_app_on_one_thread():
     try:
-        dp.loop.create_task(alerts.background_alerts(True))
-        executor.start_polling(dp, skip_updates=True)
+        start_webhook(
+            dispatcher=dp,
+            webhook_path=WEBHOOK_PATH,
+            skip_updates=True,
+            on_startup=on_startup,
+            host=WEBAPP_HOST,
+            port=BOT_PORT,
+            on_shutdown=on_shutdown,
+        )
     except (SystemExit, ) as ex:
         logger.exception("Stop one thread app."
                          f"exception type: {type(ex)} exception: {ex}")
         bot.close()
+
 
 
 def multiproc_app():
@@ -53,9 +66,6 @@ def start_bot_proc1(instance):
     """Запуск бота в процессе 1"""
     try:
         update_users_list_sync(instance)
-        WEBHOOK_PATH = os.getenv("WEBHOOK_PATH")
-        WEBAPP_HOST = os.getenv("WEBAPP_HOST")
-        BOT_PORT = os.getenv("BOT_PORT")
         start_webhook(
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
@@ -63,22 +73,24 @@ def start_bot_proc1(instance):
             on_startup= on_startup,
             host=WEBAPP_HOST,
             port=BOT_PORT,
+            on_shutdown=on_shutdown,
         )
-
-
     except NetworkError as ex:
         logger.exception("Error process 1 (bot) "
                          f"exception type: {type(ex)} exception: {ex}")
         raise SystemExit
 
-async def on_startup(dp):
-    WEBHOOK_URL = os.getenv("WEBHOOK_URL")
-    register_admin_handlers(dp)
+async def on_startup(dp: aiogram.Dispatcher):
     await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
+    logger.info("Webhook is created. Bot is running")
+
+async def on_shutdown(dp: aiogram.Dispatcher):
+    await bot.delete_webhook()
+    logger.info("Webhook is deleted. Bot is stopped")
 
 
 def start_alerts_proc2(instance):
-    """Запуск уведомлений в процессе 2"""
+    """Run notifications in second process"""
     try:
         asyncio.run(alerts.background_alerts(instance))
     except SystemError as ex:

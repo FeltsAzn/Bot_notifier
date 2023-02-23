@@ -21,9 +21,8 @@ from alert_worker.exchanges_cache.quotes_of_currency_cache import CurrencyCache
 """
 
 
-service_url = os.getenv("SERVICE_URL")
-multiproc_config = os.getenv("MULTIPROCESSORING")
-admin = int(os.getenv("SUPER_ADMIN_ID"))
+MULTIPROCESS_CONFIG = os.getenv("MULTIPROCESSORING")
+MAIN_ADMIN = int(os.getenv("SUPER_ADMIN_ID"))
 
 USER_CACHE = []
 
@@ -34,7 +33,7 @@ async def update_user_cache(instance) -> None:
     Updating cache after app launching or after adding new user
     """
     global USER_CACHE
-    if multiproc_config.upper() == "ON":
+    if MULTIPROCESS_CONFIG.upper() == "ON":
         """Updating cache in multiprocess mod"""
         if instance.value:
             logger.info("CACHE HAS BEEN UPDATED")
@@ -58,15 +57,15 @@ async def background_alerts(instance) -> None:
             if not isinstance(instance, bool):
                 # verification on multiprocess mod
                 await update_user_cache(instance)
-            raw_data = await data_collector()
+            raw_data = await http_req.exchanges_data_collector()
 
             if time.time() - t1 < 1:
                 logger.error("FastAPI service is dropped.")
-                await bot.send_message(chat_id=admin, text="FastAPI service is dropped.")
+                await bot.send_message(chat_id=MAIN_ADMIN, text="FastAPI service is dropped.")
                 time.sleep(10)
 
-            data = CurrencyCache().counter_of_currencies(*raw_data)
-            content: list = content_creator(data)
+            content = await http_req.give_finished_text(*raw_data)
+
             await send_message(content)
 
     except ClientConnectorError:
@@ -82,7 +81,6 @@ async def background_alerts(instance) -> None:
                 await error.exception_handler()
             raise SystemError
 
-
 async def send_message(content: list):
     if content != [] and USER_CACHE != []:
         for tg_id, state in USER_CACHE:
@@ -93,21 +91,4 @@ async def send_message(content: list):
                                            parse_mode="html")
                 except exceptions.BotBlocked as ex:
                     logger.warning(f"Message didn't send to user {tg_id}. {ex}")
-                    await bot.send_message(chat_id=admin, text=f"Message not sent to user {tg_id}. He is blocked bot")
-
-
-async def data_collector() -> tuple:
-    """Collector of data on different exchanges"""
-    async with aiohttp.ClientSession(service_url) as session:
-        list_of_exchanges = [
-            "binance",
-            "kucoin",
-            "huobi",
-            "okx"
-        ]
-        tasks = []
-        for exchange in list_of_exchanges:
-            request = http_req.get_exchange_data(session, exchange)
-            tasks.append(request)
-        all_data = await asyncio.gather(*tasks)
-    return all_data
+                    await bot.send_message(chat_id=MAIN_ADMIN, text=f"Message not sent to user {tg_id}. He is blocked bot")

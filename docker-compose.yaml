@@ -1,7 +1,15 @@
 services:
-  fastapi:
-    image: fastapi
-    container_name: fastapi_app
+  exchanges-data:
+    image: exchanges-data
+    container_name: exchanges_data
+    build:
+      context: /home/tim/PycharmProjects/Crypto_bot_API/
+      dockerfile: dockerfile
+    restart: on-failure
+
+  text-generator:
+    image: text-generator
+    container_name: text_creator
     build:
       context: /home/tim/PycharmProjects/Crypto_bot_API/
       dockerfile: dockerfile
@@ -15,7 +23,8 @@ services:
       context: .
       dockerfile: dockerfile
     depends_on:
-      - fastapi
+      - text-generator
+      - exchanges-data
       - redis
     restart: on-failure
 

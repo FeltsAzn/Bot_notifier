@@ -175,7 +175,7 @@ class Database:
             return False
 
     def sync_get_users(self) -> list[tuple] | bool:
-        """Синхронный обработчик для получение списка пользователей (для корректного старта приложения)"""
+        """Синхронный обработчик для получения списка пользователей (для корректного старта приложения)"""
         database_session = self.create_sync_session()
         if database_session:
             with database_session() as session:

@@ -1,6 +1,6 @@
 import time
 from logger import logger
-from loader import VOLUME_CONNECTION
+# from loader import VOLUME_CONNECTION
 
 """
 volume_of_trading_cache.py file - Cache updater.
@@ -9,6 +9,7 @@ Using redis to saving a values
 """
 
 class VolumeCache:
+    VOLUME_CONNECTION = None
     __CACHE_CONN = VOLUME_CONNECTION
     TIME_INTERVALS = {
         "5_min": 300,
