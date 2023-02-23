@@ -1,6 +1,4 @@
 import time
-import aiohttp
-import asyncio
 import os
 import redis
 from emoji import emojize
@@ -10,9 +8,7 @@ from db.crud import Database
 from loader import bot
 from logger import logger
 from alert_worker import http_req
-from alert_worker.sending_text_view.template_fabric import content_creator
 from alert_worker.alerts_exception_handler import UnexpectedException
-from alert_worker.exchanges_cache.quotes_of_currency_cache import CurrencyCache
 
 
 """
