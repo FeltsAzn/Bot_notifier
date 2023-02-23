@@ -1,9 +1,9 @@
 import os
 from aiogram import types
 from aiogram.dispatcher.filters import Text
-from loader import dp
-from handlers.exception_handler import exception_hand
-from handlers.middleware import update_users_list_sync, update_users_list_async, delete_user_from_tg_id, \
+from src.loader import dp
+from src.handlers.exception_handler import exception_hand
+from src.handlers.middleware import update_users_list_sync, update_users_list_async, delete_user_from_tg_id, \
     notify_activate, activate_notify, deactivate_notify
 
 

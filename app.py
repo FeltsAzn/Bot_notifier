@@ -4,14 +4,13 @@ import os
 import sys
 import multiprocessing
 import aiogram
-import handlers
 from aiogram.utils.exceptions import NetworkError
 from dotenv import load_dotenv
 from aiogram.utils.executor import start_webhook
-from handlers.middleware import update_users_list_sync
-from loader import dp, bot
-from alert_worker import alerts
-from logger import logger
+from src.handlers.middleware import update_users_list_sync
+from src.loader import dp, bot
+from src.alert_worker import alerts
+from src.logger import logger
 
 
 WEBHOOK_PATH = os.getenv("WEBHOOK_PATH")

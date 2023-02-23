@@ -4,11 +4,11 @@ import redis
 from emoji import emojize
 from aiogram.utils import markdown, exceptions
 from aiohttp.client_exceptions import ClientConnectorError
-from db.crud import Database
-from loader import bot
-from logger import logger
-from alert_worker import http_req
-from alert_worker.alerts_exception_handler import UnexpectedException
+from src.db.crud import Database
+from src.loader import bot
+from src.logger import logger
+from src.alert_worker import http_req
+from src.alert_worker.alerts_exception_handler import UnexpectedException
 
 
 """

@@ -1,7 +1,7 @@
 from aiogram.types import Message, InlineKeyboardButton
 from aiogram.dispatcher.filters import Text
-from loader import dp
-from handlers.exchange_list.config_for_filling import last_page, filling_keyboard
+from src.loader import dp
+from src.handlers.exchange_list.config_for_filling import last_page, filling_keyboard
 
 
 @dp.message_handler(Text(equals="Список площадок"))

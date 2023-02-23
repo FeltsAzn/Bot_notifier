@@ -1,12 +1,12 @@
 import os
 from aiogram import types
-from loader import dp
-from handlers.exception_handler import exception_hand
-from handlers.middleware import (async_update_admin_list,
-                                 create_new_user,
-                                 async_update_users_list,
-                                 update_users_list_sync,
-                                 update_users_list_async)
+from src.loader import dp
+from src.handlers.exception_handler import exception_hand
+from src.handlers.middleware import (async_update_admin_list,
+                                     create_new_user,
+                                     async_update_users_list,
+                                     update_users_list_sync,
+                                     update_users_list_async)
 
 """
 Файл main_handler.py - стартовое меню бота. Осуществляет авторизацию, либо регистрацию пользователя.

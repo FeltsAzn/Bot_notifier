@@ -1,6 +1,6 @@
 import multiprocessing
-from db.crud import Database
-from alert_worker.alerts import update_user_cache
+from src.db.crud import Database
+from src.alert_worker.alerts import update_user_cache
 
 
 

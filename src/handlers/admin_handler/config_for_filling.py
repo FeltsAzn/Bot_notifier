@@ -1,6 +1,6 @@
 import math
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from handlers.middleware import sync_get_users_list, async_update_users_list
+from src.handlers.middleware import sync_get_users_list, async_update_users_list
 
 
 """

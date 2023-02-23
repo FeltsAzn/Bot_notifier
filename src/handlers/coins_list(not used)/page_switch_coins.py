@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardButton, CallbackQuery
-from loader import dp
-from handlers.coins_list.config_for_filling import filling_keyboard,\
+from src.loader import dp
+from src.handlers import filling_keyboard,\
     add_of_value, \
     diff_of_value, \
     last_page

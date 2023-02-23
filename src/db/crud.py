@@ -3,8 +3,8 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, select
 
-from db.models import User
-from logger import logger
+from src.db.models import User
+from src.logger import logger
 import os
 
 """

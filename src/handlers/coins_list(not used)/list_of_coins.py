@@ -1,7 +1,7 @@
 from aiogram.types import Message, InlineKeyboardButton
-from loader import dp
+from src.loader import dp
 from aiogram.dispatcher.filters import Text
-from handlers.coins_list.config_for_filling import last_page, filling_keyboard
+from src.handlers import last_page, filling_keyboard
 
 
 @dp.message_handler(Text(equals="Список валют"))
