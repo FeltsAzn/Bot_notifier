@@ -1,3 +1,4 @@
+import json
 import os
 import aiohttp
 from logger import logger
@@ -46,11 +47,10 @@ async def send_request(session: aiohttp.ClientSession, service: str) -> dict:
 
 async def give_finished_text(*raw_data) -> list:
     async with aiohttp.ClientSession(TEXT_CREATOR_URL) as session:
-        raw_data = {"data": raw_data}
-        print(raw_data)
+        converted_data = {"data": [*raw_data]}
         try:
-            async with session.post(f"/get_text", data=raw_data,timeout=5) as response:
-                convert_data = await response.json()
+            async with session.post(f"/get_text", json=converted_data, timeout=5) as response:
+                text_block = await response.json()
         except (asyncio.exceptions.TimeoutError,
                 aiohttp.ClientConnectorError,
                 aiohttp.ClientOSError,
@@ -58,8 +58,8 @@ async def give_finished_text(*raw_data) -> list:
                 OSError) as ex:
             logger.warning(f"Http error text creator service endpoint not responding. Exception: {ex}")
             return []
-        if "error" in convert_data.keys():
+        if "error" in text_block.keys():
             logger.warning(f"Error in text creator.\n"
-                           f"response -> {convert_data['error']}")
+                           f"response -> {text_block['error']}")
             return []
-        return convert_data["data"]
+        return text_block["data"]
