@@ -2,17 +2,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, select
-
+from load_virtual_variables import DATABASE_URL, DATABASE_ASYNC_URL
 from src.db.models import User
 from src.logger import logger
-import os
 
 """
 Файл crud.py - методы для создания, чтения, удаления и обновления полей в бд
 """
-
-database_url_async = os.getenv("DATABASE_URL_ASYNC")
-database_url = os.getenv("DATABASE_URL")
 
 
 class Database:
@@ -21,7 +17,7 @@ class Database:
     async def create_session():
         """Асинхронная сессия подключения к бд"""
         try:
-            engine = create_async_engine(database_url_async, future=True, echo=False)
+            engine = create_async_engine(DATABASE_ASYNC_URL, future=True, echo=False)
             session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
             return session
         except Exception as ex:
@@ -167,7 +163,7 @@ class Database:
     def create_sync_session():
         """Синхронная сессия подключения к бд"""
         try:
-            engine = create_engine(database_url, future=True, echo=True)
+            engine = create_engine(DATABASE_URL, future=True, echo=True)
             session = sessionmaker(engine, expire_on_commit=False)
             return session
         except Exception as ex:

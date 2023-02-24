@@ -10,13 +10,8 @@ from src.handlers.middleware import update_users_list_sync
 from src.loader import dp, bot
 from src.alert_worker import alerts
 from src.logger import logger
+from load_virtual_variables import WEBHOOK_PATH, WEBHOOK_URL, WEBAPP_HOST, BOT_PORT
 
-
-WEBHOOK_PATH = os.getenv("WEBHOOK_PATH")
-WEBAPP_HOST = os.getenv("WEBAPP_HOST")
-BOT_PORT = os.getenv("BOT_PORT")
-DOMAIN = os.getenv("DOMAIN_NAME")
-WEBHOOK_URL = f"{DOMAIN}{WEBHOOK_PATH}"
 
 
 def start_app_on_one_thread():

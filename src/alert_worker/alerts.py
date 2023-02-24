@@ -1,5 +1,4 @@
 import time
-import os
 import redis
 from emoji import emojize
 from aiogram.utils import markdown, exceptions
@@ -9,7 +8,7 @@ from src.loader import bot
 from src.logger import logger
 from src.alert_worker import http_req
 from src.alert_worker.alerts_exception_handler import UnexpectedException
-
+from load_virtual_variables import MULTIPROCESS_CONFIG, MAIN_ADMIN
 
 """
 Файл alerts.py предназначен для уведомления позльзователей о изменении цен на бирже.
@@ -17,8 +16,6 @@ from src.alert_worker.alerts_exception_handler import UnexpectedException
 """
 
 
-MULTIPROCESS_CONFIG = os.getenv("MULTIPROCESSORING")
-MAIN_ADMIN = int(os.getenv("SUPER_ADMIN_ID"))
 
 USER_CACHE = []
 
