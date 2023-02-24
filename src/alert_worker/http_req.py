@@ -35,7 +35,7 @@ async def send_request(session: aiohttp.ClientSession, service: str) -> dict:
             aiohttp.ClientOSError,
             ContentTypeError,
             OSError) as ex:
-        logger.warning(f"Http error exchanges endpoint '{service}' not responding. Exception: {ex}")
+        logger.warning(f"Http error exchanges endpoint '{service}'[{EXCHANGES_DATA_URL}] not responding. Exception: {ex}")
         return {}
     if "error" in convert_data.keys():
         logger.warning(f"{service} endpoint is empty.\n"
@@ -55,7 +55,7 @@ async def give_finished_text(*raw_data) -> list:
                 aiohttp.ClientOSError,
                 ContentTypeError,
                 OSError) as ex:
-            logger.warning(f"Http error text creator service endpoint not responding. Exception: {ex}")
+            logger.warning(f"Http error text creator [{TEXT_CREATOR_URL}] service endpoint not responding. Exception: {ex}")
             return []
         if "error" in text_block.keys():
             logger.warning(f"Error in text creator.\n"
