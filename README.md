@@ -49,15 +49,40 @@ Create a ***.env*** file in your project folder
 
 Contents of the `.env` file:
 ```sh
-BOT_TOKEN=<Bot token from BotFather>
-DATABASE_URL_ASYNC=sqlite+aiosqlite:///db/info.db # local database and driver for asynchronous connection
-DATABASE_URL=sqlite:///db/info.db # local database for synchronous connection
-SERVICE_URL=http://0.0.0.0:8000
-ADMIN_NAME=https://t.me/Turkey_accountt # admin account responsible for technical support
-SUPER_ADMIN_ID=<telegram id of the admin who will have super access>
-MULTIPROCESSORING=ON # Multiprocessor mode. To disable, you can change "ON" to any other text.
-# SERVICE_URL=http://0.0.0.0:8000 for local run
-# SERVICE_URL=http://fastapi:8000 for docker run
+MULTIPROCESSORING=ON
+COMPOSE_PROJECT_NAME=<for docker images>
+# WEBHOOK
+DOMAIN_NAME=<webhook server domain>
+WEBAPP_HOST=0.0.0.0
+BOT_PORT=5555
+WEBHOOK_PATH=/bot/
+
+# TELEGRAM
+ADMIN_NAME=<tg-url admin>
+SUPER_ADMIN_ID=<tg id admin for logs>
+BOT_TOKEN=<tg bot token>
+
+# DATABASE
+DATABASE_URL_ASYNC=sqlite+aiosqlite:///src/db/info.db
+DATABASE_URL=sqlite:///src/db/info.db
+
+#EXCHANGE DATA
+EXCHANGES_DATA_COLLECTOR=http://exchanges_data:8888
+# EXCHANGES_DATA_COLLECTOR=http://0.0.0.0:8888 for local run
+# EXCHANGES_DATA_COLLECTOR=http://exchanges_data:8888 for docker run
+
+# CREATE SENDING TEXT
+TEXT_GENERATOR=http://text_creator:9999
+# TEXT_GENERATOR=http://0.0.0.0:9999
+# TEXT_GENERATOR=http://text_creator:9999
+
+# CACHE
+REDIS_URL=redis_server
+REDIS_PORT=6379
+REDIS_PASS=redis_password
+# REDIS_URL=0.0.0.0 for local start
+# REDIS_URL=redis_server for docker run
+
 ```
 
 
