@@ -1,6 +1,5 @@
 import time
 import asyncio
-import os
 import sys
 import multiprocessing
 import aiogram
