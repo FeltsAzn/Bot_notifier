@@ -6,6 +6,7 @@ import aiogram
 from aiogram.utils.exceptions import NetworkError
 from aiogram.utils.executor import start_webhook
 from src.handlers.middleware import update_users_list_sync
+from src import handlers
 from src.loader import dp, bot
 from src.alert_worker import alerts
 from src.logger import logger
