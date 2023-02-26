@@ -99,8 +99,8 @@ services:
      ports:
      - "8000:8000"
      build:
-       context: <absolute path in the system to the dockerfile for the fastapi service>
-       dockerfile: dockerfile
+       context: <absolute path in the system to the dockerfile_bot for the fastapi service>
+       dockerfile_bot: dockerfile_bot
 .....
 ```
 

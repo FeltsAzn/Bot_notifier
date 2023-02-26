@@ -1,21 +1,46 @@
+version: "2"
+
 services:
   nginx:
-    image: nginx:latest
-    container_name: webserver
-    restart: unless-stopped
-    ports:
-      - 3335:80
-      - 3333:443
+    build: ./webserver/nginx
+    image: tim/nginx-proxy
+    env_file:
+      - ./webserver/config.env
     volumes:
-      - /root/Crypto_Bot/nginx.conf:/etc/nginx/conf.d/default.conf
-      - /root/Crypto_Bot/ssl/*:/usr/nginx/
+      - nginx_conf:/etc/nginx/sites
+      - webserver/letsencrypt_certs:/etc/letsencrypt
+      - webserver/certbot_acme_challenge:/var/www/certbot
+      - ./webserver/vhosts:/etc/nginx/vhosts
+      - ./webserver/html:/var/www/html
+    ports:
+      - "443:443"
+    restart: unless-stopped
+
+  certbot:
+    build: ./webserver/certbot
+    image: tim/certbot
+    env_file:
+      - ./webserver/config.env
+    volumes:
+      - letsencrypt_certs:/etc/letsencrypt
+      - certbot_acme_challenge:/var/www/certbot
+
+  cron:
+    build: ./webserver/cron
+    image: tim/cron
+    environment:
+      COMPOSE_PROJECT_NAME: "${COMPOSE_PROJECT_NAME}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/workdir:ro
+    restart: unless-stopped
 
   exchanges-data:
     image: exchanges-data
     container_name: exchanges_data
     build:
       context: ~/Crypto_Bot/Crypto_bot_API/
-      dockerfile: dockerfile
+      dockerfile: dockerfile_exchanges
     restart: unless-stopped
 
   text-generator:
@@ -23,7 +48,7 @@ services:
     container_name: text_creator
     build:
       context: ~/Crypto_Bot/Content_for_bot/
-      dockerfile: dockerfile
+      dockerfile: dockerfile_text
     restart: unless-stopped
 
   telegram_bot:
@@ -33,9 +58,8 @@ services:
       - ${BOT_PORT}:${BOT_PORT}
     build:
       context: .
-      dockerfile: dockerfile
+      dockerfile: dockerfile_bot
     depends_on:
-      - nginx
       - text-generator
       - exchanges-data
       - redis
@@ -57,3 +81,10 @@ services:
 volumes:
   cache:
     driver: local
+    external: true
+  nginx_conf:
+    external: true
+  letsencrypt_certs:
+    external: true
+  certbot_acme_challenge:
+
