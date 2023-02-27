@@ -124,14 +124,14 @@ services:
      ports:
      - "8000:8000"
      build:
-       context: <absolute path in the system to the dockerfile_bot for the fastapi service>
-       dockerfile_bot: dockerfile_bot
+       context: <absolute path in the system to the Dockerfile_bot for the fastapi service>
+       Dockerfile_bot: Dockerfile_bot
 .....
 ```
 
 We register in the IDE terminal or the terminal of the operating system:
 ```bash
-docker compose -f docker-compose.dev.yaml up -d --build
+docker compose -f docker-compose.yml up -d
 ```
 
 

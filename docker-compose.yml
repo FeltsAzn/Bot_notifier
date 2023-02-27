@@ -58,7 +58,7 @@ services:
       - ${BOT_PORT}:${BOT_PORT}
     build:
       context: .
-      dockerfile: dockerfile_bot
+      dockerfile: Dockerfile_bot
     depends_on:
       - text-generator
       - exchanges-data
