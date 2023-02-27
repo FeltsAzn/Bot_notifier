@@ -40,7 +40,7 @@ services:
     container_name: exchanges_data
     build:
       context: ~/Crypto_Bot/Crypto_bot_API/
-      dockerfile: dockerfile_exchanges
+      dockerfile: Dockerfile_exchanges
     restart: unless-stopped
 
   text-generator:
@@ -48,7 +48,7 @@ services:
     container_name: text_creator
     build:
       context: ~/Crypto_Bot/Content_for_bot/
-      dockerfile: dockerfile_text
+      dockerfile: Dockerfile_text
     restart: unless-stopped
 
   telegram_bot:

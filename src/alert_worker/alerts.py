@@ -65,7 +65,6 @@ async def background_alerts(instance) -> None:
         time.sleep(10)
         logger.exception("Telegram connection refused. Timeout 10 second activated")
 
-
     except (TypeError, AttributeError, redis.exceptions.ConnectionError) as ex:
         logger.exception(f"Exception on alerts loop: {ex}")
         for tg_id, state in USER_CACHE:
@@ -73,6 +72,7 @@ async def background_alerts(instance) -> None:
                 error = UnexpectedException(tg_id, bot)
                 await error.exception_handler()
             raise SystemError
+
 
 async def send_message(content: list):
     if content != [] and USER_CACHE != []:
@@ -84,4 +84,5 @@ async def send_message(content: list):
                                            parse_mode="html")
                 except exceptions.BotBlocked as ex:
                     logger.warning(f"Message didn't send to user {tg_id}. {ex}")
-                    await bot.send_message(chat_id=MAIN_ADMIN, text=f"Message not sent to user {tg_id}. He is blocked bot")
+                    await bot.send_message(chat_id=MAIN_ADMIN, text=f"Message not sent to user {tg_id}. "
+                                                                    f"He is blocked bot")
