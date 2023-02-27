@@ -8,8 +8,8 @@ services:
       - ./webserver/config.env
     volumes:
       - nginx_conf:/etc/nginx/sites
-      - webserver/letsencrypt_certs:/etc/letsencrypt
-      - webserver/certbot_acme_challenge:/var/www/certbot
+      - letsencrypt_certs:/etc/letsencrypt
+      - certbot_acme_challenge:/var/www/certbot
       - ./webserver/vhosts:/etc/nginx/vhosts
       - ./webserver/html:/var/www/html
     ports:
@@ -36,29 +36,29 @@ services:
     restart: unless-stopped
 
   exchanges-data:
-    image: exchanges-data
-    container_name: exchanges_data
     build:
       context: ~/Crypto_Bot/Crypto_bot_API/
       dockerfile: Dockerfile_exchanges
+    image: tim/exchanges-data
+    container_name: exchanges_data
     restart: unless-stopped
 
   text-generator:
-    image: text-generator
-    container_name: text_creator
     build:
       context: ~/Crypto_Bot/Content_for_bot/
       dockerfile: Dockerfile_text
+    image: tim/text-generator
+    container_name: text_creator
     restart: unless-stopped
 
   telegram_bot:
-    image: bot
-    container_name: bot_app
-    ports:
-      - ${BOT_PORT}:${BOT_PORT}
     build:
       context: .
       dockerfile: Dockerfile_bot
+    image: tim/bot
+    container_name: bot_app
+    ports:
+      - ${BOT_PORT}
     depends_on:
       - text-generator
       - exchanges-data
@@ -68,12 +68,12 @@ services:
   redis:
     image: redis:latest
     container_name: redis_server
+    env_file:
+      - .env
     command: ["redis-server", "--save", "3600", "1000", "--loglevel", "warning", "--requirepass", "${REDIS_PASS}"]
     volumes:
       - cache:/data
     restart: unless-stopped
-    env_file:
-      - .env
 #  mongodb:
 #    image: mongo
 #    container_name: mongodb
