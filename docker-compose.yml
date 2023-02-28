@@ -1,9 +1,10 @@
-version: "2"
+version: "3.9"
 
 services:
   nginx:
     build: ./webserver/nginx
     image: tim/nginx-proxy
+    container_name: nginx-proxy-server
     env_file:
       - ./webserver/config.env
     volumes:
@@ -13,12 +14,14 @@ services:
       - ./webserver/vhosts:/etc/nginx/vhosts
       - ./webserver/html:/var/www/html
     ports:
+      - "80:80"
       - "443:443"
     restart: unless-stopped
 
   certbot:
     build: ./webserver/certbot
     image: tim/certbot
+    container_name: certbot-ssl
     env_file:
       - ./webserver/config.env
     volumes:
@@ -28,6 +31,7 @@ services:
   cron:
     build: ./webserver/cron
     image: tim/cron
+    container_name: cron-background
     environment:
       COMPOSE_PROJECT_NAME: "${COMPOSE_PROJECT_NAME}"
     volumes:
@@ -81,7 +85,6 @@ services:
 volumes:
   cache:
     driver: local
-    external: true
   nginx_conf:
     external: true
   letsencrypt_certs:

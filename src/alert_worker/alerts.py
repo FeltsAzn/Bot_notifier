@@ -15,8 +15,6 @@ from load_virtual_variables import MULTIPROCESS_CONFIG, MAIN_ADMIN
 Используется бесконечный цикл для постоянной работы бота.
 """
 
-
-
 USER_CACHE = []
 
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-openssl req -x509 -nodes -newkey rsa:2048 -keyout key.pem -out cert.pem -sha256 -days 365 \
-    -subj "/C=TR/ST=Eskisehir/L=None/O=None/OU=Telegram Bot/CN=quotes-bot"
-
-docker compose -f docker-compose_self_ssl.yml up -d
+docker volume create --name=nginx_conf
+docker volume create --name=letsencrypt_certs
+docker compose -f docker-compose.yml up -d
+docker compose logs -f

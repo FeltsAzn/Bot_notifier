@@ -12,7 +12,6 @@ from src.logger import logger
 from load_virtual_variables import WEBHOOK_PATH, WEBHOOK_URL, WEBAPP_HOST, BOT_PORT
 
 
-
 def start_app_on_one_thread():
     try:
         start_webhook(
@@ -24,11 +23,10 @@ def start_app_on_one_thread():
             port=BOT_PORT,
             on_shutdown=on_shutdown,
         )
-    except (SystemExit, ) as ex:
+    except (SystemExit,) as ex:
         logger.exception("Stop one thread app."
                          f"exception type: {type(ex)} exception: {ex}")
         bot.close()
-
 
 
 def multiproc_app():
@@ -62,7 +60,7 @@ def start_bot_proc1(instance):
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
             skip_updates=True,
-            on_startup= on_startup,
+            on_startup=on_startup,
             host=WEBAPP_HOST,
             port=BOT_PORT,
             on_shutdown=on_shutdown,
@@ -72,9 +70,11 @@ def start_bot_proc1(instance):
                          f"exception type: {type(ex)} exception: {ex}")
         raise SystemExit
 
+
 async def on_startup(dp: aiogram.Dispatcher):
     await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
     logger.info("Webhook is created. Bot is running")
+
 
 async def on_shutdown(dp: aiogram.Dispatcher):
     await bot.delete_webhook()
