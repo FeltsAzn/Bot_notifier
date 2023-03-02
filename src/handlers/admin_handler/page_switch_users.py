@@ -32,7 +32,7 @@ async def next_pages_handler(call: CallbackQuery):
     keyboard.insert(left_button)
     keyboard.insert(right_button)
 
-    text = f"Список пользователей ({page_counter}/{last_page}):"
+    text = f"List of users ({page_counter}/{last_page}):"
     await call.message.edit_text(text, reply_markup=keyboard)
 
 
@@ -55,5 +55,5 @@ async def back_pages_handler(call: CallbackQuery):
     keyboard.insert(left_button)
     keyboard.insert(right_button)
 
-    text = f"Список пользователей ({page_counter}/{last_page}):"
+    text = f"List of users ({page_counter}/{last_page}):"
     await call.message.edit_text(text, reply_markup=keyboard)

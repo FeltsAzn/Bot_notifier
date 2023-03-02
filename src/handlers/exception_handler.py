@@ -13,9 +13,9 @@ admin_url = os.getenv("ADMIN_NAME")
 
 
 async def exception_hand(tg_id: int) -> None:
-    start_buttons = ['Список площадок', "Список валют", 'Настройки']
+    start_buttons = ["List of places", "List of currencies", "Home"]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*start_buttons)
-    await bot.send_message(tg_id, "Возникла ошибка:(\n"
-                                  f"Напишите администратору {admin_url}",
+    await bot.send_message(tg_id, "Error :(\n"
+                                  f"Text to administrator: {admin_url}",
                            reply_markup=keyboard)

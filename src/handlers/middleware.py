@@ -1,8 +1,8 @@
 import multiprocessing
+from typing import Callable
+
 from src.db.crud import Database
-from src.alert_worker.alerts import update_user_cache
-
-
+from src.alert_worker.alerts import update_user_cache, USER_CACHE
 
 
 instance_cache = {}
@@ -11,6 +11,16 @@ instance_cache = {}
 The middleware.py file is designed to hide database calls and filter data when a response is received.
 from the database for readability of the code.
 """
+
+
+def validate_user(func) -> Callable:
+    user_cache = set(map(lambda x: x[0], USER_CACHE))
+
+    def wrap(message) -> Callable:
+        if message.from_user.id in user_cache:
+            return func(message, True)
+        return func(message, False)
+    return wrap
 
 
 def update_users_list_sync(instance: multiprocessing.Value = None) -> None:

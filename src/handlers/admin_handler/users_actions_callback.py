@@ -16,7 +16,7 @@ super_admin_id = os.getenv("SUPER_ADMIN_ID")
 
 @dp.callback_query_handler(text_contains=":cancel:call")
 async def list_of_users(call: CallbackQuery) -> None:
-    """заполниние списка пользователей после отмены действия"""
+    """Filling is list of users after canceling action"""
 
     keyboard = await filling_keyboard()
     if page_counter > 1:
@@ -29,7 +29,7 @@ async def list_of_users(call: CallbackQuery) -> None:
         stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         keyboard.insert(stop_button)
         keyboard.insert(next_button)
-    text = f"Список пользователей ({page_counter}/{last_page}):"
+    text = f"List of users ({page_counter}/{last_page}):"
     await call.message.edit_text(text, reply_markup=keyboard)
 
 
@@ -43,8 +43,8 @@ async def user_info(call: CallbackQuery) -> None:
            f"<i>name</i>: <b>{username}</b>\n" \
            f"<i>notify</i>: <b>{state}</b>\n" \
            f"<i>status</i>: <b>{status}</b>\n"
-    delete_but = InlineKeyboardButton(text="Удалить пользователя", callback_data=f"{user_tg_id}:ask:delete:call")
-    cancel_but = InlineKeyboardButton(text="Отмена", callback_data=f"{user_tg_id}:cancel:call")
+    delete_but = InlineKeyboardButton(text="Delete user", callback_data=f"{user_tg_id}:ask:delete:call")
+    cancel_but = InlineKeyboardButton(text="Cancel", callback_data=f"{user_tg_id}:cancel:call")
     keyboard.insert(delete_but)
     keyboard.insert(cancel_but)
 
@@ -53,39 +53,38 @@ async def user_info(call: CallbackQuery) -> None:
 
 @dp.callback_query_handler(text_contains=":ask:delete:call")
 async def ask_delete_user(call: CallbackQuery) -> None:
-    """Выбор удаления выбранного пользователя"""
+    """Deleting the selected user solution"""
 
     user_tg_id = int(call.data.split(':')[0])
 
     keyboard = InlineKeyboardMarkup(row_width=1)
-    delete_but = InlineKeyboardButton(text="Да, удалить", callback_data=f"{user_tg_id}:delete:call")
-    cancel_but = InlineKeyboardButton(text="Отмена", callback_data=f"{user_tg_id}:user:info:call")
+    delete_but = InlineKeyboardButton(text="Yes, delete", callback_data=f"{user_tg_id}:delete:call")
+    cancel_but = InlineKeyboardButton(text="Cancel", callback_data=f"{user_tg_id}:user:info:call")
     keyboard.insert(delete_but)
     keyboard.insert(cancel_but)
 
-    await call.message.edit_text(text="Вы действительно хотите\n"
-                                      "удалить пользователя?", reply_markup=keyboard, parse_mode="html")
+    await call.message.edit_text(text="Are you sure to delete user?", reply_markup=keyboard, parse_mode="html")
 
 
 @dp.callback_query_handler(text_contains=":delete:call")
 async def delete_user(call: CallbackQuery) -> None:
-    """Удаление выбранного пользователя"""
+    """Deleting the selected user"""
 
     user_tg_id = int(call.data.split(':')[0])
 
     if user_tg_id != call.from_user.id:
         state: bool = await delete_user_from_tg_id(user_tg_id)
         if state:
-            mes = f"Пользователь {user_tg_id} удален"
+            mes = f"User {user_tg_id} removed"
         else:
-            mes = f"Ошибка удаления пользователя {user_tg_id}"
+            mes = f"Error on removing user {user_tg_id}"
     else:
-        mes = "Не нужно удалять самого себя\nтаким образом."
+        mes = "Don't delete yourself\nlike that."
 
     keyboard_without_but = await filling_keyboard()
     keyboard = inserting_button(keyboard_without_but)
 
-    text = f"Список пользователей ({page_counter}/{last_page}):"
+    text = f"List of users ({page_counter}/{last_page}):"
     await call.message.edit_text(mes)
     await asyncio.sleep(2)
     await call.message.edit_text(text, reply_markup=keyboard, parse_mode="html")
