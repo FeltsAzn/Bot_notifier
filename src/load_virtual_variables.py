@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from src.cache.async_redis_logic import AsyncRedisCache
+from cache.async_redis_logic import AsyncRedisCache
 
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 if os.path.exists(dotenv_path):
@@ -21,4 +21,4 @@ WEBHOOK_URL = f"{DOMAIN}{WEBHOOK_PATH}"
 __redis_url = os.getenv("REDIS_URL")
 __redis_port = os.getenv("REDIS_PORT")
 __redis_password = os.getenv("REDIS_PASS")
-USER_CACHE = AsyncRedisCache(host=__redis_url, port=__redis_port, db=2, password=__redis_password)
+REDIS_ASYNC_CONN = AsyncRedisCache(host=__redis_url, port=__redis_port, db=2, password=__redis_password)

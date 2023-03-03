@@ -3,12 +3,12 @@ import asyncio
 import sys
 import multiprocessing
 import aiogram
+import handlers
 from aiogram.utils.exceptions import NetworkError
 from aiogram.utils.executor import start_webhook
-from src.handlers.middleware import update_users_list_sync
-from src.loader import dp, bot
-from src.alert_worker import alerts
-from src.logger import logger
+from loader import dp, bot
+from alert_worker.alerts import NotificationAlerter
+from logger import logger
 from load_virtual_variables import WEBHOOK_PATH, WEBHOOK_URL, WEBAPP_HOST, BOT_PORT
 
 
@@ -30,10 +30,8 @@ def start_app_on_one_thread():
 
 
 def multiproc_app():
-    manager = multiprocessing.Manager()
-    instance = manager.Value("instance", False)
-    process_1 = multiprocessing.Process(target=start_bot_proc1, args=(instance,))
-    process_2 = multiprocessing.Process(target=start_alerts_proc2, args=(instance,))
+    process_1 = multiprocessing.Process(target=start_bot_proc1)
+    process_2 = multiprocessing.Process(target=start_alerts_proc2)
     process_1.start()
     process_2.start()
 
@@ -52,10 +50,9 @@ def multiproc_app():
             sys.exit(13)
 
 
-def start_bot_proc1(instance):
+def start_bot_proc1():
     """Запуск бота в процессе 1"""
     try:
-        update_users_list_sync(instance)
         start_webhook(
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
@@ -81,10 +78,11 @@ async def on_shutdown(dp: aiogram.Dispatcher):
     logger.info("Webhook is deleted. Bot is stopped")
 
 
-def start_alerts_proc2(instance):
+def start_alerts_proc2():
     """Run notifications in second process"""
     try:
-        asyncio.run(alerts.background_alerts(instance))
+        notification = NotificationAlerter()
+        asyncio.run(notification.background_task())
     except SystemError as ex:
         logger.exception("Error process 2 (alerts) "
                          f"exception type: {type(ex)} exception: {ex}")

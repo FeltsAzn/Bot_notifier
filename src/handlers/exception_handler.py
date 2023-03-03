@@ -1,6 +1,6 @@
 import os
 from aiogram import types
-from src.loader import bot
+from loader import bot
 
 
 """

@@ -1,5 +1,5 @@
-from src.logger import logger
-from src.bot import multiproc_app, start_app_on_one_thread
+from logger import logger
+from bot import multiproc_app, start_app_on_one_thread
 from load_virtual_variables import MULTIPROCESS_CONFIG
 
 

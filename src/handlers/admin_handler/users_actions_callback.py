@@ -1,10 +1,10 @@
 import asyncio
 import os
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
-from src.loader import dp
-from src.handlers.admin_handler.config_for_filling import filling_keyboard, last_page
-from src.handlers.admin_handler.page_switch_users import page_counter
-from src.handlers.middleware import get_user_from_tg_id, delete_user_from_tg_id
+from loader import dp
+from handlers.admin_handler.config_for_filling import filling_keyboard, last_page
+from handlers.admin_handler.page_switch_users import page_counter
+from middleware import get_user_from_tg_id, delete_user_from_tg_id
 
 """
 Файл users_actioins_callback.py предназначен для реализации функционала бота "Админка -> Список пользователей".
@@ -37,12 +37,12 @@ async def list_of_users(call: CallbackQuery) -> None:
 async def user_info(call: CallbackQuery) -> None:
     """Получение информации по конкретному пользователю"""
     user_tg_id = int(call.data.split(':')[0])
-    _, username, state, status = await get_user_from_tg_id(user_tg_id)
+    user = await get_user_from_tg_id(user_tg_id)
     keyboard = InlineKeyboardMarkup(row_width=1)
     text = f"<i>tg_id</i>: <b>{user_tg_id}</b>\n" \
-           f"<i>name</i>: <b>{username}</b>\n" \
-           f"<i>notify</i>: <b>{state}</b>\n" \
-           f"<i>status</i>: <b>{status}</b>\n"
+           f"<i>name</i>: <b>{user['username']}</b>\n" \
+           f"<i>notify</i>: <b>{user['state']}</b>\n" \
+           f"<i>status</i>: <b>{user['access']}</b>\n"
     delete_but = InlineKeyboardButton(text="Delete user", callback_data=f"{user_tg_id}:ask:delete:call")
     cancel_but = InlineKeyboardButton(text="Cancel", callback_data=f"{user_tg_id}:cancel:call")
     keyboard.insert(delete_but)

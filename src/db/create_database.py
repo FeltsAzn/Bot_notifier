@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 Файл create_database.py - создание новой базы данных для приложения бота, если будет удалена активная база
 """
 
-dotenv_path = os.path.join(os.path.dirname(__file__), "../../.env")
+dotenv_path = os.path.join(os.path.dirname(__file__), "../.env")
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 Base = declarative_base()

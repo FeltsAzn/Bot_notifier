@@ -1,10 +1,12 @@
+import functools
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, select
 from load_virtual_variables import DATABASE_URL, DATABASE_ASYNC_URL
-from src.db.models import User
-from src.logger import logger
+from db.models import User
+from logger import logger
+
 
 """
 crud.py file - it is file, which contains database methods to create, read, delete, update database fields 
@@ -15,6 +17,18 @@ class Database:
     ENGINE = create_async_engine(DATABASE_ASYNC_URL, future=True, echo=False)
     ASYNC_SESSION = sessionmaker(ENGINE, expire_on_commit=False, class_=AsyncSession)
 
+    @staticmethod
+    def exception_middleware(func):
+        @functools.wraps(func)
+        async def wrap(*args):
+            try:
+                return await func(*args)
+            except Exception as ex:
+                logger.exception(f"Database is not exist. Or {type(ex)}: {ex}")
+                raise SystemExit
+        return wrap
+
+    @exception_middleware
     async def create_user(self, tg_id: int, name: str) -> bool:
         """Создание нового пользователя"""
         async with self.ASYNC_SESSION() as session:
@@ -36,6 +50,7 @@ class Database:
                                  f"exception type {type(ex)} - {ex}")
                 return False
 
+    @exception_middleware
     async def delete_user(self, tg_id: int) -> bool:
         """Удаление пользователя"""
         async with self.ASYNC_SESSION() as session:
@@ -55,35 +70,38 @@ class Database:
                                  f"exception type {type(ex)} - {ex}")
                 return False
 
-    async def get_user(self, tg_id: int) -> tuple | bool:
-        """Список всех пользователей(Синхронно, используется для старта приложения)"""
+    @exception_middleware
+    async def get_user(self, tg_id: int) -> dict:
+        """Get one user"""
         async with self.ASYNC_SESSION() as session:
             try:
                 query = select(User).where(User.user_id == tg_id)
                 database_response = await session.execute(query)
                 user = database_response.one()
-                user: tuple = tuple(map(lambda x: (x.user_id, x.username, x.notification, x.access), user))
-                return user[0]
+                users = {x.user_id: {"username": x.username, "state": x.notification, "access": x.access} for x in user}
+                return users
             except Exception as ex:
                 logger.exception(f"Exception in asynchronous get user on db with tg id: {tg_id}\n"
                                  f"exception type {type(ex)} - {ex}")
-                return ()
+                return {}
 
-    async def async_get_users(self) -> list[tuple] | bool:
+    @exception_middleware
+    async def async_get_users(self) -> dict:
         """Список всех пользователей (асинхронно, используется во время работы программы)"""
         async with self.ASYNC_SESSION() as session:
             try:
                 query = select(User)
                 database_response = await session.execute(query)
                 user = database_response.scalars()
-                users = list(map(lambda x: (x.user_id, x.username, x.notification, x.access), user))
+                users = {x.user_id: {"username": x.username, "state": x.notification, "access": x.access} for x in user}
                 return users
             except Exception as ex:
                 logger.exception(f"Exception in asynchronous get all users on db\n"
                                  f"exception type {type(ex)} - {ex}")
-                return []
+                return {}
 
-    async def active_notification(self, tg_id) -> bool:
+    @exception_middleware
+    async def activate_notification(self, tg_id) -> bool:
         """Активация уведомлений пользователя"""
         async with self.ASYNC_SESSION() as session:
             try:
@@ -98,7 +116,9 @@ class Database:
                 logger.exception(f"Exception in activate notifications with tg id: {tg_id}\n"
                                  f"exception type {type(ex)} - {ex}")
                 return False
-    async def deactivated_notification(self, tg_id) -> bool:
+
+    @exception_middleware
+    async def deactivate_notification(self, tg_id) -> bool:
         """Деактивация уведомлений пользователя"""
         async with self.ASYNC_SESSION() as session:
             try:
@@ -114,20 +134,6 @@ class Database:
                                  f"exception type {type(ex)} - {ex}")
                 return False
 
-    async def notifications_state(self) -> list[tuple] | bool:
-        """Состояние уведомлений пользователя"""
-        async with self.ASYNC_SESSION() as session:
-            try:
-                query = select(User)
-                database_response = await session.execute(query)
-                user = database_response.scalars()
-                users = list(map(lambda x: (x.user_id, x.notification), user))
-                return users
-            except Exception as ex:
-                logger.exception(f"Exception in asynchronous notifications state on db\n"
-                                 f"exception type {type(ex)} - {ex}")
-                return False
-
     @staticmethod
     def create_sync_session():
         """Синхронная сессия подключения к бд"""
@@ -139,7 +145,7 @@ class Database:
             logger.exception(f"Synchronous session maker error: {ex}")
             return False
 
-    def sync_get_users(self) -> list[tuple] | bool:
+    def sync_get_users(self) -> dict:
         """Синхронный обработчик для получения списка пользователей (для корректного старта приложения)"""
         database_session = self.create_sync_session()
         if database_session:
@@ -148,10 +154,10 @@ class Database:
                     query = select(User)
                     database_response = session.execute(query)
                     user = database_response.scalars()
-                    users = list(map(lambda x: (x.user_id, x.username, x.notification, x.access), user))
+                    users = {x.user_id: {"username": x.username, "state": x.notification, "access": x.access} for x in user}
                     return users
                 except Exception as ex:
                     logger.exception(f"Exception in synchronous get all users on db\n"
                                      f"exception type {type(ex)} - {ex}")
-                    return False
-        return False
+                    return {}
+        return {}

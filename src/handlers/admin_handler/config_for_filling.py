@@ -1,6 +1,6 @@
 import math
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from src.handlers.middleware import sync_get_users_list, async_update_users_list
+from middleware import sync_get_users_list, async_get_all_users
 
 
 """
@@ -17,7 +17,11 @@ last_page = math.ceil(len(users_list) / 6)
 
 async def get_user_list() -> list[tuple]:
     """Получение списка всех пользователей"""
-    return await async_update_users_list()
+    all_users = await async_get_all_users()
+    list_of_users = []
+    for user_id, data in all_users.items():
+        list_of_users.append((user_id, data["username"]))
+    return list_of_users
 
 
 async def filling_keyboard() -> InlineKeyboardMarkup:
@@ -28,7 +32,7 @@ async def filling_keyboard() -> InlineKeyboardMarkup:
     last_page = math.ceil(len(users) / 6)
     keyboard = InlineKeyboardMarkup(row_width=2)
 
-    for tg_id, username, _, _ in users[elements_counter:6 + elements_counter]:
+    for tg_id, username in users[elements_counter:6 + elements_counter]:
         button = InlineKeyboardButton(text=username, callback_data=f"{tg_id}:user:info:call")
         keyboard.insert(button)
     return keyboard

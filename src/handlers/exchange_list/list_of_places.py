@@ -1,9 +1,9 @@
 import asyncio
 from aiogram.types import Message, InlineKeyboardButton
 from aiogram.dispatcher.filters import Text
-from src.loader import dp
-from src.handlers.exchange_list.config_for_filling import last_page, filling_keyboard
-from src.handlers.middleware import validate_user
+from loader import dp
+from handlers.exchange_list.config_for_filling import last_page, filling_keyboard
+from middleware import validate_user
 
 
 @dp.message_handler(Text(equals="List of places"))
