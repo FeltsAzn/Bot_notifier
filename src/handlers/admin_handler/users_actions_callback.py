@@ -2,8 +2,7 @@ import asyncio
 import os
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from loader import dp
-from handlers.admin_handler.config_for_filling import filling_keyboard, last_page
-from handlers.admin_handler.page_switch_users import page_counter
+from handlers.admin_handler.config_for_filling import fill_table
 from middleware import get_user_from_tg_id, delete_user_from_tg_id
 
 """
@@ -18,18 +17,18 @@ super_admin_id = os.getenv("SUPER_ADMIN_ID")
 async def list_of_users(call: CallbackQuery) -> None:
     """Filling is list of users after canceling action"""
 
-    keyboard = await filling_keyboard()
-    if page_counter > 1:
+    keyboard = await fill_table.filling_keyboard()
+    if fill_table.page_counter > 1:
         next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:user:call")
         stop_button = InlineKeyboardButton(text="<<<", callback_data="back_page:user:call")
         keyboard.insert(stop_button)
         keyboard.insert(next_button)
-    elif last_page > 1:
+    elif fill_table.last_page > 1:
         next_button = InlineKeyboardButton(text=">>>", callback_data="next_page:user:call")
         stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         keyboard.insert(stop_button)
         keyboard.insert(next_button)
-    text = f"List of users ({page_counter}/{last_page}):"
+    text = f"List of users ({fill_table.page_counter}/{fill_table.last_page}):"
     await call.message.edit_text(text, reply_markup=keyboard)
 
 
@@ -81,27 +80,27 @@ async def delete_user(call: CallbackQuery) -> None:
     else:
         mes = "Don't delete yourself\nlike that."
 
-    keyboard_without_but = await filling_keyboard()
+    keyboard_without_but = await fill_table.filling_keyboard()
     keyboard = inserting_button(keyboard_without_but)
 
-    text = f"List of users ({page_counter}/{last_page}):"
+    text = f"List of users ({fill_table.page_counter}/{fill_table.last_page}):"
     await call.message.edit_text(mes)
     await asyncio.sleep(2)
     await call.message.edit_text(text, reply_markup=keyboard, parse_mode="html")
 
 
 def inserting_button(keyboard: InlineKeyboardMarkup) -> InlineKeyboardMarkup:
-    if page_counter == last_page and last_page != 1:
+    if fill_table.page_counter == fill_table.last_page and fill_table.last_page != 1:
         right_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         left_button = InlineKeyboardButton(text="<<<", callback_data="back_page:user:call")
         keyboard.insert(right_button)
         keyboard.insert(left_button)
-    elif page_counter > 1 and last_page != 2:
+    elif fill_table.page_counter > 1 and fill_table.last_page != 2:
         right_button = InlineKeyboardButton(text=">>>", callback_data="next_page:user:call")
         left_button = InlineKeyboardButton(text="<<<", callback_data="back_page:user:call")
         keyboard.insert(right_button)
         keyboard.insert(left_button)
-    elif last_page > 1 and page_counter == 1:
+    elif fill_table.last_page > 1 and fill_table.page_counter == 1:
         right_button = InlineKeyboardButton(text=">>>", callback_data="next_page:user:call")
         left_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         keyboard.insert(right_button)

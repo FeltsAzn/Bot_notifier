@@ -44,7 +44,8 @@ async def create_new_user(tg_id: int, username: str) -> bool:
     """Creating new user"""
     user_is_registered = await Database().create_user(tg_id=tg_id, name=username)
     if user_is_registered:
-        await async_get_all_users()
+        await update_users_list_async()
+        return user_is_registered
     return user_is_registered
 
 
@@ -67,6 +68,7 @@ async def delete_user_from_tg_id(user_tg_id: int) -> bool:
     is_deleted = await Database().delete_user(user_tg_id)
     if is_deleted:
         await update_users_list_async()
+        return is_deleted
     return is_deleted
 
 
@@ -81,6 +83,7 @@ async def activate_notify(tg_id: int) -> bool:
     is_activated = await Database().activate_notification(tg_id)
     if is_activated:
         await update_users_list_async()
+        return is_activated
     return is_activated
 
 
@@ -89,9 +92,6 @@ async def deactivate_notify(tg_id: int) -> bool:
     is_deactivated = await Database().deactivate_notification(tg_id)
     if is_deactivated:
         await update_users_list_async()
+        return is_deactivated
     return is_deactivated
-
-
-def sync_get_users_list():
-    return Database().sync_get_users()
 

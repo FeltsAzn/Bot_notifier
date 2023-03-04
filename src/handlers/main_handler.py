@@ -4,7 +4,6 @@ from loader import dp
 from handlers.exception_handler import exception_hand
 from middleware import (async_get_admin,
                         create_new_user,
-                        async_get_all_users,
                         validate_user)
 
 """
@@ -13,15 +12,14 @@ from middleware import (async_get_admin,
 
 
 @dp.message_handler(commands=["start", "home"])
-async def start(message: types.Message) -> None:
+@validate_user
+async def start(message: types.Message, is_reg_user: bool) -> None:
     """Start window"""
-    all_users = await async_get_all_users()
     buttons = ["List of places", "Settings"]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
-    if all_users and message.from_user.id in all_users:
+    if is_reg_user:
         await user_in_users_list(message, keyboard, buttons)
-
     else:
         await new_user(message, keyboard, buttons)
 
@@ -31,7 +29,7 @@ async def user_in_users_list(message: types.Message,
                              buttons: list) -> None:
     """Handler for existed user"""
     admin_list = await async_get_admin()
-    if message.from_user.id in admin_list:
+    if f"{message.from_user.id}" in admin_list:
         buttons = ["List of places", "Admin Panel", "Settings"]
     keyboard.add(*buttons)
     await message.answer("Hi, I am your assistant to tracking changes quotes!",
@@ -59,7 +57,7 @@ async def start_again(message: types.Message, is_reg_user: bool) -> None:
     if is_reg_user:
         admin_list = await async_get_admin()
         buttons = ["List of places", "Settings"]
-        if message.from_user.id in admin_list:
+        if f"{message.from_user.id}" in admin_list:
             buttons = ["List of places", "Admin panel", "Settings"]
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         keyboard.add(*buttons)

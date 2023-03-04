@@ -1,10 +1,10 @@
 import json
 import time
-from async_redis_logic import RedisCache
+from async_redis_logic import AsyncRedisCache
 import redis
 
-cache1 = RedisCache()
-cache2 = RedisCache(db=1)
+cache1 = AsyncRedisCache()
+cache2 = AsyncRedisCache(db=2)
 timer1 = {
     "timer_5": {
         "time": str(time.time()),

@@ -1,7 +1,7 @@
 from aiogram.types import Message, InlineKeyboardButton, ReplyKeyboardMarkup
 from aiogram.dispatcher.filters import Text
 from loader import dp
-from handlers.admin_handler.config_for_filling import filling_keyboard, last_page
+from handlers.admin_handler.config_for_filling import fill_table
 from middleware import admin_validator
 
 """
@@ -22,13 +22,13 @@ async def start(message: Message):
 @admin_validator
 async def start_list_of_users(message: Message):
     """Стартовый список пользователей"""
-    keyboard = await filling_keyboard()
-    if last_page > 1:
+    keyboard = await fill_table.filling_keyboard()
+    if fill_table.last_page > 1:
         next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:user:call")
         stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")
         keyboard.insert(stop_button)
         keyboard.insert(next_button)
-    text = f"List of users (1/{last_page}):"
+    text = f"List of users (1/{fill_table.last_page}):"
     await message.answer(text, reply_markup=keyboard)
 
 

@@ -91,10 +91,12 @@ async def deleting(message: types.Message, is_reg_user: bool):
     if is_reg_user:
         response = await delete_user_from_tg_id(message.from_user.id)
         if response:
-            await message.answer("Your account removed in database.\n"
-                                 "If you want to get notifications \n"
-                                 "about exchanges quotes again\n"
-                                 "text /start for me")
+            msg_id = await message.answer("Your account removed in database.\n"
+                                          "If you want to get notifications \n"
+                                          "about exchanges quotes again\n"
+                                          "text /start for me")
+            await asyncio.sleep(5)
+            await msg_id.delete()
         else:
             await exception_hand(message.from_user.id)
     else:

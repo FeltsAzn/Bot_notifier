@@ -20,9 +20,9 @@ class Database:
     @staticmethod
     def exception_middleware(func):
         @functools.wraps(func)
-        async def wrap(*args):
+        async def wrap(*args, **kwargs):
             try:
-                return await func(*args)
+                return await func(*args, **kwargs)
             except Exception as ex:
                 logger.exception(f"Database is not exist. Or {type(ex)}: {ex}")
                 raise SystemExit
