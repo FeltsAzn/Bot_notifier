@@ -55,7 +55,7 @@ services:
 
   telegram_bot:
     build:
-      context: ./src
+      context: .
       dockerfile: Dockerfile_bot
     image: tim/bot
     container_name: bot_app
