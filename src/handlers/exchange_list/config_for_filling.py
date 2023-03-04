@@ -6,6 +6,8 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 глобальных переменных для корректного переключения страничек 
 """
 
+# TODO: Add state for correct work filling keyboard
+
 
 class FillingKeyboard:
     places = [

@@ -2,17 +2,13 @@ import functools
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, select
-from load_virtual_variables import DATABASE_URL, DATABASE_ASYNC_URL
+from sqlalchemy import select
+from load_virtual_variables import DATABASE_ASYNC_URL
 from db.models import User
 from logger import logger
 
 
-"""
-crud.py file - it is file, which contains database methods to create, read, delete, update database fields 
-"""
-
-
+# TODO: connect to mongo db
 class Database:
     ENGINE = create_async_engine(DATABASE_ASYNC_URL, future=True, echo=False)
     ASYNC_SESSION = sessionmaker(ENGINE, expire_on_commit=False, class_=AsyncSession)
@@ -24,7 +20,8 @@ class Database:
             try:
                 return await func(*args, **kwargs)
             except Exception as ex:
-                logger.exception(f"Database is not exist. Or {type(ex)}: {ex}")
+                logger.exception(f"Database is not exist. Or {type(ex)}: {ex}\n"
+                                 f"arguments: {args} and keywords: {kwargs}")
                 raise SystemExit
         return wrap
 
@@ -133,31 +130,3 @@ class Database:
                 logger.exception(f"Exception in deactivate notifications with tg id: {tg_id}\n"
                                  f"exception type {type(ex)} - {ex}")
                 return False
-
-    @staticmethod
-    def create_sync_session():
-        """Синхронная сессия подключения к бд"""
-        try:
-            engine = create_engine(DATABASE_URL, future=True, echo=True)
-            session = sessionmaker(engine, expire_on_commit=False)
-            return session
-        except Exception as ex:
-            logger.exception(f"Synchronous session maker error: {ex}")
-            return False
-
-    def sync_get_users(self) -> dict:
-        """Синхронный обработчик для получения списка пользователей (для корректного старта приложения)"""
-        database_session = self.create_sync_session()
-        if database_session:
-            with database_session() as session:
-                try:
-                    query = select(User)
-                    database_response = session.execute(query)
-                    user = database_response.scalars()
-                    users = {x.user_id: {"username": x.username, "state": x.notification, "access": x.access} for x in user}
-                    return users
-                except Exception as ex:
-                    logger.exception(f"Exception in synchronous get all users on db\n"
-                                     f"exception type {type(ex)} - {ex}")
-                    return {}
-        return {}

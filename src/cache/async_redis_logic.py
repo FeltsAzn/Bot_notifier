@@ -2,6 +2,7 @@ import json
 import functools
 import redis
 import redis.asyncio as async_redis
+from logger import logger
 
 
 class AsyncRedisCache:
@@ -16,7 +17,7 @@ class AsyncRedisCache:
             try:
                 return await func(*args)
             except redis.exceptions.ConnectionError:
-                # logger
+                logger.error("The redis connection is refused. The redis container not responding. Restart a container.")
                 raise ConnectionError
         return wrap
 

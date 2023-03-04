@@ -4,9 +4,7 @@ from logger import logger
 import asyncio
 from aiohttp.client_exceptions import ContentTypeError
 
-"""
-Файл http_req.py - запросы к endpoint'ам приложения на FastAPI
-"""
+
 TEXT_CREATOR_URL = os.getenv("TEXT_GENERATOR")
 EXCHANGES_DATA_URL = os.getenv("EXCHANGES_DATA_COLLECTOR")
 

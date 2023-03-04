@@ -2,10 +2,6 @@ import os
 import aiogram
 from aiogram import types
 
-"""
-Файл alerts_exception_handler.py - метод для отправки сообщения об ошибке
-связанной с главным обработчиком уведомлений.  
-"""
 
 admin_url = os.getenv("ADMIN_NAME")
 

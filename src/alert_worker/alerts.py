@@ -45,10 +45,12 @@ class NotificationAlerter:
         """
         await update_users_list_async()
         while True:
+            t1 = time.time()
             await self.update_user_cache()
             raw_data = await http_req.exchanges_data_collector()
             content = await http_req.give_finished_text(*raw_data)
             await self.send_message(content)
+            logger.info(f"{time.time() - t1}")
 
     async def send_message(self, content: list) -> None:
         if content != [] and self.USERS_CACHE:
