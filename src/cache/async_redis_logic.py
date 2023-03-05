@@ -13,12 +13,15 @@ class AsyncRedisCache:
     @staticmethod
     def exception_middleware(func):
         @functools.wraps(func)
-        async def wrap(*args):
+        async def wrap(*args, **kwargs):
             try:
-                return await func(*args)
+                return await func(*args, **kwargs)
             except redis.exceptions.ConnectionError:
                 logger.error("The redis connection is refused. The redis container not responding. Restart a container.")
                 raise ConnectionError
+            except Exception as ex:
+                logger.critical(f"Unknown error. [TYPE] {type(ex)} [DESCRIPTION] {ex}")
+                raise SystemError
         return wrap
 
     @exception_middleware
