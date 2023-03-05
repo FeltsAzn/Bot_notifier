@@ -24,8 +24,8 @@ class NotificationAlerter:
                 except ClientConnectorError:
                     logger.exception("Telegram connection refused. Timeout 10 second activated")
                     time.sleep(10)
-                except (TypeError, AttributeError, redis.exceptions.ConnectionError) as ex:
-                    logger.exception(f"Exception on alerts loop: {ex}")
+                except Exception as ex:
+                    logger.critical(f"Not excepting error. on alerts loop: [TYPE] {type(ex)} [DESCRIPTION] {ex}")
                     for tg_id, state in self.USERS_CACHE.items():
                         if state == "ACTIVATED":
                             await UnexpectedException(tg_id, bot).exception_handler()
@@ -36,6 +36,7 @@ class NotificationAlerter:
         """
         Updating cache after app launching or after adding new user
         """
+        logger.info("Cache has been updated.")
         self.USERS_CACHE = await async_get_all_users()
 
     @exception_middleware
@@ -45,12 +46,10 @@ class NotificationAlerter:
         """
         await update_users_list_async()
         while True:
-            t1 = time.time()
             await self.update_user_cache()
             raw_data = await http_req.exchanges_data_collector()
             content = await http_req.give_finished_text(*raw_data)
             await self.send_message(content)
-            logger.info(f"{time.time() - t1}")
 
     async def send_message(self, content: list) -> None:
         if content != [] and self.USERS_CACHE:

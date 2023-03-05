@@ -11,7 +11,7 @@ class AsyncRedisCache:
         self.pool = async_redis.ConnectionPool(host=host, port=port, db=db, password=password)
 
     @staticmethod
-    def exception_middleware(func):
+    def __exception_handler(func):
         @functools.wraps(func)
         async def wrap(*args, **kwargs):
             try:
@@ -24,38 +24,38 @@ class AsyncRedisCache:
                 raise SystemError
         return wrap
 
-    @exception_middleware
+    @__exception_handler
     async def check_key_in_async_redis(self, key: str) -> bool:
         if await self.async_redis.exists(key):
             return True
         return False
 
-    @exception_middleware
+    @__exception_handler
     async def create_key_and_value(self, key: str, value: dict | str | float) -> None:
         if isinstance(value, dict):
             await self.async_redis.set(name=key, value=json.dumps(value), ex=self.timeout)
         else:
             await self.async_redis.set(name=key, value=value, ex=self.timeout)
 
-    @exception_middleware
+    @__exception_handler
     async def update_exist_key(self, key: str, new_value: dict | float | str) -> None:
         if isinstance(new_value, dict):
             await self.async_redis.set(name=key, value=json.dumps(new_value), ex=self.timeout)
         else:
             await self.async_redis.set(name=key, value=new_value, ex=self.timeout)
 
-    @exception_middleware
+    @__exception_handler
     async def get_value(self, key: str) -> dict:
         value = await self.async_redis.get(key)
         if value is None:
             return {}
         return json.loads(value)
 
-    @exception_middleware
+    @__exception_handler
     async def __aenter__(self) -> any:
         self.async_redis = await async_redis.Redis(connection_pool=self.pool)
         return self
 
-    @exception_middleware
+    @__exception_handler
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         await self.async_redis.close()
