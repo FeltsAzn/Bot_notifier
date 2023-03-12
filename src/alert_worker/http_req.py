@@ -16,7 +16,8 @@ async def exchanges_data_collector() -> tuple:
             "binance",
             "kucoin",
             "huobi",
-            "okx"
+            "okx",
+            "bybit"
         ]
         tasks = []
         for exchange in list_of_exchanges:

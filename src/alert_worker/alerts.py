@@ -17,26 +17,26 @@ class NotificationAlerter:
 
     @staticmethod
     def exception_middleware(func):
-            @functools.wraps(func)
-            async def wrapped(self) -> None:
-                try:
-                    return await func(self)
-                except ClientConnectorError:
-                    logger.exception("Telegram connection refused. Timeout 10 second activated")
-                    time.sleep(10)
-                except Exception as ex:
-                    logger.critical(f"Not excepting error. on alerts loop: [TYPE] {type(ex)} [DESCRIPTION] {ex}")
-                    for tg_id, state in self.USERS_CACHE.items():
-                        if state == "ACTIVATED":
-                            await UnexpectedException(tg_id, bot).exception_handler()
-                    raise SystemError
-            return wrapped
+        @functools.wraps(func)
+        async def wrapped(self) -> None:
+            try:
+                return await func(self)
+            except ClientConnectorError:
+                logger.exception("Telegram connection refused. Timeout 10 second activated")
+                time.sleep(10)
+            except Exception as ex:
+                logger.critical(f"Not excepting error. on alerts loop: [TYPE] {type(ex)} [DESCRIPTION] {ex}")
+                for tg_id, state in self.USERS_CACHE.items():
+                    if state == "ACTIVATED":
+                        await UnexpectedException(tg_id, bot).exception_handler()
+                raise SystemError
+
+        return wrapped
 
     async def update_user_cache(self) -> None:
         """
         Updating cache after app launching or after adding new user
         """
-        logger.info("Cache has been updated.")
         self.USERS_CACHE = await async_get_all_users()
 
     @exception_middleware
