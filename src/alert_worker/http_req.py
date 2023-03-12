@@ -4,7 +4,6 @@ from logger import logger
 import asyncio
 from aiohttp.client_exceptions import ContentTypeError
 
-
 TEXT_CREATOR_URL = os.getenv("TEXT_GENERATOR")
 EXCHANGES_DATA_URL = os.getenv("EXCHANGES_DATA_COLLECTOR")
 
@@ -50,15 +49,15 @@ async def give_finished_text(*raw_data) -> list:
     async with aiohttp.ClientSession(TEXT_CREATOR_URL) as session:
         converted_data = {"data": [*raw_data]}
         try:
-            async with session.post(f"/get_text", json=converted_data, timeout=5) as response:
+            async with session.post(f"/get_text", json=converted_data, timeout=15) as response:
                 text_block = await response.json()
         except (asyncio.exceptions.TimeoutError,
                 aiohttp.ClientConnectorError,
                 aiohttp.ClientOSError,
                 ContentTypeError,
                 OSError) as ex:
-            logger.warning(
-                f"Http error text creator [{TEXT_CREATOR_URL}] service endpoint not responding. Exception: {ex}")
+            logger.warning(f"Http error text creator [{TEXT_CREATOR_URL}] service endpoint not responding."
+                           f" Exception: {type(ex)} :{ex}")
             return []
         if "error" in text_block.keys():
             logger.warning(f"Error in text creator.\n"

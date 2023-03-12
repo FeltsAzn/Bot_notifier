@@ -23,11 +23,10 @@ def start_app_on_one_thread():
             port=BOT_PORT,
             on_shutdown=on_shutdown,
         )
-    except (SystemExit, ) as ex:
+    except (SystemExit,) as ex:
         logger.exception("Stop one thread app."
                          f"exception type: {type(ex)} exception: {ex}")
         bot.close()
-
 
 
 def multiproc_app():
@@ -58,7 +57,7 @@ def start_bot_proc1():
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
             skip_updates=True,
-            on_startup= on_startup,
+            on_startup=on_startup,
             host=WEBAPP_HOST,
             port=BOT_PORT,
             on_shutdown=on_shutdown,
@@ -68,9 +67,13 @@ def start_bot_proc1():
                          f"exception type: {type(ex)} exception: {ex}")
         raise SystemExit
 
+
 async def on_startup(dp: aiogram.Dispatcher):
     await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
+    info = await bot.get_webhook_info()
     logger.info("Webhook is created. Bot is running")
+    logger.info(f"Webhook info: {info}")
+
 
 async def on_shutdown(dp: aiogram.Dispatcher):
     await bot.delete_webhook()
