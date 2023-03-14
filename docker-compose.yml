@@ -5,8 +5,6 @@ services:
     container_name: nginx-proxy-server
     env_file:
       - ./webserver/config.env
-    environment:
-      BOT_TOKEN: "${BOT_TOKEN}"
     volumes:
       - nginx_conf:/etc/nginx/sites
       - letsencrypt_certs:/etc/letsencrypt
