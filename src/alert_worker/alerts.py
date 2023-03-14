@@ -1,6 +1,5 @@
 import time
 import functools
-import redis
 from emoji import emojize
 from aiogram.utils import markdown, exceptions
 from aiohttp.client_exceptions import ClientConnectorError
@@ -9,7 +8,7 @@ from logger import logger
 from alert_worker import http_req
 from alert_worker.alerts_exception_handler import UnexpectedException
 from load_virtual_variables import MAIN_ADMIN
-from middleware import async_get_all_users, update_users_list_async
+from middleware import async_get_all_users, update_users_list_async, deactivate_notify
 
 
 class NotificationAlerter:
@@ -65,6 +64,7 @@ class NotificationAlerter:
                                                text=emojize(markdown.text(*content), language="alias"),
                                                parse_mode="html")
                     except exceptions.BotBlocked as ex:
-                        logger.warning(f"Message didn't send to user {tg_id}. {ex}")
+                        logger.warning(f"Message didn't send to user {tg_id}. {ex}. User notify deactivated")
+                        await deactivate_notify(int(tg_id))
                         await bot.send_message(chat_id=MAIN_ADMIN, text=f"Message not sent to user {tg_id}. "
                                                                         f"He is blocked bot")
