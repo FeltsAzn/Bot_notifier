@@ -94,7 +94,7 @@ async def deleting(message: types.Message, is_reg_user: bool):
             msg_id = await message.answer("Your account removed in database.\n"
                                           "If you want to get notifications \n"
                                           "about exchanges quotes again\n"
-                                          "text /start for me")
+                                          "text /start for me", reply_markup=types.ReplyKeyboardRemove())
             await asyncio.sleep(5)
             await msg_id.delete()
         else:

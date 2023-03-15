@@ -95,3 +95,14 @@ async def deactivate_notify(tg_id: int) -> bool:
         return is_deactivated
     return is_deactivated
 
+
+async def set_value_to_redis(value: str) -> bool:
+    try:
+        value = float(value)
+    except ValueError:
+        return False
+    else:
+        async with REDIS_ASYNC_CONN as session:
+            await session.create_key_and_value("MINIMUM_VOLUME", value)
+        return True
+

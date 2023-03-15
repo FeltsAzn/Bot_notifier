@@ -9,7 +9,12 @@ from aiogram.utils.executor import start_webhook
 from loader import dp, bot
 from alert_worker.alerts import NotificationAlerter
 from logger import logger
-from load_virtual_variables import WEBHOOK_PATH, WEBHOOK_URL, WEBAPP_HOST, BOT_PORT
+from load_virtual_variables import (WEBHOOK_PATH,
+                                    WEBHOOK_URL,
+                                    WEBAPP_HOST,
+                                    BOT_PORT,
+                                    LOAD_BTC_ETH,
+                                    BASE_MINIMUM_VOLUME)
 
 
 def start():
@@ -56,6 +61,8 @@ async def on_startup(dp: aiogram.Dispatcher):
     info = await bot.get_webhook_info()
     logger.info("Webhook is created. Bot is running")
     logger.info(f"Webhook info: {info}")
+    async with LOAD_BTC_ETH as session:
+        await session.create_key_and_value("MINIMUM_VOLUME", BASE_MINIMUM_VOLUME)
 
 
 async def on_shutdown(dp: aiogram.Dispatcher):

@@ -19,21 +19,9 @@ async def start(message: types.Message, is_reg_user: bool) -> None:
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     if is_reg_user:
-        await user_in_users_list(message, keyboard, buttons)
+        return await start_again(message)
     else:
         await new_user(message, keyboard, buttons)
-
-
-async def user_in_users_list(message: types.Message,
-                             keyboard: types.ReplyKeyboardMarkup,
-                             buttons: list) -> None:
-    """Handler for existed user"""
-    admin_list = await async_get_admin()
-    if f"{message.from_user.id}" in admin_list:
-        buttons = ["List of places", "Admin Panel", "Settings"]
-    keyboard.add(*buttons)
-    await message.answer("Hi, I am your assistant to tracking changes quotes!",
-                         reply_markup=keyboard)
 
 
 async def new_user(message: types.Message,
