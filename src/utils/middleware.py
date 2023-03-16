@@ -1,6 +1,6 @@
 from typing import Callable
 from db.crud import Database
-from utils.virtual_variables import REDIS_ASYNC_CONN
+from utils.virtual_variables import REDIS_ASYNC_CONN, LOAD_BTC_ETH_PRICE
 import functools
 
 """
@@ -101,7 +101,7 @@ async def set_value_to_redis(value: str) -> bool:
     except ValueError:
         return False
     else:
-        async with REDIS_ASYNC_CONN as session:
+        async with LOAD_BTC_ETH_PRICE as session:
             await session.create_key_and_value("MINIMUM_VOLUME", value)
         return True
 
