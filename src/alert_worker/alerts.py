@@ -67,4 +67,4 @@ class NotificationAlerter:
                         logger.warning(f"Message didn't send to user {tg_id}. {ex}. User notify deactivated")
                         await deactivate_notify(int(tg_id))
                         await bot.send_message(chat_id=MAIN_ADMIN, text=f"Message not sent to user {tg_id}. "
-                                                                        f"He is blocked bot")
+                                                                        f"He is blocked bot, User notify deactivated")

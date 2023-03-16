@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from utils.async_redis_cache import AsyncRedisCache
 
-dotenv_path = os.path.join(os.path.dirname(__file__), "../.env.internal.bot")
+dotenv_path = os.path.join(os.path.dirname(__file__), ".env.internal.bot")
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
