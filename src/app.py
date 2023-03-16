@@ -3,6 +3,7 @@ import asyncio
 import sys
 import multiprocessing
 import aiogram
+import handlers
 from aiogram.utils.exceptions import NetworkError
 from aiogram.utils.executor import start_webhook
 from alert_worker.alerts import NotificationAlerter
