@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardButton, CallbackQuery
-from loader import dp
+from utils.create_bot import dp
 from handlers.admin_handler.config_for_filling import fill_table
 
 """

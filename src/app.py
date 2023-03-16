@@ -3,18 +3,17 @@ import asyncio
 import sys
 import multiprocessing
 import aiogram
-import handlers
 from aiogram.utils.exceptions import NetworkError
 from aiogram.utils.executor import start_webhook
-from loader import dp, bot
 from alert_worker.alerts import NotificationAlerter
-from logger import logger
-from load_virtual_variables import (WEBHOOK_PATH,
-                                    WEBHOOK_URL,
-                                    WEBAPP_HOST,
-                                    BOT_PORT,
-                                    LOAD_BTC_ETH_PRICE,
-                                    BASE_MINIMUM_VOLUME)
+from utils.create_bot import dp, bot
+from utils.logger import logger
+from utils.virtual_variables import (WEBHOOK_PATH,
+                                     WEBHOOK_URL,
+                                     WEBAPP_HOST,
+                                     BOT_PORT,
+                                     LOAD_BTC_ETH_PRICE,
+                                     BASE_MINIMUM_VOLUME)
 
 
 def start():

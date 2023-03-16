@@ -1,6 +1,6 @@
 import os
 import aiohttp
-from logger import logger
+from utils.logger import logger
 import asyncio
 from aiohttp.client_exceptions import ContentTypeError
 

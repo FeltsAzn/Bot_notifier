@@ -3,12 +3,12 @@ import functools
 from emoji import emojize
 from aiogram.utils import markdown, exceptions
 from aiohttp.client_exceptions import ClientConnectorError
-from loader import bot
-from logger import logger
+from utils.create_bot import bot
+from utils.logger import logger
+from utils.virtual_variables import MAIN_ADMIN
+from utils.middleware import async_get_all_users, update_users_list_async, deactivate_notify
 from alert_worker import http_req
 from alert_worker.alerts_exception_handler import UnexpectedException
-from load_virtual_variables import MAIN_ADMIN
-from middleware import async_get_all_users, update_users_list_async, deactivate_notify
 
 
 class NotificationAlerter:

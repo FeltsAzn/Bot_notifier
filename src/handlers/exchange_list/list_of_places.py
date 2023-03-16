@@ -1,8 +1,8 @@
 import asyncio
 from aiogram.types import Message, InlineKeyboardButton
 from aiogram.dispatcher.filters import Text
-from loader import dp
-from middleware import validate_user
+from utils.create_bot import dp
+from utils.middleware import validate_user
 from handlers.exchange_list.config_for_filling import fill_kb
 
 

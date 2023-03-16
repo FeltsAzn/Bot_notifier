@@ -3,9 +3,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select
-from load_virtual_variables import DATABASE_ASYNC_URL
+from utils.virtual_variables import DATABASE_ASYNC_URL
 from db.models import User
-from logger import logger
+from utils.logger import logger
 
 
 # TODO: connect to mongo db

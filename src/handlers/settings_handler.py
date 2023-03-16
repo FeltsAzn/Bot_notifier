@@ -1,13 +1,13 @@
 import asyncio
 from aiogram import types
 from aiogram.dispatcher.filters import Text
-from loader import dp
+from utils.create_bot import dp
 from handlers.exception_handler import exception_hand
-from middleware import (delete_user_from_tg_id,
-                        activate_notify,
-                        deactivate_notify,
-                        validate_user,
-                        get_user_from_tg_id)
+from utils.middleware import (delete_user_from_tg_id,
+                              activate_notify,
+                              deactivate_notify,
+                              validate_user,
+                              get_user_from_tg_id)
 
 """
 Файл settiongs_handler.py предназначен для реализации функционала бота "Settings" пользователя

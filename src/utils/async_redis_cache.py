@@ -2,7 +2,7 @@ import json
 import functools
 import redis
 import redis.asyncio as async_redis
-from logger import logger
+from utils.logger import logger
 
 
 class AsyncRedisCache:

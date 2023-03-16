@@ -1,9 +1,9 @@
 import asyncio
 import os
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
-from loader import dp
+from utils.create_bot import dp
 from handlers.admin_handler.config_for_filling import fill_table
-from middleware import get_user_from_tg_id, delete_user_from_tg_id
+from utils.middleware import get_user_from_tg_id, delete_user_from_tg_id
 
 """
 Файл users_actioins_callback.py предназначен для реализации функционала бота "Админка -> Список пользователей".

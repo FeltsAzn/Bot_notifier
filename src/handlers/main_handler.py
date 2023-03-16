@@ -1,10 +1,10 @@
 import asyncio
 from aiogram import types
-from loader import dp
+from utils.create_bot import dp
 from handlers.exception_handler import exception_hand
-from middleware import (async_get_admin,
-                        create_new_user,
-                        validate_user)
+from utils.middleware import (async_get_admin,
+                              create_new_user,
+                              validate_user)
 
 """
 Файл main_handler.py - стартовое меню бота. Осуществляет авторизацию, либо регистрацию пользователя.

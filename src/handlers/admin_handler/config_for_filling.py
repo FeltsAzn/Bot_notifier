@@ -1,6 +1,6 @@
 import math
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from middleware import async_get_all_users
+from utils.middleware import async_get_all_users
 
 """
 Файл config_for_filling.py - методы для заполнения административного списка пользователей и контроль

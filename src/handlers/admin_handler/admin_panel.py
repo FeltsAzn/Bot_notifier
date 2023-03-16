@@ -1,8 +1,8 @@
 from aiogram.types import Message, InlineKeyboardButton, ReplyKeyboardMarkup
 from aiogram.dispatcher.filters import Text
-from loader import dp, VolumeState
+from utils.create_bot import dp, VolumeState
 from handlers.admin_handler.config_for_filling import fill_table
-from middleware import admin_validator, set_value_to_redis
+from utils.middleware import admin_validator, set_value_to_redis
 from aiogram.dispatcher import FSMContext
 
 """

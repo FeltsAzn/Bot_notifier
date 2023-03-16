@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardButton, CallbackQuery
 from handlers.exchange_list.config_for_filling import fill_kb
-from loader import dp
+from utils.create_bot import dp
 
 
 """

@@ -1,8 +1,7 @@
 from typing import Callable
 from db.crud import Database
-from load_virtual_variables import REDIS_ASYNC_CONN
+from utils.virtual_variables import REDIS_ASYNC_CONN
 import functools
-instance_cache = {}
 
 """
 The middleware.py file is designed to hide database calls and filter data when a response is received.
