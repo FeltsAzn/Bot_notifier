@@ -1,141 +1,20 @@
 # Bot for tracking quotes on crypto exchanges.
 
-## Local deployment
-
-Copy via terminal repository:
-```bash
-git clone https://github.com/FeltsAzn/Ctypto_info_bot
+### Message example: 
+```
+📉  ALGO-USDC:
+min:   0.217700$ - KUCOIN
+max:   0.228100$ - HUOBI
+diff: 4.55%
+common networks: ALGO
+Volume of trading on KUCOIN:
+ 🔴 5m:   138534.31 (0.0%)
+ ⚪ 30m: 138540.55 (0.0%)
+ ⚪ 1h:     138540.55 (0.0%)
+ ⚪ 4h:     138540.55 (0.0%)
+ ⚪ day:   138540.55 (0.0%)
 ```
 
-#### If you are working with code editors `vim`, `nano`, `notepad` and others:
-Installing a virtual environment if you don't have one locally.
-```bash
-python3 -m pip install --user virtualenv
-```
-
-Create a virtual environment in the copied repository:
-```bash
-python3 -m venv env
-```
-
-Activate the virtual environment:
-```bash
-source env/bin/activate
-```
-
-Install the dependency file in the virtual environment:
-```bash
-(venv):~<project path>$ pip install -r requirements.txt
-```
-
-Create a `.env` file in the project folder
-```bash
-touch.env
-```
-
-For correct work, you need to create a **logs** folder in the project repository:
-```bash
-mkdir logs
-```
-
-
-#### If you are using the IDE:
-Install the dependency file in the virtual environment:
-```bash
-(venv):~<project path>$ pip install -r requirements.txt
-```
-
-Create a ***.env*** file in your project folder
-
-Contents of the `.env` file:
-```sh
-MULTIPROCESSORING=ON
-COMPOSE_PROJECT_NAME=<for docker images>
-# WEBHOOK
-DOMAIN_NAME=<webhook server domain>
-WEBAPP_HOST=0.0.0.0
-BOT_PORT=5555
-WEBHOOK_PATH=/bot/
-
-# TELEGRAM
-ADMIN_NAME=<tg-url admin>
-SUPER_ADMIN_ID=<tg id admin for logs>
-BOT_TOKEN=<tg bot token>
-
-# DATABASE
-DATABASE_URL_ASYNC=sqlite+aiosqlite:///src/db/info.db
-DATABASE_URL=sqlite:///src/db/info.db
-
-#EXCHANGE DATA
-EXCHANGES_DATA_COLLECTOR=http://exchanges_data:8888
-# EXCHANGES_DATA_COLLECTOR=http://0.0.0.0:8888 for local run
-# EXCHANGES_DATA_COLLECTOR=http://exchanges_data:8888 for docker run
-
-# CREATE SENDING TEXT
-TEXT_GENERATOR=http://text_creator:9999
-# TEXT_GENERATOR=http://0.0.0.0:9999
-# TEXT_GENERATOR=http://text_creator:9999
-
-# CACHE
-REDIS_URL=redis_server
-REDIS_PORT=6379
-REDIS_PASS=redis_password
-# REDIS_URL=0.0.0.0 for local start
-# REDIS_URL=redis_server for docker run
-
-```
-
-
-For correct work, you need to create a **logs** folder in the project repository:
-```bash
-mkdir logs
-```
-
-
-!!! IMPORTANT
-1. Before starting, you need to create a database, for this you need to run **db/**`create_database.py`.
-2. The bot will only work with its [backend](https://github.com/FeltsAzn/FastAPI-service-for-bot) part,
-so before you start, download the 2nd part of the application.
-
-Run from terminal -> `python3 app.py`
-
-
-#### Docker container
-
-You can deploy the application on a server or locally in a container using ***dockerfile***:
-```bash
-docker build . -t <image name>
-```
-
-And run the built image in a container:
-```bash
-docker run -d <image name>
-```
-
-
-It is possible to raise a cluster for the bot and its [backend](https://github.com/FeltsAzn/FastAPI-service-for-bot) parts in docker-compose:
-```bash
-"Changing the path to the API for the bot"
-
-services:
-   fastapi:
-     image:fastapi
-     container_name: fastapi_app
-     ports:
-     - "8000:8000"
-     build:
-       context: <absolute path in the system to the Dockerfile_bot for the fastapi service>
-       Dockerfile_bot: Dockerfile_bot
-.....
-```
-
-We register in the IDE terminal or the terminal of the operating system:
-```bash
-docker compose -f docker-compose.yml up -d
-```
-
-
-_______________________________________________________________
 
 The application is written in the `aiogramm` library. There are two types of operation: single-threaded mode and multiprocessor.
 
