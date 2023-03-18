@@ -1,6 +1,7 @@
 from typing import Callable
 from db.crud import Database
-from utils.virtual_variables import REDIS_ASYNC_CONN, LOAD_BTC_ETH_PRICE
+from utils.virtual_variables import REDIS_ASYNC_CONN, LOAD_SETTINGS
+from utils.logger import logger
 import functools
 
 """
@@ -95,13 +96,21 @@ async def deactivate_notify(tg_id: int) -> bool:
     return is_deactivated
 
 
-async def set_value_to_redis(value: str) -> bool:
+async def set_value_to_redis(category: str, value: str) -> bool:
     try:
         value = float(value)
+        settings = await get_settings()
     except ValueError:
         return False
     else:
-        async with LOAD_BTC_ETH_PRICE as session:
-            await session.create_key_and_value("MINIMUM_VOLUME", value)
+        settings[category] = value
+        async with LOAD_SETTINGS as session:
+            await session.create_key_and_value("SETTINGS", settings)
+        logger.info(f"Settings updated category '{category}' value: '{value}'. All settings: {settings}")
         return True
 
+
+async def get_settings() -> dict:
+    async with LOAD_SETTINGS as session:
+        settings = await session.get_value("SETTINGS")
+    return settings

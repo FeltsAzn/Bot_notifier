@@ -6,7 +6,7 @@ from utils.virtual_variables import TOKEN
 
 
 class VolumeState(StatesGroup):
-    set_volume = State()
+    set_value = State()
 
 
 bot = Bot(token=TOKEN, parse_mode="HTML")

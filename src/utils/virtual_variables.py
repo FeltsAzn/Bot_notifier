@@ -16,9 +16,8 @@ WEBAPP_HOST = os.getenv("WEBAPP_HOST")
 DOMAIN = os.getenv("DOMAIN_NAME")
 WEBHOOK_URL = f"{DOMAIN}{WEBHOOK_PATH}"
 
-BASE_MINIMUM_VOLUME = 100000
 __redis_url = os.getenv("REDIS_URL")
 __redis_port = os.getenv("REDIS_PORT")
 __redis_password = os.getenv("REDIS_PASS")
 REDIS_ASYNC_CONN = AsyncRedisCache(host=__redis_url, port=__redis_port, db=2, password=__redis_password)
-LOAD_BTC_ETH_PRICE = AsyncRedisCache(host=__redis_url, port=__redis_port, db=4, password=__redis_password)
+LOAD_SETTINGS = AsyncRedisCache(host=__redis_url, port=__redis_port, db=4, password=__redis_password)
