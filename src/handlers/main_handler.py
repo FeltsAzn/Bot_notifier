@@ -1,7 +1,8 @@
 import asyncio
 from aiogram import types
-from utils.create_bot import dp
+from utils.create_bot import dp, bot
 from handlers.exception_handler import exception_hand
+from utils.virtual_variables import MAIN_ADMIN
 from utils.middleware import (async_get_admin,
                               create_new_user,
                               validate_user)
@@ -15,6 +16,8 @@ from utils.middleware import (async_get_admin,
 @validate_user
 async def start(message: types.Message, is_reg_user: bool) -> None:
     """Start window"""
+    username: str = message.from_user.username if message.from_user.username else message.from_user.first_name
+    await bot.send_message(chat_id=MAIN_ADMIN, text=f"User @{username} click to start.")
     buttons = ["List of places", "Settings"]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
