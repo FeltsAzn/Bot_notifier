@@ -12,12 +12,12 @@ from the database for readability of the code.
 
 def validate_user(func) -> Callable:
     @functools.wraps(func)
-    async def wrap(message) -> Callable:
+    async def wrap(message, state=None) -> Callable:
         async with REDIS_ASYNC_CONN as redis_connection:
             user_cache = await redis_connection.get_value("users_list")
         if f"{message.from_user.id}" in user_cache:
-            return await func(message, True)
-        return await func(message, False)
+            return await func(message, True, state)
+        return await func(message, False, state)
 
     return wrap
 

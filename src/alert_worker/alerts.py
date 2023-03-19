@@ -52,8 +52,8 @@ class NotificationAlerter:
             await self.send_message(content)
             t2 = time.time()
             if t2 - t1 < 2:
-                time.sleep(10)
                 logger.warning("Exchanges/Text creator service dropped. Timeout 10 sec.")
+                time.sleep(10)
 
     async def send_message(self, content: list) -> None:
         if content != [] and self.USERS_CACHE:

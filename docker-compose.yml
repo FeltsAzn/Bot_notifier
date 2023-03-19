@@ -70,7 +70,7 @@ services:
   redis:
     image: redis:latest
     container_name: redis_server
-    command: ["redis-server", "--save", "3600", "1000", "--loglevel", "warning", "--requirepass", "${REDIS_PASS}"]
+    command: ["redis-server", "--save", "3600", "10000", "--loglevel", "warning", "--requirepass", "${REDIS_PASS}"]
     volumes:
       - cache:/data
     restart: unless-stopped
