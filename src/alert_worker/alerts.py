@@ -32,7 +32,7 @@ class NotificationAlerter:
 
         return wrapped
 
-    async def update_user_cache(self) -> None:
+    async def load_list_of_users(self) -> None:
         """
         Updating cache after app launching or after adding new user
         """
@@ -46,7 +46,7 @@ class NotificationAlerter:
         await update_users_list_async()
         while True:
             t1 = time.time()
-            await self.update_user_cache()
+            await self.load_list_of_users()
             raw_data = await http_req.exchanges_data_collector()
             content = await http_req.give_finished_text(*raw_data)
             await self.send_message(content)
