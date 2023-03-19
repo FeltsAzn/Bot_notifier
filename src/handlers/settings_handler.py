@@ -1,5 +1,6 @@
 import asyncio
 from aiogram import types
+from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from utils.create_bot import dp
 from handlers.exception_handler import exception_hand
@@ -17,7 +18,7 @@ from utils.middleware import (delete_user_from_tg_id,
 
 @dp.message_handler(lambda mes: mes.text in ("Cancel deleting", "Settings"))
 @validate_user
-async def settings(message: types.Message, is_user: bool):
+async def settings(message: types.Message, is_user: bool, state: FSMContext = None):
     if is_user:
         users = await get_user_from_tg_id(message.from_user.id)
         if users:
@@ -39,7 +40,7 @@ async def settings(message: types.Message, is_user: bool):
 
 @dp.message_handler(Text(equals="Deactivate tracking"))
 @validate_user
-async def stop_notify(message: types.Message, is_reg_user: bool):
+async def stop_notify(message: types.Message, is_reg_user: bool, state: FSMContext = None):
     if is_reg_user:
         response: bool = await deactivate_notify(message.from_user.id)
         if response:
@@ -56,7 +57,7 @@ async def stop_notify(message: types.Message, is_reg_user: bool):
 
 @dp.message_handler(Text(equals="Activate tracking"))
 @validate_user
-async def start_notify(message: types.Message, is_reg_user: bool):
+async def start_notify(message: types.Message, is_reg_user: bool, state: FSMContext = None):
     if is_reg_user:
         response: bool = await activate_notify(message.from_user.id)
         if response:
@@ -73,7 +74,7 @@ async def start_notify(message: types.Message, is_reg_user: bool):
 
 @dp.message_handler(Text(equals="Delete account"))
 @validate_user
-async def delete_user(message: types.Message, is_reg_user: bool):
+async def delete_user(message: types.Message, is_reg_user: bool, state: FSMContext = None):
     if is_reg_user:
         buttons = ["Yes, delete my account", "Cancel deleting", "Home"]
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
@@ -87,7 +88,7 @@ async def delete_user(message: types.Message, is_reg_user: bool):
 
 @dp.message_handler(Text(equals="Yes, delete my account"))
 @validate_user
-async def deleting(message: types.Message, is_reg_user: bool):
+async def deleting(message: types.Message, is_reg_user: bool, state: FSMContext = None):
     if is_reg_user:
         response = await delete_user_from_tg_id(message.from_user.id)
         if response:

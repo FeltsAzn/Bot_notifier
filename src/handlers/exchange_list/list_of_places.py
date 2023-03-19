@@ -1,5 +1,6 @@
 import asyncio
 from aiogram.types import Message, InlineKeyboardButton
+from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from utils.create_bot import dp
 from utils.middleware import validate_user
@@ -8,7 +9,7 @@ from handlers.exchange_list.config_for_filling import fill_kb
 
 @dp.message_handler(Text(equals="List of places"))
 @validate_user
-async def list_of_places(message: Message, is_user: bool):
+async def list_of_places(message: Message, is_user: bool, state: FSMContext = None):
     if is_user:
         keyboard = fill_kb.filling_keyboard()
         if fill_kb.last_page > 1:

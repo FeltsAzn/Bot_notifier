@@ -1,5 +1,6 @@
 import asyncio
 from aiogram import types
+from aiogram.dispatcher import FSMContext
 from utils.create_bot import dp, bot
 from handlers.exception_handler import exception_hand
 from utils.virtual_variables import MAIN_ADMIN
@@ -14,10 +15,9 @@ from utils.middleware import (async_get_admin,
 
 @dp.message_handler(commands=["start", "home"])
 @validate_user
-async def start(message: types.Message, is_reg_user: bool) -> None:
+async def start(message: types.Message, is_reg_user: bool, state: FSMContext) -> None:
     """Start window"""
-    username: str = message.from_user.username if message.from_user.username else message.from_user.first_name
-    await bot.send_message(chat_id=MAIN_ADMIN, text=f"User @{username} click to start.")
+    await state.reset_state()
     buttons = ["List of places", "Settings"]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
@@ -38,14 +38,17 @@ async def new_user(message: types.Message,
         keyboard.add(*buttons)
         await message.answer("Hi, I am your assistant to tracking changes quotes!",
                              reply_markup=keyboard)
+        await bot.send_message(chat_id=MAIN_ADMIN, text=f"User @{username} registered on bot.")
     else:
+        await bot.send_message(chat_id=MAIN_ADMIN, text=f"User @{username} try to register to bot.")
         await exception_hand(message.from_user.id)
 
 
 @dp.message_handler(lambda mes: mes.text in ("Home", "Back to user menu"))
 @validate_user
-async def start_again(message: types.Message, is_reg_user: bool) -> None:
+async def start_again(message: types.Message, is_reg_user: bool, state: FSMContext) -> None:
     if is_reg_user:
+        await state.reset_state()
         admin_list = await async_get_admin()
         buttons = ["List of places", "Settings"]
         if f"{message.from_user.id}" in admin_list:
