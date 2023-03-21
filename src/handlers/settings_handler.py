@@ -22,11 +22,10 @@ async def settings(message: types.Message, is_user: bool, state: FSMContext = No
     if is_user:
         users = await get_user_from_tg_id(message.from_user.id)
         if users:
-            match users["state"]:
-                case "ACTIVATED":
-                    buttons = ["Deactivate tracking", "Delete account", "Home"]
-                case _:
-                    buttons = ["Activate tracking", "Delete account", "Home"]
+            if users["state"]:
+                buttons = ["Deactivate tracking", "Delete account", "Home"]
+            else:
+                buttons = ["Activate tracking", "Delete account", "Home"]
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
             keyboard.add(*buttons)
             await message.answer("Choose action:", reply_markup=keyboard)
@@ -88,7 +87,7 @@ async def delete_user(message: types.Message, is_reg_user: bool, state: FSMConte
 
 @dp.message_handler(Text(equals="Yes, delete my account"))
 @validate_user
-async def deleting(message: types.Message, is_reg_user: bool, state: FSMContext = None):
+async def delete(message: types.Message, is_reg_user: bool, state: FSMContext = None):
     if is_reg_user:
         response = await delete_user_from_tg_id(message.from_user.id)
         if response:
