@@ -4,7 +4,7 @@ from aiogram.dispatcher import FSMContext
 from utils.create_bot import dp, bot
 from handlers.exception_handler import exception_hand
 from utils.virtual_variables import MAIN_ADMIN
-from utils.middleware import (async_get_admin,
+from utils.middleware import (get_admins,
                               create_new_user,
                               validate_user)
 
@@ -17,10 +17,10 @@ from utils.middleware import (async_get_admin,
 @validate_user
 async def start(message: types.Message, is_reg_user: bool, state: FSMContext) -> None:
     """Start window"""
-    await state.reset_state()
+    if state:
+        await state.reset_state()
     buttons = ["List of places", "Settings"]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-
     if is_reg_user:
         return await start_again(message)
     else:
@@ -44,12 +44,13 @@ async def new_user(message: types.Message,
         await exception_hand(message.from_user.id)
 
 
-@dp.message_handler(lambda mes: mes.text in ("Home", "Back to user menu"))
+@dp.message_handler(lambda mes: mes.text in {"Home", "Back to user menu"})
 @validate_user
 async def start_again(message: types.Message, is_reg_user: bool, state: FSMContext) -> None:
     if is_reg_user:
-        await state.reset_state()
-        admin_list = await async_get_admin()
+        if state:
+            await state.reset_state()
+        admin_list = await get_admins()
         buttons = ["List of places", "Settings"]
         if f"{message.from_user.id}" in admin_list:
             buttons = ["List of places", "Admin panel", "Settings"]
