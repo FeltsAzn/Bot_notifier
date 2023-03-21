@@ -1,10 +1,9 @@
-import asyncio
 import functools
+from db.models import User
 from utils.logger import logger
 from motor.motor_asyncio import AsyncIOMotorClient
 
 
-# TODO: connect to mongo db
 class Database:
     MONGO_URL = "mongodb://bot:mongo_password@localhost:27017/"
     client = AsyncIOMotorClient(MONGO_URL)
@@ -33,10 +32,12 @@ class Database:
                 "username": name,
                 "access": "USER",
                 "notify": True,
-                "ban_list": {
-                    "quote": [],
-                    "time_alive": 0
-                }
+                "ban_list": [
+                    {
+                        "quote": "",
+                        "time_alive": 0
+                    }
+                ]
             }
             response = await self.USERS.insert_one(data)
             if response.acknowledged:
@@ -57,50 +58,38 @@ class Database:
         return False
 
     @exception_middleware
-    async def get_user(self, tg_id: int) -> dict:
-        user = await self.USERS.find_one({"tg_id": tg_id})
-        if user:
-            return user
-        logger.exception(f"User {tg_id} not found in database")
-        return user
+    async def change_user_access(self, tg_id: int, access: str) -> bool:
+        response = await self.USERS.find_one_and_update({"tg_id": tg_id}, {"$set": {"access": access}})
+        if response:
+            logger.info(f"User: {tg_id} access: {access} changed successfully")
+            return True
+        logger.exception(f"User {tg_id} not found in database. ")
+        return False
 
     @exception_middleware
-    async def get_users(self) -> list[dict]:
+    async def get_users(self) -> list[User]:
         users_set = []
         users = self.USERS.find()
         for user in await users.to_list(length=100):
-            users_set.append(user)
+            users_set.append(User(user))
         if not users_set:
             logger.exception("User list is empty")
         return users_set
 
-
     @exception_middleware
     async def activate_notification(self, tg_id) -> bool:
-        user = await self.USERS.find_one_and_update({"tg_id": tg_id, "notify": False})
-        return user
+        response = await self.USERS.find_one_and_update({"tg_id": tg_id}, {"$set": {"notify": True}})
+        if response:
+            logger.info(f"Activate notifications for tg id: {tg_id}")
+            return True
+        logger.exception(f"User {tg_id} not found in database")
+        return False
 
     @exception_middleware
     async def deactivate_notification(self, tg_id) -> bool:
-        user = await self.USERS.find_one_and_update({"tg_id": tg_id}, {"$notify": False})
-        return user
-
-
-
-async def db_methods():
-    database = Database()
-    await database.create_user(4586546, "Nik")
-    await database.create_user(4899416, "Rom")
-    await database.create_user(4854526, "Tim")
-    await database.create_user(4488551, "Aza")
-    await database.create_user(8498494, "Lil")
-    # resp = await database.delete_user(4586546)
-    # print(resp)
-    # resp = await database.get_user(4586546)
-    resp = await database.get_users()
-    print(resp)
-    resp = await database.deactivate_notification(8498494)
-    print(resp)
-
-
-asyncio.run(db_methods())
+        response = await self.USERS.find_one_and_update({"tg_id": tg_id}, {"$set": {"notify": False}})
+        if response:
+            logger.info(f"Deactivate notifications for tg id: {tg_id}")
+            return True
+        logger.exception(f"User {tg_id} not found in database")
+        return False
