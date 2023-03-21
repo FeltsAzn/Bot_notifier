@@ -74,12 +74,22 @@ services:
     volumes:
       - cache:/data
     restart: unless-stopped
-#  mongodb:
-#    image: mongo
-#    container_name: mongodb
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "${MONGO_PORT}:${MONGO_PORT}"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_USER}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+    volumes:
+      - database:/data
 
 volumes:
   cache:
+    driver: local
+  database:
     driver: local
   nginx_conf:
     external: true

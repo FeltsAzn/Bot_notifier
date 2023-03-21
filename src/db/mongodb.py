@@ -2,11 +2,11 @@ import functools
 from db.models import User
 from utils.logger import logger
 from motor.motor_asyncio import AsyncIOMotorClient
+from utils.virtual_variables import DATABASE_URL
 
 
 class Database:
-    MONGO_URL = "mongodb://bot:mongo_password@localhost:27017/"
-    client = AsyncIOMotorClient(MONGO_URL)
+    client = AsyncIOMotorClient(DATABASE_URL)
     DB = client["bot_users"]
     USERS = DB.users
 
