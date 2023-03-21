@@ -11,7 +11,7 @@ from handlers.exchange_list.config_for_filling import fill_kb
 @validate_user
 async def list_of_places(message: Message, is_user: bool, state: FSMContext = None):
     if is_user:
-        keyboard = fill_kb.filling_keyboard()
+        keyboard = fill_kb.fill_keyboard()
         if fill_kb.last_page > 1:
             next_button = InlineKeyboardButton(text=">>>>>", callback_data="next_page:places:call")
             stop_button = InlineKeyboardButton(text="|||", callback_data="stop:call")

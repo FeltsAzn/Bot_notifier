@@ -14,7 +14,7 @@ async def next_pages_handler(call: CallbackQuery):
 
     state: bool = True if fill_kb.page_counter < fill_kb.last_page - 1 else False  # Проверка пагинации страницы для заполнения
     fill_kb.up_values()
-    keyboard = fill_kb.filling_keyboard()
+    keyboard = fill_kb.fill_keyboard()
 
     if state:
         left_button = InlineKeyboardButton(text="<<<", callback_data="back_page:places:call")
@@ -36,7 +36,7 @@ async def back_pages_handler(call: CallbackQuery):
 
     state = True if fill_kb.page_counter > 2 else False  # Проверка пагинации страницы для заполнения
     fill_kb.down_values()
-    keyboard = fill_kb.filling_keyboard()
+    keyboard = fill_kb.fill_keyboard()
 
     if state:
         left_button = InlineKeyboardButton(text="<<<", callback_data="back_page:places:call")

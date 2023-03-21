@@ -6,7 +6,7 @@ from aiohttp.client_exceptions import ClientConnectorError
 from utils.create_bot import bot
 from utils.logger import logger
 from utils.virtual_variables import MAIN_ADMIN
-from utils.middleware import async_get_all_users, update_users_list_async, deactivate_notify
+from utils.middleware import get_all_users, update_users_list, deactivate_notify
 from alert_worker import http_req
 from alert_worker.alerts_exception_handler import UnexpectedException
 
@@ -36,14 +36,14 @@ class NotificationAlerter:
         """
         Updating cache after app launching or after adding new user
         """
-        self.USERS_CACHE = await async_get_all_users()
+        self.USERS_CACHE = await get_all_users()
 
     @exception_middleware
     async def background_task(self) -> None:
         """
         Mainloop with requests to backend and sending notifications to telegram users
         """
-        await update_users_list_async()
+        await update_users_list()
         while True:
             t1 = time.time()
             await self.load_list_of_users()
@@ -58,7 +58,7 @@ class NotificationAlerter:
     async def send_message(self, content: list) -> None:
         if content != [] and self.USERS_CACHE:
             for tg_id, data in self.USERS_CACHE.items():
-                if data["state"] == "ACTIVATED":
+                if data["state"]:
                     try:
                         await bot.send_message(chat_id=int(tg_id),
                                                text=emojize(markdown.text(*content), language="alias"),

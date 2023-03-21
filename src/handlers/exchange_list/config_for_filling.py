@@ -31,7 +31,7 @@ class FillingKeyboard:
         self.page_counter = 1
         self.last_page = math.ceil(len(self.places) / 6)
 
-    def filling_keyboard(self) -> InlineKeyboardMarkup:
+    def fill_keyboard(self) -> InlineKeyboardMarkup:
         """Заполнение инлайн клавиатуры элементами базы данных"""
         keyboard = InlineKeyboardMarkup(row_width=2)
         for coin in self.places[self.elements_counter:6 + self.elements_counter]:
