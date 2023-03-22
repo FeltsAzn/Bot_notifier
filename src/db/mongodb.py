@@ -2,7 +2,7 @@ import functools
 from db.models import User
 from utils.logger import logger
 from motor.motor_asyncio import AsyncIOMotorClient
-from utils.virtual_variables import DATABASE_URL
+from utils.virtual_variables import DATABASE_URL, MAIN_ADMIN
 
 
 class Database:
@@ -27,10 +27,14 @@ class Database:
         """Создание нового пользователя"""
         is_exist_user = await self.USERS.find_one({"tg_id": tg_id})
         if not is_exist_user:
+            if tg_id == MAIN_ADMIN:
+                access = "ADMIN"
+            else:
+                access = "USER"
             data = {
                 "tg_id": tg_id,
                 "username": name,
-                "access": "USER",
+                "access": access,
                 "notify": True,
                 "ban_list": [
                     {
