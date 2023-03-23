@@ -45,7 +45,7 @@ async def send_request(session: aiohttp.ClientSession, service: str) -> dict:
     return convert_data
 
 
-async def give_finished_text(*raw_data) -> list:
+async def get_finished_text(*raw_data) -> list:
     async with aiohttp.ClientSession(TEXT_CREATOR_URL) as session:
         converted_data = {"data": [*raw_data]}
         try:

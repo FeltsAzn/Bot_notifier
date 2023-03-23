@@ -48,7 +48,7 @@ class NotificationAlerter:
             t1 = time.time()
             await self.load_list_of_users()
             raw_data = await http_req.exchanges_data_collector()
-            content = await http_req.give_finished_text(*raw_data)
+            content = await http_req.get_finished_text(*raw_data)
             await self.send_message(content)
             t2 = time.time()
             if t2 - t1 < 2:
