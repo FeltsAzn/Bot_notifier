@@ -12,7 +12,8 @@ from utils.logger import logger
 from utils.virtual_variables import (WEBHOOK_PATH,
                                      WEBHOOK_URL,
                                      WEBAPP_HOST,
-                                     BOT_PORT)
+                                     BOT_PORT,
+                                     MAIN_ADMIN)
 
 
 def start():
@@ -59,6 +60,7 @@ async def on_startup(dp: aiogram.Dispatcher):
     info = await bot.get_webhook_info()
     logger.info("Webhook is created. Bot is running")
     logger.info(f"Webhook info: {info}")
+    await bot.send_message(chat_id=MAIN_ADMIN, text="Bot is running")
 
 
 async def on_shutdown(dp: aiogram.Dispatcher):
