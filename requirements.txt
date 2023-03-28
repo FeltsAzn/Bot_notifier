@@ -18,7 +18,7 @@ multidict==6.0.2
 pymongo==4.3.3
 python-dotenv==0.21.0
 pytz==2022.6
-redis==4.5.1
+redis==4.5.3
 SQLAlchemy==1.4.42
 typing_extensions==4.4.0
 yarl==1.8.1
