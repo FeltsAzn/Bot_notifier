@@ -1,5 +1,6 @@
 from aiogram.types import Message, InlineKeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, CallbackQuery
 from aiogram.dispatcher.filters import Text
+from emoji import emojize
 from utils.create_bot import dp, VolumeState
 from utils.middleware import admin_validator, set_value_to_redis, get_settings
 from aiogram.dispatcher import FSMContext
@@ -27,7 +28,7 @@ async def show_settings(message: Message):
     buttons = [volume, start_percent, up_percent, down_percent, high_percent, volume_15_min, volume_30_min]
     keyboard = InlineKeyboardMarkup(row_width=1)
     keyboard.add(*buttons)
-    await message.answer("Values:", reply_markup=keyboard)
+    await message.answer(text=emojize(":pencil:"), reply_markup=keyboard)
 
 
 @dp.callback_query_handler(text_contains=":change:call")
@@ -52,7 +53,7 @@ async def set_volume(message: Message, state: FSMContext):
     is_right_value = await set_value_to_redis(category=category, value=message.text)
     if is_right_value:
         await state.reset_state()
-        buttons = ['List of users', "Filter settings", "Admins settings", 'Back to user menu']
+        buttons = ["Back to admin panel"]
         keyboard = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         keyboard.add(*buttons)
         await message.answer(f"Boundary {category} {message.text} set successfully", reply_markup=keyboard)
