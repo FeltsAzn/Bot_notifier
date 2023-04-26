@@ -63,6 +63,11 @@ class NotificationAlerter:
                         await bot.send_message(chat_id=int(tg_id),
                                                text=emojize(markdown.text(*content), language="alias"),
                                                parse_mode="html")
+                    except exceptions.MessageIsTooLong:
+                        for block in content:
+                            await bot.send_message(chat_id=int(tg_id),
+                                                   text=emojize(markdown.text(*block), language="alias"),
+                                                   parse_mode="html")
                     except exceptions.BotBlocked as ex:
                         logger.warning(f"Message didn't send to user {tg_id}. {ex}. User notify deactivated")
                         await deactivate_notify(int(tg_id))
