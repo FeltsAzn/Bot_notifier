@@ -63,7 +63,7 @@ class NotificationAlerter:
                         await bot.send_message(chat_id=int(tg_id),
                                                text=emojize(markdown.text(*content), language="alias"),
                                                parse_mode="html")
-                    except exceptions.MessageIsTooLong:
+                    except (exceptions.MessageIsTooLong, exceptions.CantParseEntities):
                         for block in content:
                             await bot.send_message(chat_id=int(tg_id),
                                                    text=emojize(markdown.text(*block), language="alias"),
